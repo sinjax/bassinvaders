@@ -1,0 +1,9 @@
+SoundSource/BassInvaders*
+SoundSource/*.a
+SoundSource/*.wav
+SoundSource/*.ogg
+SoundSource/*.mp3
+SoundSource/*.out
+SoundSource/*.err
+SoundSource/*.cdr
+SoundSource/build
