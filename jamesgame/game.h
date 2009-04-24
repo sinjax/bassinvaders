@@ -18,7 +18,7 @@
 #define SCREEN_HEIGHT 480
 #define SCREEN_DEPTH 32
 #define CHUNK 4096 					//size of audio stream chunks
-#define INSERT_YOUR_SONG_PATH_HERE "pendulum.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "sound/test.mp3"
 
 class game
 {

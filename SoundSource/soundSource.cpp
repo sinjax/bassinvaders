@@ -8,7 +8,7 @@
  */
 
 #include "soundSource.h"
-
+int SoundSource::isInit =0 ;
 void SoundSource::init()
 {
 	if(!SoundSource::isInit)
@@ -97,12 +97,12 @@ int SoundSource::addPacket(AVPacket * pkt){
 }
 
 
-SoundSourceIterator * SoundSource::iter(int sampleLen = 1024)
+SoundSourceIterator * SoundSource::iter(int sampleLen)
 {
 	return new SoundSourceIterator(this,sampleLen);
 }
 
-SoundSourceIterator * SoundSource::iterBytes(int start,int stop,int sampleLen = 1024)
+SoundSourceIterator * SoundSource::iterBytes(int start,int stop,int sampleLen)
 {
 	return new SoundSourceIterator(this,start,stop,false,sampleLen);
 }
@@ -293,29 +293,4 @@ SoundSample * SoundSourceIterator::next()
 	this->getSound(this->soundSample->sample,this->soundSample->len,this->start,this->end);
 	this->read+=this->soundSample->len;
 	return this->soundSample;
-}
-
-int main(int argc, char *argv[]){
-	SoundSource * s = new SoundSource(argv[1]);
-	SoundSourceIterator * iter;
-	iter = s->iterBytes(44100*0*4,44100*2*4);
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
-	delete iter;
-	iter = s->iter();
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
-	
 }

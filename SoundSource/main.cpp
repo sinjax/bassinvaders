@@ -1,4 +1,5 @@
 #include <iostream>
+#include "soundSource.h"
 void printBinary(int n)
 {
 	std::cout << "decimal: " << n << std::endl;
@@ -10,19 +11,28 @@ void printBinary(int n)
 	}
 	std::cout << std::endl;
 }
-int main (int argc, char * const argv[]) {
-    // insert code here...
-	signed int a ;
-	while(std::cin>>a){
-		printBinary(a);
-		printBinary(0xff);
-		printBinary(a >> 8);
-		printBinary(((a >> 8) & 0xff));
-		printBinary(a >> 0);
-		printBinary(((a >> 0) & 0xff));
-		// print binary with leading zeros
-		
-		
+
+int main(int argc, char *argv[]){
+	SoundSource * s = new SoundSource(argv[1]);
+	SoundSourceIterator * iter;
+	iter = s->iterBytes(44100*0*4,44100*2*4,1024);
+	while(iter->hasNext())
+	{
+		SoundSample * sample = iter->next();
+		for(int i = 0; i < sample->len; i++)
+		{
+			std::cout << sample->sample[i];
+		}
 	}
-    return 0;
+	delete iter;
+	iter = s->iter(1024);
+	while(iter->hasNext())
+	{
+		SoundSample * sample = iter->next();
+		for(int i = 0; i < sample->len; i++)
+		{
+			std::cout << sample->sample[i];
+		}
+	}
+	
 }

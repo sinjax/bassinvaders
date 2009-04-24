@@ -7,3 +7,6 @@ SoundSource/*.out
 SoundSource/*.err
 SoundSource/*.cdr
 SoundSource/build
+*.1
+*.xcodeproj
+build

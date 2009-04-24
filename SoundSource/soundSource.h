@@ -6,6 +6,8 @@
  *  Copyright 2009 __MyCompanyName__. All rights reserved.
  *
  */
+#ifndef SOUNDSOURCE_H
+#define SOUNDSOURCE_H 0
 # include <iostream>
 # include <unistd.h>
 # include <sys/stat.h>
@@ -67,15 +69,11 @@ class SoundSource  {
 		SoundSource(char * filename);
 		~SoundSource();
 		
-		SoundSourceIterator * iter(int);
+		SoundSourceIterator * iter(int sampleLen);
 		/*
 		 * Pointer to a stream containing sound
 		 */
-		SoundSourceIterator * iterTimes(
-			int beginSeconds, 
-			int endSeconds,
-			int sampleLen
-		);
+		SoundSourceIterator * iterTimes(int beginSeconds,int endSeconds,int sampleLen);
 		/*
 		 * Get sound between certain byte range
 		 */
@@ -104,5 +102,4 @@ class SoundSource  {
 		static int isInit;
 	AVPacket flush_pkt;
 };
-int SoundSource::isInit = 0;
-
+#endif
