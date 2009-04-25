@@ -150,10 +150,15 @@ game::game()
 	SDL_WM_SetCaption( "Bass Invaders", NULL );
 	pScreen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, SDL_HWSURFACE|SDL_DOUBLEBUF);
 	bg = new background(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Mix_OpenAudio( 44100/*22050*/, MIX_DEFAULT_FORMAT, 2, CHUNK/4 );
+	SoundSource * source = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
+    Mix_OpenAudio( source->spec.freq, 
+				   MIX_DEFAULT_FORMAT, 
+				   source->spec.channels, 
+				   source->spec.samples);
+	
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
-    SoundSource * source = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
-    SoundSourceIterator * iter = new SoundSourceIterator(source, CHUNK);
+    
+    SoundSourceIterator * iter = new SoundSourceIterator(source, source->spec.samples*4);
     Mix_HookMusic(MusicPlayer, iter);
 
 	sprite *s = new sprite(this);
