@@ -40,8 +40,11 @@ public:
 	Uint8* keys;
 	void * getResource(std::string s);
 	std::list<sprite*> sprite_list;
+	audio_processor *au;
+	SoundSourceIterator * soundIter;
 private:
 	SDL_Surface* pScreen;
+	
 	background *bg;
 	std::map<std::string, void*> resources;
 	hud *h;

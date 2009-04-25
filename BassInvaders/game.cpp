@@ -18,7 +18,7 @@ void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination,
     SDL_BlitSurface( source, clip, destination, &offset );
 }
 
-audio_processor au(CHUNK, BANDS, HISTORY_BUFFER_SIZE, SENSITIVITY);
+
 
 void game::gameloop(){
    // Mix_SetPostMix(band_separate, &au);
@@ -29,7 +29,7 @@ void game::gameloop(){
 
 	while(shouldIQuit() == false)
 	{
-		if ((cooldown<0)&&au.poll_beat(0)){
+		if ((cooldown<0)&&this->au->poll_beat(0)){
 			//srand(au.poll_sig(4));
 			for (int i =0; i<rand()%10; i++)
 			{
@@ -131,7 +131,7 @@ SDL_Surface* game::getWindowSurface()
 
 void MusicPlayer(void *udata, Uint8 *stream, int len)
 {
-	SoundSourceIterator* iter = (SoundSourceIterator*)udata;
+	SoundSourceIterator* iter = ((game*)udata)->soundIter;
 	if(iter->hasNext())
 	{
 		SoundSample * sample = iter->next();
@@ -141,7 +141,7 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 		}
 	}
 
-	band_separate(&au, stream, len);
+	band_separate(((game*)udata)->au, stream, len);
 }
 
 game::game()
@@ -155,11 +155,11 @@ game::game()
 				   MIX_DEFAULT_FORMAT, 
 				   source->spec.channels, 
 				   source->spec.samples);
-	
+	au = new audio_processor (source->spec.samples*4, BANDS, HISTORY_BUFFER_SIZE, SENSITIVITY);
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
     
-    SoundSourceIterator * iter = new SoundSourceIterator(source, source->spec.samples*4);
-    Mix_HookMusic(MusicPlayer, iter);
+    soundIter = new SoundSourceIterator(source, source->spec.samples*4);
+    Mix_HookMusic(MusicPlayer, this);
 
 	sprite *s = new sprite(this);
 	sprite_list.push_back(s);
