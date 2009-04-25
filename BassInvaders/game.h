@@ -22,7 +22,6 @@
 #define SCREEN_DEPTH 32
 #define HISTORY_BUFFER_SIZE 43 		//size of sound energy buffer
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
-#define CHUNK 2*4096 					//size of audio stream chunks
 #define BANDS 6
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
 

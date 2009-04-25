@@ -155,7 +155,10 @@ game::game()
 				   MIX_DEFAULT_FORMAT, 
 				   source->spec.channels, 
 				   source->spec.samples);
-	au = new audio_processor (source->spec.samples*4, BANDS, HISTORY_BUFFER_SIZE, SENSITIVITY);
+	int historyBuffer = 1.0 / ((double)(source->spec.samples)/(double)(source->spec.freq));
+	//double sensit = SENSITIVITY;
+	double sensit = 1.6;
+	au = new audio_processor (source->spec.samples*4, BANDS, historyBuffer, sensit );
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
     
     soundIter = new SoundSourceIterator(source, source->spec.samples*4);
