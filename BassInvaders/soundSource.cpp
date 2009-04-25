@@ -292,28 +292,4 @@ SoundSample * SoundSourceIterator::next()
 	this->read+=this->soundSample->len;
 	return this->soundSample;
 }
-/*
-int main(int argc, char *argv[]){
-	SoundSource * s = new SoundSource("/Users/dag/Documents/bassinvaders/jamesgames/08 Julie and Candy.mp3");
-	SoundSourceIterator * iter;
-	iter = s->iterBytes(44100*0*4,44100*2*4);
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
-	delete iter;
-	iter = s->iter();
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
 
-}*/
