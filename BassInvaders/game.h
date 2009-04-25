@@ -24,7 +24,7 @@
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
 #define CHUNK 2*4096 					//size of audio stream chunks
 #define BANDS 6
-#define INSERT_YOUR_SONG_PATH_HERE "08 Julie and Candy.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
 
 class game
 {
