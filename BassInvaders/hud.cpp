@@ -22,21 +22,22 @@ hud::~hud() {
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
-void hud::displayText(int x, int y, char *text, ...){
-
-	char buffer[256];
-	va_list args;
-	va_start (args, text);
-	vsprintf (buffer,text, args);
-
-	message = TTF_RenderText_Solid( font, buffer, textColor );
-	SDL_Rect offset;
-	offset.x = x;
-	offset.y = y;
-	SDL_BlitSurface( message, NULL, baseSurface, &offset );
-	SDL_FreeSurface( message );
-
-	va_end (args);
+void hud::displayText(int x, int y, std::string text)
+{
+	char * pch = strtok ((char*)text.data(),"\n");
+	int currentY = y;
+	int fontHeight = TTF_FontHeight(font);
+	while (pch != NULL)
+	{
+		message = TTF_RenderText_Solid( font, pch, textColor );
+		SDL_Rect offset;
+		offset.x = x;
+		offset.y = currentY;
+		SDL_BlitSurface( message, NULL, baseSurface, &offset );
+		SDL_FreeSurface( message );
+		pch = strtok (NULL, "\n");
+		currentY += fontHeight;
+	}
 }
 
 /**

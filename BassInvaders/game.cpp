@@ -18,7 +18,21 @@ void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination,
     SDL_BlitSurface( source, clip, destination, &offset );
 }
 
-
+void game::musicDebug()
+{
+	std::stringstream debugStream;
+	debugStream << "Packets Read: " << this->soundIter->packetsRead << "/"
+				<< this->soundIter->source->packetQueue.nb_packets 
+				<< "(" << 100.0 * (double)(this->soundIter->packetsRead) / (double)(this->soundIter->source->packetQueue.nb_packets) << "%)" << std::endl;
+	debugStream << "Bytes Read: " << this->soundIter->read << "/" 
+				<< this->soundIter->source->packetQueue.duration 
+				<< "(" << 100.0 * (double)(this->soundIter->read) / (double)(this->soundIter->source->packetQueue.duration)<<  "%)" << std::endl;
+	h->displayText(
+		MDEBUG_X,
+		MDEBUG_Y,
+		debugStream.str()
+	);
+}
 
 void game::gameloop(){
    // Mix_SetPostMix(band_separate, &au);
@@ -61,7 +75,11 @@ void game::gameloop(){
 		for(i=sprite_list.begin(); i != sprite_list.end(); ++i) {
 			(*i)->renderSprite();
 		}
-		h->displayText(10,10,"Score: %i0",score/10);
+		std::stringstream scoreStream;
+		scoreStream << "Score: " << std::endl << score/10;
+		
+		h->displayText(10,10,scoreStream.str());
+		musicDebug();
 		if ((*sprite_list.begin())->currentState==IDLE){
 			if(2*(*sprite_list.begin())->xpos>SCREEN_WIDTH)
 			{ score+=2;}
@@ -161,7 +179,15 @@ game::game()
 	au = new audio_processor (source->spec.samples*4, BANDS, historyBuffer, sensit );
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
     
-    soundIter = new SoundSourceIterator(source, source->spec.samples*4);
+    //soundIter = new SoundSourceIterator(source, source->spec.samples*4);
+	soundIter = source->iter(source->spec.samples*4);
+	AVPacket pkt;
+	for(int waste = 0; waste < 600; waste++){
+		soundIter->nextPacket(&pkt,false);
+	}
+	/*soundIter = source->iterBytes((source->spec.freq*source->spec.channels)*6, // start
+								  (source->spec.freq*source->spec.channels)*12, // stop
+								  source->spec.samples*4);*/
     Mix_HookMusic(MusicPlayer, this);
 
 	sprite *s = new sprite(this);

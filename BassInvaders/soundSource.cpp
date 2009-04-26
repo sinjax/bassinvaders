@@ -121,6 +121,7 @@ SoundSourceIterator::SoundSourceIterator(SoundSource * source,int start,int stop
 	this->soundSample = new SoundSample();
 	this->soundSample->sample = new uint8_t[sampleLen];
 	this->soundSample->len = sampleLen;
+	this->packetsRead = 0;
 
 }
 
@@ -136,6 +137,7 @@ SoundSourceIterator::SoundSourceIterator(SoundSource * source, int sampleLen)
 	this->soundSample = new SoundSample();
 	this->soundSample->sample = new uint8_t[sampleLen];
 	this->soundSample->len = sampleLen;
+	this->packetsRead = 0;
 }
 
 SoundSourceIterator::~SoundSourceIterator()
@@ -156,10 +158,12 @@ int SoundSourceIterator::nextPacket(AVPacket *pkt, int block) {
 		{
 			// Set the first one to the next one
 			this->currentPacketList = currentPacketList1->next;
-
+			
 
 			// Sort out the return, free the queue item
 			*pkt = currentPacketList1->pkt;
+			this->packetsRead += 1;
+			this->read += pkt->duration;
 			ret = 1;
 			break;
 		}
@@ -226,10 +230,10 @@ int SoundSourceIterator::getSound(uint8_t *stream, int len, int start = -1, int 
 				{
 					do{
 						popRet = this->nextPacket(&pkt, 0) ;
-					}while(start != -1 && (pkt.pos + pkt.size) <= start);
+					}while(start != -1 && (pkt.pts + pkt.duration) <= start);
 
 
-					if(popRet == 0 || (end != -1 && (pkt.pos + pkt.size) >= end))
+					if(popRet == 0 || (end != -1 && (pkt.pts + pkt.duration) >= end))
 					{
 						audio_size  = 0;
 						break;
