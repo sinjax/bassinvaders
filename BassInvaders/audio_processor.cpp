@@ -21,7 +21,7 @@ audio_processor::audio_processor(uint32_t chunk_size, uint32_t num, uint32_t buf
 	freqs = samples/2;
 	history_len = buf_sz;
 	sensitivity = sen;
-	sig = new uint32_t[bands];
+	//sig = new uint32_t[bands];
 	beat = new bool[bands];
 	for (uint32_t i=0; i<bands; i++) beat[i] = false;
 
@@ -81,7 +81,7 @@ void audio_processor::detect_beat()
 		H[j]->record(average_energy);
 
 		/* expose a feature as a signature */
-		sig[j] = H[j]->sigma;
+		//sig[j] = H[j]->sigma;
 	}
 }
 
@@ -91,7 +91,7 @@ void audio_processor::detect_beat()
 audio_processor::~audio_processor() {
 	delete[] band;
 	delete[] beat;
-	delete[] sig;
+	//delete[] sig;
 	for (uint32_t i = 0; i< bands; i++){
 		delete H[i];
 		delete partitions[i];
@@ -107,9 +107,9 @@ bool audio_processor::poll_beat(uint32_t ba){
 	return beat[ba];
 }
 
-uint32_t audio_processor::poll_sig(uint32_t ba){
+/*uint32_t audio_processor::poll_sig(uint32_t ba){
 	return sig[ba];
-}
+}*/
 
 void audio_processor::process(uint8_t *stream){
 	partition(stream);

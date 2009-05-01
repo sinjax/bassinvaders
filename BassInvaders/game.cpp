@@ -151,16 +151,14 @@ game::game()
 	pScreen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, SDL_HWSURFACE|SDL_DOUBLEBUF);
 	bg = new background(SCREEN_WIDTH, SCREEN_HEIGHT);
 	SoundSource * source = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
-    Mix_OpenAudio( source->spec.freq, 
-				   MIX_DEFAULT_FORMAT, 
-				   source->spec.channels, 
+    Mix_OpenAudio( source->spec.freq,
+				   MIX_DEFAULT_FORMAT,
+				   source->spec.channels,
 				   source->spec.samples);
 	int historyBuffer = 1.0 / ((double)(source->spec.samples)/(double)(source->spec.freq));
-	//double sensit = SENSITIVITY;
-	double sensit = 1.6;
-	au = new audio_processor (source->spec.samples*4, BANDS, historyBuffer, sensit );
+	au = new audio_processor (source->spec.samples*4, BANDS, historyBuffer, SENSITIVITY );
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
-    
+
     soundIter = new SoundSourceIterator(source, source->spec.samples*4);
     Mix_HookMusic(MusicPlayer, this);
 

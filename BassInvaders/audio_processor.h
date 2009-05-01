@@ -11,10 +11,8 @@
 #define AUDIO_PROCESSOR_H_
 
 #include <inttypes.h>
-extern "C"{
 #include "gsl/gsl_errno.h"
 #include "gsl/gsl_fft_complex.h"
-}
 #include "history.h"
 
 // Macros for real/imaginary right/left parts of data stream
@@ -42,7 +40,7 @@ class audio_processor {
 	history<double> **H;// history arrays
 	uint8_t **partitions; // partition streams
 	double sensitivity; // sensitivity of beat detector
-	uint32_t *sig; // signatures to expose from music (perhaps for random seeding)
+	//uint32_t *sig; // signatures to expose from music (perhaps for random seeding)
 
 	void partition(uint8_t *stream); // split input stream into "bands" output streams
 	void detect_beat(); // look for a beat

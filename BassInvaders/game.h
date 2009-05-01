@@ -20,10 +20,9 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define SCREEN_DEPTH 32
-#define HISTORY_BUFFER_SIZE 43 		//size of sound energy buffer
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
 #define BANDS 6
-#define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "/Users/dag/Documents/bassinvaders/bassinvaders/BassInvaders/08 Julie and Candy.mp3"
 
 class game
 {
@@ -43,7 +42,7 @@ public:
 	SoundSourceIterator * soundIter;
 private:
 	SDL_Surface* pScreen;
-	
+
 	background *bg;
 	std::map<std::string, void*> resources;
 	hud *h;
