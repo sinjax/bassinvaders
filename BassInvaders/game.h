@@ -21,10 +21,9 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define SCREEN_DEPTH 32
-#define HISTORY_BUFFER_SIZE 43 		//size of sound energy buffer
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
 #define BANDS 6
-#define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "bassy.mp3"
 
 #define MDEBUG_X 0
 #define MDEBUG_Y SCREEN_HEIGHT - 60
@@ -48,6 +47,7 @@ public:
 private:
 	SDL_Surface* pScreen;
 	void musicDebug();
+	
 	background *bg;
 	std::map<std::string, void*> resources;
 	hud *h;

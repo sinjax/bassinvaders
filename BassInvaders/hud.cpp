@@ -22,9 +22,13 @@ hud::~hud() {
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
-void hud::displayText(int x, int y, std::string text)
+void hud::displayText(int x, int y, char* text,...)
 {
-	char * pch = strtok ((char*)text.data(),"\n");
+	char *buffer;
+	va_list args;
+	va_start (args, text);
+	vasprintf(&buffer,text, args);
+	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
 	while (pch != NULL)
@@ -38,6 +42,8 @@ void hud::displayText(int x, int y, std::string text)
 		pch = strtok (NULL, "\n");
 		currentY += fontHeight;
 	}
+	free(buffer);
+	va_end (args);
 }
 
 /**

@@ -7,9 +7,14 @@ void * game::getResource(std::string s){
 	}
 	return resources[s];
 }
+
 void band_separate( void *udata, uint8_t *stream, int len){
+	((audio_processor*)udata)->ingest(stream);
 	((audio_processor*)udata)->process(stream);
+	//((audio_processor*)udata)->band_pass(stream, 1000, 4000);
+
 }
+
 void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL )
 {
     SDL_Rect offset;
@@ -30,10 +35,9 @@ void game::musicDebug()
 	h->displayText(
 		MDEBUG_X,
 		MDEBUG_Y,
-		debugStream.str()
+		(char*)debugStream.str().data()
 	);
 }
-
 void game::gameloop(){
    // Mix_SetPostMix(band_separate, &au);
 
@@ -43,7 +47,7 @@ void game::gameloop(){
 
 	while(shouldIQuit() == false)
 	{
-		if ((cooldown<0)&&this->au->poll_beat(0)){
+		if ((cooldown<0)&&au->poll_beat(0)){
 			//srand(au.poll_sig(4));
 			for (int i =0; i<rand()%10; i++)
 			{
@@ -78,7 +82,7 @@ void game::gameloop(){
 		std::stringstream scoreStream;
 		scoreStream << "Score: " << std::endl << score/10;
 		
-		h->displayText(10,10,scoreStream.str());
+		h->displayText(10,10,(char*)scoreStream.str().data());
 		musicDebug();
 		if ((*sprite_list.begin())->currentState==IDLE){
 			if(2*(*sprite_list.begin())->xpos>SCREEN_WIDTH)
@@ -169,14 +173,11 @@ game::game()
 	pScreen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, SDL_HWSURFACE|SDL_DOUBLEBUF);
 	bg = new background(SCREEN_WIDTH, SCREEN_HEIGHT);
 	SoundSource * source = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
-    Mix_OpenAudio( source->spec.freq, 
-				   MIX_DEFAULT_FORMAT, 
-				   source->spec.channels, 
-				   source->spec.samples);
+    Mix_OpenAudio( source->spec.freq, MIX_DEFAULT_FORMAT, source->spec.channels, source->spec.samples);
 	int historyBuffer = 1.0 / ((double)(source->spec.samples)/(double)(source->spec.freq));
 	//double sensit = SENSITIVITY;
 	double sensit = 1.6;
-	au = new audio_processor (source->spec.samples*4, BANDS, historyBuffer, sensit );
+	au = new audio_processor (source->spec.freq,source->spec.samples*4, BANDS, historyBuffer, sensit );
     //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
     
     //soundIter = new SoundSourceIterator(source, source->spec.samples*4);
