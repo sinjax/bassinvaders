@@ -23,7 +23,6 @@ hud::~hud() {
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
 void hud::displayText(int x, int y, char *text, ...){
-
 	char *buffer;
 	va_list args;
 	va_start (args, text);
