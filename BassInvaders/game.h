@@ -22,7 +22,7 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define SCREEN_DEPTH 32
-#define INSERT_YOUR_SONG_PATH_HERE "/Users/dag/Documents/bassinvaders/bassinvaders/BassInvaders/08 Julie and Candy.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
 #define SENSITIVITY 1.3
 #define MDEBUG_X 0
 #define MDEBUG_Y SCREEN_HEIGHT - 60
