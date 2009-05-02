@@ -163,7 +163,6 @@ int SoundSourceIterator::nextPacket(AVPacket *pkt, int block) {
 			// Sort out the return, free the queue item
 			*pkt = currentPacketList1->pkt;
 			this->packetsRead += 1;
-			this->read += pkt->duration;
 			ret = 1;
 			break;
 		}
@@ -218,6 +217,7 @@ int SoundSourceIterator::getSound(uint8_t *stream, int len, int start = -1, int 
 					}
 					audio_pkt_data += len1;
 					audio_pkt_size -= len1;
+					this->read += len1;
 					if(data_size <= 0) {
 						/* No data yet, get more frames */
 						continue;
@@ -230,10 +230,18 @@ int SoundSourceIterator::getSound(uint8_t *stream, int len, int start = -1, int 
 				{
 					do{
 						popRet = this->nextPacket(&pkt, 0) ;
-					}while(start != -1 && (pkt.pts + pkt.duration) <= start);
+						if(start != -1 && (this->read + pkt.size) <= start)
+						{
+							this->read += pkt.size;
+						}
+						else
+						{
+							break;
+						}
+					}while(1);
 
 
-					if(popRet == 0 || (end != -1 && (pkt.pts + pkt.duration) >= end))
+					if(popRet == 0 || (end != -1 && (this->read + pkt.size) >= end))
 					{
 						audio_size  = 0;
 						break;
@@ -293,7 +301,7 @@ bool SoundSourceIterator::hasNext()
 SoundSample * SoundSourceIterator::next()
 {
 	this->getSound(this->soundSample->sample,this->soundSample->len,this->start,this->end);
-	this->read+=this->soundSample->len;
+	//this->read+=this->soundSample->len;
 	return this->soundSample;
 }
 
