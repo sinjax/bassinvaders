@@ -188,10 +188,11 @@ game::game()
 		soundIter->nextPacket(&pkt,false);
 		soundIter->read += pkt.size;
 	}*/
-	soundIter = source->iterBytes((source->spec.freq*source->spec.channels)*0, // start
+	/*soundIter = source->iterBytes((source->spec.freq*source->spec.channels)*0, // start
 								  (source->spec.freq*source->spec.channels)*6, // stop
-								  source->spec.samples*4);
-    Mix_HookMusic(MusicPlayer, this);
+								  source->spec.samples*4);*/
+    soundIter = source->iter(source->spec.samples*4);
+	Mix_HookMusic(MusicPlayer, this);
 
 	sprite *s = new sprite(this);
 	sprite_list.push_back(s);
