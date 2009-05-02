@@ -27,7 +27,7 @@
 #define POSITIVE(i,size) (i)
 #define NEGATIVE(i,size) ((size)-(i))
 
-typedef double* fft;
+typedef double* fft_t;
 
 class audio_processor {
 	/* wavetable and workspace are used by the fft algorithm */
@@ -47,13 +47,13 @@ class audio_processor {
 
 	gsl_interp_accel * faccel;
 	double *f; // frequencies
-	fft data;
+	fft_t data;
 	int ffind(double);
 
 	double* fft_alloc(uint8_t* stream);
 	//void fft_free(double* data);
 
-	void band_window(fft data, uint8_t * stream, uint32_t bandhi, uint32_t bandlo);
+	void band_window(fft_t data, uint8_t * stream, uint32_t bandhi, uint32_t bandlo);
 
 	void partition(uint8_t *stream); // split input stream into "bands" output streams
 	void detect_beat(); // look for a beat

@@ -18,6 +18,8 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
+#include<math.h>
+
 template <class type>
 class history {
 	unsigned long int index; // current array index

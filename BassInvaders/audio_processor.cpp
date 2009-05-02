@@ -79,7 +79,7 @@ int audio_processor::ffind(double freq){
 /*
  * transform stream in to frequency domain
  */
-fft audio_processor::fft_alloc(uint8_t* stream)
+fft_t audio_processor::fft_alloc(uint8_t* stream)
 {
 	for (uint32_t i =0; i<samples; i++){
 		REAL(data,i)=(double)RIGHT((int16_t*)stream,i);
@@ -168,7 +168,7 @@ void audio_processor::band_pass(uint8_t *stream, double flo, double fhi)
 /*
  * using the frequency fft data, band pass between frequencies in f[bandlo] <= f <= f[bandhi]
  */
-void audio_processor::band_window(fft data, uint8_t * stream, uint32_t bandhi, uint32_t bandlo)
+void audio_processor::band_window(fft_t data, uint8_t * stream, uint32_t bandhi, uint32_t bandlo)
 {
 	/*
 	 * Split the data in to frequency bands.

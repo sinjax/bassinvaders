@@ -9,10 +9,11 @@ void * game::getResource(std::string s){
 }
 
 void band_separate( void *udata, uint8_t *stream, int len){
-	((audio_processor*)udata)->ingest(stream);
-	((audio_processor*)udata)->process(stream);
-	//((audio_processor*)udata)->band_pass(stream, 1000, 4000);
-
+	uint8_t bandstream[len];
+	game* g = (game*)udata;
+	g->fft->ingest(stream);
+	g->fft->band_pass(bandstream, 0, 400);
+	g->beat->detect(bandstream);
 }
 
 void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL )
@@ -23,23 +24,6 @@ void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination,
     SDL_BlitSurface( source, clip, destination, &offset );
 }
 
-void game::musicDebug()
-{
-	h->displayText(
-		MDEBUG_X,
-		MDEBUG_Y,
-		"Packets Read: %d/%d (%f \%)\n"
-		"Bytes Read: %d/%d (%f \%)\n",
-		this->soundIter->packetsRead, 
-		this->soundIter->source->packetQueue.nb_packets,
-		100.0 * (double)(this->soundIter->packetsRead) / 
-				   (double)(this->soundIter->source->packetQueue.nb_packets),
-		this->soundIter->read, 
-		this->soundIter->source->packetQueue.size,
-		100.0 * (double)(this->soundIter->read) / 
-				   (double)(this->soundIter->source->packetQueue.size)
-	);
-}
 void game::gameloop(){
    // Mix_SetPostMix(band_separate, &au);
 
@@ -49,9 +33,8 @@ void game::gameloop(){
 
 	while(shouldIQuit() == false)
 	{
-		if ((cooldown<0)&&au->poll_beat(0)){
-			//srand(au.poll_sig(4));
-			for (int i =0; i<rand()%10; i++)
+		if ((cooldown<0)&&beat->isBeat()){
+ 			for (int i =0; i<rand()%10; i++)
 			{
 				baddie *b = new baddie(this);
 				sprite_list.push_back(b);
@@ -81,9 +64,9 @@ void game::gameloop(){
 		for(i=sprite_list.begin(); i != sprite_list.end(); ++i) {
 			(*i)->renderSprite();
 		}
-		std::stringstream scoreStream;
 		h->displayText(10,10,"Score: %i0",score/10);
 		musicDebug();
+
 		if ((*sprite_list.begin())->currentState==IDLE){
 			if(2*(*sprite_list.begin())->xpos>SCREEN_WIDTH)
 			{ score+=2;}
@@ -94,6 +77,24 @@ void game::gameloop(){
 
 		Flip();
 	}
+}
+
+void game::musicDebug()
+{
+	h->displayText(
+		MDEBUG_X,
+		MDEBUG_Y,
+		"Packets Read: %d/%d (%f \%)\n"
+		"Bytes Read: %d/%d (%f \%)\n",
+		this->soundIter->packetsRead,
+		this->soundIter->source->packetQueue.nb_packets,
+		100.0 * (double)(this->soundIter->packetsRead) /
+				   (double)(this->soundIter->source->packetQueue.nb_packets),
+		this->soundIter->read,
+		this->soundIter->source->packetQueue.size,
+		100.0 * (double)(this->soundIter->read) /
+				   (double)(this->soundIter->source->packetQueue.size)
+	);
 }
 
 int main(int argc, char* argv[])
@@ -163,7 +164,7 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 		}
 	}
 
-	band_separate(((game*)udata)->au, stream, len);
+	band_separate(udata, stream, len);
 }
 
 game::game()
@@ -175,24 +176,10 @@ game::game()
 	SoundSource * source = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
     Mix_OpenAudio( source->spec.freq, MIX_DEFAULT_FORMAT, source->spec.channels, source->spec.samples);
 	int historyBuffer = 1.0 / ((double)(source->spec.samples)/(double)(source->spec.freq));
-	//double sensit = SENSITIVITY;
-	double sensit = 1.6;
-	au = new audio_processor (source->spec.freq,source->spec.samples*4, BANDS, historyBuffer, sensit );
-    //music = Mix_LoadMUS(INSERT_YOUR_SONG_PATH_HERE);
-    
-    //soundIter = new SoundSourceIterator(source, source->spec.samples*4);
-	/*soundIter = source->iter(source->spec.samples*4);
-	AVPacket pkt;
-	for(int waste = 0; waste < 600; waste++)
-	{
-		soundIter->nextPacket(&pkt,false);
-		soundIter->read += pkt.size;
-	}*/
-	/*soundIter = source->iterBytes((source->spec.freq*source->spec.channels)*0, // start
-								  (source->spec.freq*source->spec.channels)*6, // stop
-								  source->spec.samples*4);*/
-    soundIter = source->iter(source->spec.samples*4);
-	Mix_HookMusic(MusicPlayer, this);
+	fft = new BandPassFilterFFT (source->spec.freq, source->spec.samples*4);
+	beat = new BeatDetector(historyBuffer, SENSITIVITY, source->spec.samples );
+    soundIter = new SoundSourceIterator(source, source->spec.samples*4);
+    Mix_HookMusic(MusicPlayer, this);
 
 	sprite *s = new sprite(this);
 	sprite_list.push_back(s);
