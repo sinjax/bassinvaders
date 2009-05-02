@@ -24,10 +24,10 @@ hud::~hud() {
  */
 void hud::displayText(int x, int y, char *text, ...){
 
-	char buffer[256];
+	char *buffer;
 	va_list args;
 	va_start (args, text);
-	vsprintf (buffer,text, args);
+	vasprintf(&buffer,text, args);
 
 	message = TTF_RenderText_Solid( font, buffer, textColor );
 	SDL_Rect offset;
@@ -36,6 +36,7 @@ void hud::displayText(int x, int y, char *text, ...){
 	SDL_BlitSurface( message, NULL, baseSurface, &offset );
 	SDL_FreeSurface( message );
 
+	free(buffer);
 	va_end (args);
 }
 

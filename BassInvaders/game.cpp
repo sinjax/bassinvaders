@@ -32,7 +32,7 @@ void game::gameloop(){
 
 	while(shouldIQuit() == false)
 	{
-		if ((cooldown<0)&&this->au->poll_beat(0)){
+		if ((cooldown<0)&&au->poll_beat(0)){
 			//srand(au.poll_sig(4));
 			for (int i =0; i<rand()%10; i++)
 			{
