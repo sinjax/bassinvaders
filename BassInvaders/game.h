@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <sstream>
 #include "SDL_mixer.h"
 #include "audio_processor.h"
 #include "hud.h"
@@ -22,7 +23,10 @@
 #define SCREEN_DEPTH 32
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
 #define BANDS 6
-#define INSERT_YOUR_SONG_PATH_HERE "/Users/dag/Documents/bassinvaders/bassinvaders/BassInvaders/08 Julie and Candy.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "bassy.mp3"
+
+#define MDEBUG_X 0
+#define MDEBUG_Y SCREEN_HEIGHT - 60
 
 class game
 {
@@ -42,7 +46,8 @@ public:
 	SoundSourceIterator * soundIter;
 private:
 	SDL_Surface* pScreen;
-
+	void musicDebug();
+	
 	background *bg;
 	std::map<std::string, void*> resources;
 	hud *h;

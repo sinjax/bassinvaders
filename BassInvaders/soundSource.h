@@ -55,12 +55,14 @@ public:
 	int start;
 	int end;
 	int read;
+	int packetsRead;
 	int toRead;
 	SoundSource * source;
 	int getSound(uint8_t *stream, int len, int start, int end);
+	int nextPacket(AVPacket *pkt, int block);
 private:
 	SoundSample * soundSample;
-	int nextPacket(AVPacket *pkt, int block);
+	
 	AVPacketList *currentPacketList;
 
 };
