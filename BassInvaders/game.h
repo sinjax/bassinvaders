@@ -22,7 +22,7 @@
 #define SCREEN_DEPTH 32
 #define SENSITIVITY 1.1 			// sensitivity for beat detection
 #define BANDS 6
-#define INSERT_YOUR_SONG_PATH_HERE "/Users/dag/Documents/bassinvaders/bassinvaders/BassInvaders/08 Julie and Candy.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "bassy.mp3"
 
 class game
 {
