@@ -13,6 +13,7 @@
 #include <inttypes.h>
 #include "gsl/gsl_errno.h"
 #include "gsl/gsl_fft_complex.h"
+#include "gsl/gsl_interp.h"
 #include "history.h"
 
 // Macros for real/imaginary right/left parts of data stream
@@ -25,6 +26,8 @@
 // Macros for positive/negative frequencies in frequency domain data
 #define POSITIVE(i,size) (i)
 #define NEGATIVE(i,size) ((size)-(i))
+
+typedef double* fft;
 
 class audio_processor {
 	/* wavetable and workspace are used by the fft algorithm */
@@ -42,12 +45,24 @@ class audio_processor {
 	double sensitivity; // sensitivity of beat detector
 	//uint32_t *sig; // signatures to expose from music (perhaps for random seeding)
 
+	gsl_interp_accel * faccel;
+	double *f; // frequencies
+	fft data;
+	int ffind(double);
+
+	double* fft_alloc(uint8_t* stream);
+	//void fft_free(double* data);
+
+	void band_window(fft data, uint8_t * stream, uint32_t bandhi, uint32_t bandlo);
+
 	void partition(uint8_t *stream); // split input stream into "bands" output streams
 	void detect_beat(); // look for a beat
 public:
-	audio_processor(uint32_t chunk_size, uint32_t num, uint32_t, double);
+	void ingest(uint8_t *stream);
+	audio_processor(uint32_t,uint32_t chunk_size, uint32_t num, uint32_t, double);
 	bool poll_beat(uint32_t band); // returns array of beat-states
-	uint32_t poll_sig(uint32_t band);
+	//uint32_t poll_sig(uint32_t band);
+	void band_pass(uint8_t *stream, double flo, double fhi);
 	virtual ~audio_processor();
 	void process(uint8_t *stream); // feed the audio processor with the audio stream
 };
