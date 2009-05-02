@@ -25,17 +25,19 @@ void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination,
 
 void game::musicDebug()
 {
-	std::stringstream debugStream;
-	debugStream << "Packets Read: " << this->soundIter->packetsRead << "/"
-				<< this->soundIter->source->packetQueue.nb_packets 
-				<< "(" << 100.0 * (double)(this->soundIter->packetsRead) / (double)(this->soundIter->source->packetQueue.nb_packets) << "%)" << std::endl;
-	debugStream << "Bytes Read: " << this->soundIter->read << "/" 
-				<< this->soundIter->source->packetQueue.size 
-				<< "(" << 100.0 * (double)(this->soundIter->read) / (double)(this->soundIter->source->packetQueue.size)<<  "%)" << std::endl;
 	h->displayText(
 		MDEBUG_X,
 		MDEBUG_Y,
-		(char*)debugStream.str().data()
+		"Packets Read: %d/%d (%f \%)\n"
+		"Bytes Read: %d/%d (%f \%)\n",
+		this->soundIter->packetsRead, 
+		this->soundIter->source->packetQueue.nb_packets,
+		100.0 * (double)(this->soundIter->packetsRead) / 
+				   (double)(this->soundIter->source->packetQueue.nb_packets),
+		this->soundIter->read, 
+		this->soundIter->source->packetQueue.size,
+		100.0 * (double)(this->soundIter->read) / 
+				   (double)(this->soundIter->source->packetQueue.size)
 	);
 }
 void game::gameloop(){
@@ -80,9 +82,7 @@ void game::gameloop(){
 			(*i)->renderSprite();
 		}
 		std::stringstream scoreStream;
-		scoreStream << "Score: " << std::endl << score/10;
-		
-		h->displayText(10,10,(char*)scoreStream.str().data());
+		h->displayText(10,10,"Score: %i0",score/10);
 		musicDebug();
 		if ((*sprite_list.begin())->currentState==IDLE){
 			if(2*(*sprite_list.begin())->xpos>SCREEN_WIDTH)
