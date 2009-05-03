@@ -11,8 +11,8 @@
 # include <iostream>
 # include <unistd.h>
 # include <sys/stat.h>
-# include <sys/mman.h>
-# include "SDL.h"
+
+# include <SDL/SDL.h>
 extern "C"{
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -63,7 +63,7 @@ public:
 	int nextPacket(AVPacket *pkt, int block);
 private:
 	SoundSample * soundSample;
-	
+
 	AVPacketList *currentPacketList;
 
 };

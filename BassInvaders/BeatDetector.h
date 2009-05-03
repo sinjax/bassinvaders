@@ -8,7 +8,6 @@
 #ifndef BEATDETECTOR_H_
 #define BEATDETECTOR_H_
 
-#include <inttypes.h>"
 #include "history.h"
 #include "audefnmacros.h"
 #include <stdio.h>

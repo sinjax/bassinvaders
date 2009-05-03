@@ -15,7 +15,7 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
 
@@ -42,7 +42,7 @@ public:
 	~BassInvaders();
 
 	void goGameGo(); // main game loop
-	
+
 	// These are called by SDL and need to be publically accessible
 	// Write getters/setters if you are so inclined :-)
 	// This is the level class
@@ -89,7 +89,7 @@ private:
 	GameStates_t nextState;
 	WindowManager wm;
 	InputManager im;
-	
+
 
 	SDL_Surface* pPauseGameScreen; /* when the pause state is invoked,
 									* the current playing screen is grabbed
