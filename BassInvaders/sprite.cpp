@@ -15,11 +15,11 @@ Sprite::Sprite(char* filename/*ResourceBundle * resources, BassInvaders * game*/
 		FILE* fp;
 		if((fp = fopen(filename, "r")) == NULL)
 		{
-			printf("Couldn't open file\n");
+			printf("Couldn't open file %s\n", filename);
 			return;
 		}
 
-		DebugPrint(("loading from %s:\n", filename));
+		DebugPrint(("loading from %s\n", filename));
 		loadSpriteData(fp);
 
 		currentState = AS_IDLE;
@@ -27,12 +27,22 @@ Sprite::Sprite(char* filename/*ResourceBundle * resources, BassInvaders * game*/
 }
 
 Sprite::~Sprite() {
+	/* DON'T free up the surfaces in here.
+	 * It's possible that the object was created on the stack
+	 * then copied into a container class.
+	 * If the owner of the container behaves nicely they will
+	 * call the destroy() function when they are done with the sprite
+	 */
 
+}
+
+void Sprite::destroy()
+{
 	for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
 	{
 		if (animationStateData[i].state != 0)
 		{
-			SDL_FreeSurface(animationStateData[i].spriteSheet);
+			//SDL_FreeSurface(animationStateData[i].spriteSheet);
 		}
 	}
 }
@@ -254,4 +264,10 @@ void Sprite::loadSpriteData(FILE *fp)
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
 	}
+}
+
+void Sprite::setLocation(uint32_t xpos, uint32_t ypos)
+{
+	this->xpos = xpos;
+	this->ypos = ypos;
 }

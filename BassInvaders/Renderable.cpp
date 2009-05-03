@@ -6,6 +6,7 @@
  */
 
 #include "Renderable.h"
+#include "toolkit.h"
 
 Renderable::Renderable() {
 	// TODO Auto-generated constructor stub
@@ -13,7 +14,13 @@ Renderable::Renderable() {
 }
 
 Renderable::~Renderable() {
-	// TODO Auto-generated destructor stub
+	//tidy up all our sprites
+	std::vector<Sprite>::iterator pos;
+
+	for (pos = sprites.begin(); pos !=sprites.end(); ++pos)
+	{
+		pos->destroy();
+	}
 }
 
 void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
