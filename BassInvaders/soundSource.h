@@ -12,6 +12,7 @@
 # include <unistd.h>
 # include <sys/stat.h>
 # include <sys/mman.h>
+# include "SDL.h"
 extern "C"{
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -108,5 +109,4 @@ class SoundSource  {
 		static int isInit;
 	AVPacket flush_pkt;
 };
-
 #endif

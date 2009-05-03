@@ -64,6 +64,6 @@ void hud::draw(){
 
 	for(i = components.begin(); i != components.end(); ++i) {
 		component_t bees = *i;
-		DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
+		//DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
 	}
 }

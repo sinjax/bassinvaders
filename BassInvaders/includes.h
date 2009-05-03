@@ -16,10 +16,9 @@ class hud;
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include "background.h"
-#include "sprite.h"
-#include "baddie.h"
-#include "game.h"
+#include "Background.h"
+#include "Sprite.h"
+#include "Baddie.h"
 #include <math.h>
 
 #endif /* INCLUDES_H_ */

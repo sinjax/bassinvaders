@@ -1,0 +1,7 @@
+filename:resources/background/starfield.bmp
+colorkey:(0,0,0,0)
+drawbox:(0,0,256,256)
+repeatpoint:(256)
+tiling:(1,1)
+drawpos:(0,0)
+scrollRatio:(1.0)
