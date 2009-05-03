@@ -17,8 +17,6 @@
 #include "SDL_ttf.h"
 #include <list>
 #include <string>
-#include "game.h"
-
 /*
  * Stores all the data needed to display an SDL_Surface on the screen
  */

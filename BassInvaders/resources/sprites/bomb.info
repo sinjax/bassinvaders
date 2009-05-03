@@ -1,0 +1,11 @@
+numberofstates:1
+state:1
+filename:resources/sprites/bomb.bmp
+colorkey:(0,255,0)
+nextstate:1
+numberofanimationsteps:3
+ticksperstep:350
+sheetstartsat:(1,1)
+spritesize:(47,47)
+numberofrects:1
+rect:(1,1,47,47)

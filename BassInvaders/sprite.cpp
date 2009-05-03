@@ -1,118 +1,99 @@
 /*
- * sprite.cpp
+ * Sprite.cpp
  *
- *  Created on: 07-Apr-2009
- *      Author: spijderman, Darren Golbourn
+ *  Created on: 19-Apr-2009
+ *      Author: spijderman
  */
 
-#include "includes.h"
+#include "Sprite.h"
+#include "toolkit.h"
 
-sprite::sprite(game* game) {
-	AnimationState_t* pTemp;
-	Uint32 colorkey;
-	pGame = game;
-	pAnimationStates = new AnimationState_t[2];
-	pScreen = game->getWindowSurface();
-	pTemp = pAnimationStates;
+Sprite::Sprite(ResourceBundle * resources, BassInvaders * game) {
+	/* take a text file as a parameter containing all the data for all the states
+	 * then pass file into a function which populates an AnimationState_t
+	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
+		FILE* fp;
+		if((fp = fopen(filename, "r")) == NULL)
+		{
+			printf("Couldn't open file\n");
+			return;
+		}
 
-	pTemp->state = IDLE;
-	pTemp->nextState = IDLE;
-	pTemp->currentAnimationStep = 0;
-	pTemp->numberOfAnimationSteps = 3;
-	pTemp->sheetStartsAt.x = 1;
-	pTemp->sheetStartsAt.y = 1;
-	pTemp->spriteWidth = 23;
-	pTemp->spriteHeight = 23;
-	pTemp->ticksPerStep = 1000;
-	pTemp->lastAnimTickCount = SDL_GetTicks();
-	pTemp->spriteSheet = (SDL_Surface*)(game->getResource("bmps/ship3.bmp"));
-	colorkey = SDL_MapRGB( pTemp->spriteSheet->format, 0, 0xFF, 0 );
-	SDL_SetColorKey( pTemp->spriteSheet, SDL_SRCCOLORKEY, colorkey );
+		DebugPrint(("loading from %s:\n", filename));
+		loadSpriteData(fp);
 
-	pTemp++; // do the dying state
-
-	pTemp->state = DYING;
-	pTemp->nextState = DEAD;
-	pTemp->currentAnimationStep = 0;
-	pTemp->numberOfAnimationSteps = 8;
-	pTemp->sheetStartsAt.x = 1;
-	pTemp->sheetStartsAt.y = 1;
-	pTemp->spriteWidth = 23;
-	pTemp->spriteHeight = 23;
-	pTemp->ticksPerStep = 100;
-	pTemp->lastAnimTickCount = SDL_GetTicks();
-	pTemp->spriteSheet = (SDL_Surface*)(game->getResource("bmps/Explode1.bmp"));
-	colorkey = SDL_MapRGB( pTemp->spriteSheet->format, 0, 0xFF, 0 );
-	SDL_SetColorKey( pTemp->spriteSheet, SDL_SRCCOLORKEY, colorkey );
-
-	currentState = IDLE;
-	pendingState = IDLE;
-	lastTickCount = SDL_GetTicks();
-	xpos = 100;
-	ypos = 100;
-	velocityTicks = 10;
-	xvelocity = 0;
-	yvelocity = 0;
-
-	removeMe = false;
+		currentState = AS_IDLE;
+		pendingState = AS_IDLE;
 }
 
-sprite::~sprite() {
-	delete[] pAnimationStates;
+Sprite::~Sprite() {
+
+	for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
+	{
+		if (animationStateData[i].state != 0)
+		{
+			SDL_FreeSurface(animationStateData[i].spriteSheet);
+		}
+	}
 }
 
-void sprite::moveSprite()
+void Sprite::changeState(AnimationState_t newState)
 {
-	Uint8* keys = pGame->keys;
-
-	if (keys[SDLK_x])
+	if ((currentState == newState)
+		|| (pendingState == newState))
 	{
-		changeState(DYING);
-	}
-	else if (keys[SDLK_r])
-	{
-		changeState(IDLE);
+		return;
 	}
 
-	if(keys[SDLK_w])
+	if (animationStateData[newState].state == 0)
 	{
-		yvelocity = -SPRITE_VELOCITY;
-	}
-	else if(keys[SDLK_s])
-	{
-		yvelocity = SPRITE_VELOCITY;
-	}
-	else
-	{
-		yvelocity = 0;
+		DebugPrint(("Can't transition to state with no data\n"));
+		return;
 	}
 
-	if(keys[SDLK_a])
+	switch(currentState)
 	{
-		xvelocity = -SPRITE_VELOCITY;
+		/* JG TODO: do we need any further logic?*/
+		case AS_IDLE:
+		{
+			pendingState = newState;
+		}break;
+
+		case AS_DAMAGED:
+		{
+			pendingState = newState;
+		} break;
+
+		case AS_DYING:
+		case AS_DEAD:
+		default:
+		{
+			//there's no return from '86...
+		}break;
 	}
-	else if(keys[SDLK_d])
-	{
-		xvelocity = SPRITE_VELOCITY;
-	}
-	else
-	{
-		xvelocity = 0;
-	}
+}
+
+void Sprite::renderSprite(SDL_Surface *pScreen)
+{
+	AnimationStateData_t* pTempState;
 
 	updateStates();
 
 	switch(currentState)
 	{
-		case IDLE:
+		case AS_IDLE:
 		{
-			pTempState = &pAnimationStates[IDLE];
+			pTempState = &(animationStateData[AS_IDLE]);
 		} break;
-		case DYING:
+		case AS_DAMAGED:
 		{
-			pTempState = &pAnimationStates[DYING];
+			pTempState = &(animationStateData[AS_DAMAGED]);
 		} break;
-		case DEAD:
+		case AS_DYING:
+		{
+			pTempState = &(animationStateData[AS_DYING]);
+		} break;
+		case AS_DEAD:
 		default:
 		{
 			/* dead sprites (or bad states) do not get rendered */
@@ -120,108 +101,43 @@ void sprite::moveSprite()
 		}break;
 	}
 
-	/* figure out if the sprite is moving about */
-	Uint32 now = SDL_GetTicks();
-	Uint32 delta = now - lastTickCount;
-	if (delta >= velocityTicks)
+	if (pTempState->state == 0)
 	{
-		lastTickCount = now;
-		xpos += xvelocity;
-		ypos += yvelocity;
+		DebugPrint(("No data for this state %x\n", currentState));
+		return;
 	}
 
-	// check for collision with edge of play area
-	if (xpos <= pScreen->clip_rect.x)
-	{
-		xpos = pScreen->clip_rect.x;
-	}
-	if (xpos + pTempState->spriteHeight >= pScreen->clip_rect.w)
-	{
-		xpos = pScreen->clip_rect.w - pTempState->spriteHeight;
-	}
-	if (ypos <= pScreen->clip_rect.y)
-	{
-		changeState(DYING);
-		ypos = pScreen->clip_rect.y;
-	}
-	if (ypos + pTempState->spriteWidth >= pScreen->clip_rect.h)
-	{
-		changeState(DYING);
-		ypos = pScreen->clip_rect.h - pTempState->spriteWidth;
-	}
-
-	//check for collision with baddie sprites
-	// DEBUG: This really need fixing! Someone find out how to do it right!!
-	std::list<sprite*>::iterator i;
-	i=pGame->sprite_list.begin();++i;
-	for(; i != pGame->sprite_list.end(); ++i) {
-		sprite *bees = *i;
-		Uint32 x2 = bees->xpos;
-		Uint32 y2 = bees->ypos;
-		Uint32 b2 = 23;//bees->pTempState->spriteHeight;
-		Uint32 a2 = 23;//bees->pTempState->spriteWidth;
-		Uint32 x1 = xpos;
-		Uint32 y1 = ypos;
-		Uint32 b1 = pTempState->spriteHeight;
-		Uint32 a1 = pTempState->spriteWidth;
-		bool dx, dy;
-
-		if (x2>x1){
-			dx = (x2-x1)<a1;
-		}else {
-			dx = (x1-x2)<a2;
-		}
-
-		if (y2>y1){
-			dy = (y2-y1)<b1;
-		}else {
-			dy = (y1-y2)<b2;
-		}
-
-		if (dx&&dy){
-			changeState(DYING);
-			bees->changeState(DYING);
-		}
-	}
-}
-
-void sprite::renderSprite()
-{
-	/* copy correct sprite from sheet */
+	//this cuts the appropriate frame out of the sprite sheet
 	SDL_Rect spriteRect;
-	spriteRect.x = pTempState->sheetStartsAt.x + (pTempState->currentAnimationStep * pTempState->spriteWidth) + pTempState->currentAnimationStep;
+	spriteRect.x = pTempState->sheetStartsAt.x
+					+ (pTempState->currentAnimationStep * pTempState->spriteWidth)
+					+ pTempState->currentAnimationStep;
 	spriteRect.y = pTempState->sheetStartsAt.y;
 	spriteRect.w = pTempState->spriteWidth;
 	spriteRect.h = pTempState->spriteHeight;
 
-	/* and finally draw it to the screen */
 	DrawToSurface(xpos,
-					ypos,
-					pTempState->spriteSheet,
-					pScreen,
-					&spriteRect);
+				  ypos,
+				  pTempState->spriteSheet,
+				  pScreen,
+				  &spriteRect);
 }
 
-Uint8 sprite::getNextAnimationStep(AnimationState_t* pState)
+uint8_t Sprite::getNextAnimationStep(const AnimationStateData_t* pStateData)
 {
-	if (pState->currentAnimationStep == (pState->numberOfAnimationSteps - 1))
+	if (pStateData->currentAnimationStep == (pStateData->numberOfAnimationSteps - 1))
 	{
 		return 0;
 	}
 	else
 	{
-		return (pState->currentAnimationStep+1);
+		return (pStateData->currentAnimationStep+1);
 	}
 }
 
-void sprite::changeState(eAnimationState state)
+void Sprite::updateStates()
 {
-	pendingState = state;
-}
-
-void sprite::updateStates()
-{
-	AnimationState_t* pCurrentState = &pAnimationStates[currentState];
+	AnimationStateData_t* pCurrentState = &animationStateData[currentState];
 
 	/* this may be the last frame in a single pass state. if so , setup the next state here*/
 	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1))
@@ -229,27 +145,113 @@ void sprite::updateStates()
 		pendingState = pCurrentState->nextState;
 	}
 
+	/* change state if we are not in the one we
+	 * should be in
+	 */
 	if (pendingState != currentState)
 	{
 		currentState = pendingState;
 
-		/* special case - dead state*/
-		if (currentState == DEAD)
-		{
-			return;
-		}
-
-		pCurrentState = &pAnimationStates[currentState];
+		pCurrentState = &animationStateData[currentState];
 		pCurrentState->currentAnimationStep = 0;
 		pCurrentState->lastAnimTickCount = SDL_GetTicks();
 	}
 
+	/* special case - dead state
+	 * we do nothing if the sprite is meant to be dead*/
+	if (currentState == AS_DEAD)
+	{
+		return;
+	}
+
 	/* figure out which animation step we are in */
-	Uint32 now = SDL_GetTicks();
-	Uint32 delta = now - pCurrentState->lastAnimTickCount;
+	uint32_t now = SDL_GetTicks();
+	uint32_t delta = now - pCurrentState->lastAnimTickCount;
 	if (delta > pCurrentState->ticksPerStep)
 	{
 		pCurrentState->currentAnimationStep = getNextAnimationStep(pCurrentState);
 		pCurrentState->lastAnimTickCount = now;
+	}
+}
+
+void Sprite::loadSpriteData(FILE *fp)
+{
+	/*read first line, should be number of states
+	 * then loop through file parsing each line until
+	 * we read all the data we expected
+	 * you should probably add some error handling code at some point*/
+	AnimationStateData_t* pData;
+	uint32_t numberOfStates;
+	uint32_t R=0;
+	uint32_t G=0;
+	uint32_t B=0;
+	uint32_t numberOfCollisionRects;
+	AnimationState_t state;
+	char buffer[255] = {0};
+	char filename[255] = {0};
+
+
+	fgets(buffer, 255, fp);
+	sscanf(buffer, "numberofstates:%u", &numberOfStates);
+
+	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
+
+	for (uint32_t i = 0; i<numberOfStates; ++i)
+	{
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "state:%d", (int*)&state);
+
+		pData = &(animationStateData[state]);
+		pData->state = state;
+
+			DebugPrint((" loading state 0x%x\n", state));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "filename:%s", filename);
+			DebugPrint(("  filename %s\n", filename));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "colorkey:(%u,%u,%u)", &R, &G, &B );
+			DebugPrint(("  colorkey:(%u,%u,%u)\n", R, G, B));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "nextstate:%d", (int*)&(pData->nextState));
+			DebugPrint(("  nextstate:%d\n", pData->nextState));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "numberofanimationsteps:%u", (int*)&(pData->numberOfAnimationSteps));
+			DebugPrint(("  numberofanimationsteps:%u\n", pData->numberOfAnimationSteps));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "ticksperstep:%u", &(pData->ticksPerStep));
+			DebugPrint(("  ticksperstep:%u\n", pData->ticksPerStep));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "sheetstartsat:(%d,%d)", (int*)&(pData->sheetStartsAt.x), (int*)&(pData->sheetStartsAt.y) );
+			DebugPrint(("  sheetstartsat:(%d,%d)\n", pData->sheetStartsAt.x, pData->sheetStartsAt.y));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "spritesize:(%d,%d)", &(pData->spriteWidth), &(pData->spriteHeight) );
+			DebugPrint(("  spritesize:(%d,%d)\n", pData->spriteWidth, pData->spriteHeight));
+
+		fgets(buffer, 255, fp);
+		sscanf(buffer, "numberofrects:%u", (int*)&numberOfCollisionRects);
+		DebugPrint(("  numberofrects:%u\n", numberOfCollisionRects));
+		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
+		{
+			CollisionRect_t rect = {0,0,0,0};
+
+			fgets(buffer, 255, fp);
+			sscanf(buffer, "rect:(%u,%u,%d,%d)", (int*)&(rect.top),
+												 (int*)&(rect.left),
+												 (int*)&(rect.bottom),
+												 (int*)&(rect.right));
+			DebugPrint(("  rect:(%u,%u,%d,%d)\n", rect.top, rect.left, rect.bottom, rect.right));
+			pData->collisionRects.push_back(rect);
+		}
+
+		pData->spriteSheet = LoadImage(filename);
+		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
+		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
 	}
 }
