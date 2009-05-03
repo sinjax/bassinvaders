@@ -9,23 +9,9 @@
 
 
 #include <map>
-/*
-filename:resources/background/Nebula1.bmp
-colorkey:(1,0,255,0)
-drawbox:(0,0,128,128)
-repeatpoint:(768)
-tiling:(0,0)
-drawpos:(640,240)
-scrollRatio:(1.1)
-numberofstates:1
-state:1
-nextstate:1
-numberofanimationsteps:3
-ticksperstep:350
-sheetstartsat:(1,1)
-spritesize:(47,47)
-numberofrects:1
-rect:(1,1,47,47)*/
+#include <yaml>
+
+void operator >> (const YAML::Node& node, Monster& monster);
 
 
 class ResourceBundle
