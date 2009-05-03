@@ -14,7 +14,7 @@
  * Add a new element, replacing the current oldest: name.record(new_element)
  * Return the most recent element: class data = name.current()
  */
-
+// i saved you!
 #ifndef HISTORY_H_
 #define HISTORY_H_
 #include<math.h>
