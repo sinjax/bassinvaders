@@ -20,8 +20,7 @@
 
 #include<math.h>
 
-template <class type>
-class history {
+template <class type> class history {
 	unsigned long int index; // current array index
 	unsigned long int size; // size of history array
 	type *data;				//history array
