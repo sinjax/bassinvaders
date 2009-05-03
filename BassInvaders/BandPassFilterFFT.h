@@ -5,6 +5,9 @@
  *      Author: Darren Golbourn
  *
  * Description: This library lets you split an audio stream in to frequency bands.
+ * Usage: 	i) Set up environment: 					BandPassFilterFFT filter(sample rate, chunk size)
+ * 			ii) feed the filter a chunk: 			filter.ingest(stream)
+ * 			iii) copy band-passed data to stream:	filter.band_pass(stream, low frequency, high frequency)
  */
 
 #ifndef BANDPASSFILTERFFT_H_
