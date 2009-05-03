@@ -23,7 +23,7 @@ BandPassFilterFFT::BandPassFilterFFT(uint32_t sample_rate, uint32_t chunk_size){
 	double delta = 1./(sample_rate-1);
 	f = new double[samples];
 	f[0] = 0;
-	for (uint32_t i=1; i<=freqs; i++){
+	for (int i=1; i<=(int)freqs; i++){
 		f[i]=i/(samples*delta);
 		f[samples-i]=-i/(samples*delta);
 	}

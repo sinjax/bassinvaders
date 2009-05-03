@@ -19,13 +19,15 @@
 
 class Hero: public Renderable {
 public:
-	Hero();
+	Hero(const char* filename);
 	virtual ~Hero();
 
 	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 
+private:
+	void loadHeroData(FILE *fp);
 private:
 	std::vector<Bullet> bullets;
 	uint8_t health;

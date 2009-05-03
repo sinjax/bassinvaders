@@ -140,9 +140,7 @@ void BassInvaders::loadLevel()
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b1.info");
 	pBG->addLayer(&bgLayer);
-	pHero = new Hero();
-
-	foo = new Sprite("resources/sprites/enemy.info");
+	pHero = new Hero("resources/hero/heroclass.info");
 
 	// The music stuff starts here
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
