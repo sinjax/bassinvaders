@@ -18,6 +18,7 @@
 #include "soundSource.h"
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
+#include "BandPassFilterDT.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -42,6 +43,7 @@ public:
 	void * getResource(std::string s);
 	std::list<sprite*> sprite_list;
 	BandPassFilterFFT *fft;
+	BandPassFilterDT *dt;
 	BeatDetector *beat;
 	SoundSourceIterator * soundIter;
 private:
