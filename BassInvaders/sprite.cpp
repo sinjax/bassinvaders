@@ -8,7 +8,7 @@
 #include "Sprite.h"
 #include "toolkit.h"
 
-Sprite::Sprite(ResourceBundle * resources, BassInvaders * game) {
+Sprite::Sprite(char* filename/*ResourceBundle * resources, BassInvaders * game*/) {
 	/* take a text file as a parameter containing all the data for all the states
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
@@ -255,4 +255,3 @@ void Sprite::loadSpriteData(FILE *fp)
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
 	}
 }
->>>>>>> 13d2e6d1276abcce01e21375efebcd6be00c8716:BassInvaders/sprite.cpp
