@@ -2,7 +2,7 @@
  * audefnmacros.h
  *
  *  Created on: May 2, 2009
- *      Author: dag
+ *      Author: Darren Golbourn
  */
 
 #ifndef AUDIO_STREAM_FMT_MACROS
@@ -15,5 +15,5 @@
 
 // Macros for positive/negative frequencies in frequency domain data
 	#define POSITIVE(i,size) (i)
-	#define NEGATIVE(i,size) ((size)-(i))
+	#define NEGATIVE(i,size) ((i)>0?((size)-(i)):i)
 #endif /* AUDEFNMACROS_H_ */

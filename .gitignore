@@ -7,5 +7,7 @@
 *.cdr
 build/
 *.1
+*.cproject
+*.project
 *.xcodeproj
 Debug/
