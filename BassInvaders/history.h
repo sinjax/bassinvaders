@@ -17,7 +17,6 @@
 
 #ifndef HISTORY_H_
 #define HISTORY_H_
-
 #include<math.h>
 
 template <class type> class history {
@@ -38,7 +37,7 @@ public:
 	virtual ~history();
 
 	void record(type);		// record a new element to the history, displacing the oldest.
-	type current(long int index ); // get the most recent new element.
+	type current(long int);			// get the most recent new element.
 };
 
 template <class type> history<type>::history(unsigned long int s) {
