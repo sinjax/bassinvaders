@@ -23,9 +23,9 @@ ResourceBundle::ResourceBundle(char * infoFile)
 	while(!feof(fp))
 	{
 		fgets(buffer, 255, fp);
-		char * key = strtok(buffer,":")
-		char * value = strtok(NULL,":")
-		
+		char * key = strtok(buffer,":");
+		char * value = strtok(NULL,":");
+
 		/*
 		filename:some/file/name
 		colorkey:(1,0,255,0)
@@ -56,14 +56,14 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		{
 			// load a 4 element array
 		}
-		
+
 		/*
 		if(commands[key] == IMAGE)
 		if(commands[key] == ARRAY)
 		if(commands[key] == MUSIC)
 		*/
 	}
-	
+
 }
 
 ResourceBundle::~ResourceBundle()
