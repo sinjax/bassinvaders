@@ -12,7 +12,7 @@
 #include <vector>
 #include "Bullet.h"
 #include "InputManager.h"
-
+//i am testing git gui
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 
 #define HERO_X_SPEED 5
