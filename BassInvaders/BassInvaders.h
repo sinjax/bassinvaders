@@ -20,7 +20,7 @@
 #include "BandPassFilterFFT.h"
 
 #define SENSITIVITY 1.3
-#define INSERT_YOUR_SONG_PATH_HERE "bassy.mp3"
+#define INSERT_YOUR_SONG_PATH_HERE "/Users/dag/Documents/bassinvaders/bassinvaders/BassInvaders/08 Julie and Candy.mp3"
 /*JG TODO:
  * - game state machine
  * - game loop
@@ -42,7 +42,7 @@ public:
 	~BassInvaders();
 
 	void goGameGo(); // main game loop
-	
+
 	// These are called by SDL and need to be publically accessible
 	// Write getters/setters if you are so inclined :-)
 	// This is the level class
@@ -89,7 +89,7 @@ private:
 	GameStates_t nextState;
 	WindowManager wm;
 	InputManager im;
-	
+
 
 	SDL_Surface* pPauseGameScreen; /* when the pause state is invoked,
 									* the current playing screen is grabbed

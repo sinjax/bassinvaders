@@ -50,7 +50,7 @@ typedef struct
  */
 class Sprite {
 public:
-	Sprite(ResourceBundle * resources, BassInvaders * game);
+	Sprite(char*/*ResourceBundle * resources, BassInvaders * game*/);
 	~Sprite();
 	void changeState(AnimationState_t state);
 	void renderSprite(SDL_Surface* pScreen);
