@@ -93,7 +93,7 @@ void BandPassFilterFFT::band_pass(uint8_t *stream, double flo, double fhi)
 {
 	double band_data[2*samples];
 	band_window(band_data, ffind(fhi)+1, ffind(flo));
-	writef(band_data, "test.dat");
+	//writef(band_data, "test.dat");
 	fft_inverse(band_data, stream);
 }
 
