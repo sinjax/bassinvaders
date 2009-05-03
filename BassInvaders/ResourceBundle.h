@@ -31,8 +31,8 @@ rect:(1,1,47,47)*/
 class ResourceBundle
 {
 public:
-	ResourceBundle ();
+	ResourceBundle();
 	virtual ~ResourceBundle ();
-	
+
 	std::map<char*, char*> data;
 };

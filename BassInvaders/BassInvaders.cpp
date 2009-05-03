@@ -143,7 +143,7 @@ void BassInvaders::loadLevel()
 	pHero = new Hero();
 
 	foo = new Sprite("resources/sprites/enemy.info");
-	
+
 	// The music stuff starts here
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 	Mix_OpenAudio( soundSource->spec.freq, MIX_DEFAULT_FORMAT, soundSource->spec.channels, soundSource->spec.samples);

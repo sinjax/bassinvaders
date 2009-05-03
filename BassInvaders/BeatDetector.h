@@ -11,6 +11,7 @@
 #include "history.h"
 #include "audefnmacros.h"
 #include <stdio.h>
+#include <stdint.h>
 
 class BeatDetector {
 	bool beat;

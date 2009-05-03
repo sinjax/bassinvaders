@@ -31,7 +31,7 @@ SoundSource::SoundSource(char * filename){
 	if(av_find_stream_info(this->formatCtx)<0)
 		throw -1;
 	this->audioStream = -1;
-	for(int i = 0; i < this->formatCtx->nb_streams; i++)
+	for(uint32_t i = 0; i < this->formatCtx->nb_streams; i++)
 	{
 		if(this->formatCtx->streams[i]->codec->codec_type==CODEC_TYPE_AUDIO)
 		{
@@ -158,7 +158,7 @@ int SoundSourceIterator::nextPacket(AVPacket *pkt, int block) {
 		{
 			// Set the first one to the next one
 			this->currentPacketList = currentPacketList1->next;
-			
+
 
 			// Sort out the return, free the queue item
 			*pkt = currentPacketList1->pkt;
