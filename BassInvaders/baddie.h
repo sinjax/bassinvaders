@@ -1,21 +1,23 @@
 /*
- * baddie.h
+ * Baddie.h
  *
- *  Created on: Apr 13, 2009
- *      Author: Darren Golbourn
+ *  Created on: 19-Apr-2009
+ *      Author: spijderman
  */
 
 #ifndef BADDIE_H_
 #define BADDIE_H_
 
-#include "sprite.h"
-#include "path.h"
+#include "Renderable.h"
 
-class baddie: public sprite {
+/* JG TODO:
+ * - type
+ * - encapsulates sprite(s)
+ */
+class Baddie: public Renderable {
 public:
-	baddie(game*);
-	virtual ~baddie();
-	void moveSprite();
+	Baddie();
+	virtual ~Baddie();
 };
 
 #endif /* BADDIE_H_ */

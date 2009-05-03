@@ -17,9 +17,9 @@
 
 #ifndef HISTORY_H_
 #define HISTORY_H_
+#include<math.h>
 
-template <class type>
-class history {
+template <class type> class history {
 	unsigned long int index; // current array index
 	unsigned long int size; // size of history array
 	type *data;				//history array
@@ -37,7 +37,7 @@ public:
 	virtual ~history();
 
 	void record(type);		// record a new element to the history, displacing the oldest.
-	type current();			// get the most recent new element.
+	type current(long int);			// get the most recent new element.
 };
 
 template <class type> history<type>::history(unsigned long int s) {
@@ -75,8 +75,8 @@ template <class type> void history<type>::record(type input) {
 }
 
 // get most recent new element.
-template <class type> type history<type>::current() {
-	return data[index];
+template <class type> type history<type>::current(long int index = 0) {
+	return data[(this->index + index)%size];
 }
 
 #endif /* HISTORY_H_ */

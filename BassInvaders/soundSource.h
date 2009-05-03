@@ -11,7 +11,8 @@
 # include <iostream>
 # include <unistd.h>
 # include <sys/stat.h>
-# include <sys/mman.h>
+# include <SDL/SDL.h>
+
 extern "C"{
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -55,12 +56,14 @@ public:
 	int start;
 	int end;
 	int read;
+	int packetsRead;
 	int toRead;
 	SoundSource * source;
 	int getSound(uint8_t *stream, int len, int start, int end);
+	int nextPacket(AVPacket *pkt, int block);
 private:
 	SoundSample * soundSample;
-	int nextPacket(AVPacket *pkt, int block);
+
 	AVPacketList *currentPacketList;
 
 };
@@ -106,5 +109,4 @@ class SoundSource  {
 		static int isInit;
 	AVPacket flush_pkt;
 };
-
 #endif

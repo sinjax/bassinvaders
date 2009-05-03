@@ -31,7 +31,7 @@ SoundSource::SoundSource(char * filename){
 	if(av_find_stream_info(this->formatCtx)<0)
 		throw -1;
 	this->audioStream = -1;
-	for(int i = 0; i < this->formatCtx->nb_streams; i++)
+	for(uint32_t i = 0; i < this->formatCtx->nb_streams; i++)
 	{
 		if(this->formatCtx->streams[i]->codec->codec_type==CODEC_TYPE_AUDIO)
 		{
@@ -121,6 +121,7 @@ SoundSourceIterator::SoundSourceIterator(SoundSource * source,int start,int stop
 	this->soundSample = new SoundSample();
 	this->soundSample->sample = new uint8_t[sampleLen];
 	this->soundSample->len = sampleLen;
+	this->packetsRead = 0;
 
 }
 
@@ -136,6 +137,7 @@ SoundSourceIterator::SoundSourceIterator(SoundSource * source, int sampleLen)
 	this->soundSample = new SoundSample();
 	this->soundSample->sample = new uint8_t[sampleLen];
 	this->soundSample->len = sampleLen;
+	this->packetsRead = 0;
 }
 
 SoundSourceIterator::~SoundSourceIterator()
@@ -160,6 +162,7 @@ int SoundSourceIterator::nextPacket(AVPacket *pkt, int block) {
 
 			// Sort out the return, free the queue item
 			*pkt = currentPacketList1->pkt;
+			this->packetsRead += 1;
 			ret = 1;
 			break;
 		}
@@ -214,6 +217,7 @@ int SoundSourceIterator::getSound(uint8_t *stream, int len, int start = -1, int 
 					}
 					audio_pkt_data += len1;
 					audio_pkt_size -= len1;
+					this->read += len1;
 					if(data_size <= 0) {
 						/* No data yet, get more frames */
 						continue;
@@ -226,10 +230,18 @@ int SoundSourceIterator::getSound(uint8_t *stream, int len, int start = -1, int 
 				{
 					do{
 						popRet = this->nextPacket(&pkt, 0) ;
-					}while(start != -1 && (pkt.pos + pkt.size) <= start);
+						if(start != -1 && (this->read + pkt.size) <= start)
+						{
+							this->read += pkt.size;
+						}
+						else
+						{
+							break;
+						}
+					}while(1);
 
 
-					if(popRet == 0 || (end != -1 && (pkt.pos + pkt.size) >= end))
+					if(popRet == 0 || (end != -1 && (this->read + pkt.size) >= end))
 					{
 						audio_size  = 0;
 						break;
@@ -289,31 +301,8 @@ bool SoundSourceIterator::hasNext()
 SoundSample * SoundSourceIterator::next()
 {
 	this->getSound(this->soundSample->sample,this->soundSample->len,this->start,this->end);
-	this->read+=this->soundSample->len;
+	//this->read+=this->soundSample->len;
 	return this->soundSample;
 }
-/*
-int main(int argc, char *argv[]){
-	SoundSource * s = new SoundSource("/Users/dag/Documents/bassinvaders/jamesgames/08 Julie and Candy.mp3");
-	SoundSourceIterator * iter;
-	iter = s->iterBytes(44100*0*4,44100*2*4);
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
-	delete iter;
-	iter = s->iter();
-	while(iter->hasNext())
-	{
-		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			std::cout << sample->sample[i];
-		}
-	}
 
-}*/
+

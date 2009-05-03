@@ -1,0 +1,7 @@
+filename:resources/background/Nebula1.bmp
+colorkey:(1,0,255,0)
+drawbox:(0,0,128,128)
+repeatpoint:(768)
+tiling:(0,0)
+drawpos:(640,240)
+scrollRatio:(1.1)

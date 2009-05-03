@@ -22,20 +22,28 @@ hud::~hud() {
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
-void hud::displayText(int x, int y, char *text, ...){
 
-	char buffer[256];
+void hud::displayText(int x, int y, char* text,...)
+{
+	char *buffer;
 	va_list args;
 	va_start (args, text);
-	vsprintf (buffer,text, args);
-
-	message = TTF_RenderText_Solid( font, buffer, textColor );
-	SDL_Rect offset;
-	offset.x = x;
-	offset.y = y;
-	SDL_BlitSurface( message, NULL, baseSurface, &offset );
-	SDL_FreeSurface( message );
-
+	vasprintf(&buffer,text, args);
+	char * pch = strtok (buffer,"\n");
+	int currentY = y;
+	int fontHeight = TTF_FontHeight(font);
+	while (pch != NULL)
+	{
+		message = TTF_RenderText_Solid( font, pch, textColor );
+		SDL_Rect offset;
+		offset.x = x;
+		offset.y = currentY;
+		SDL_BlitSurface( message, NULL, baseSurface, &offset );
+		SDL_FreeSurface( message );
+		pch = strtok (NULL, "\n");
+		currentY += fontHeight;
+	}
+	free(buffer);
 	va_end (args);
 }
 
@@ -56,6 +64,6 @@ void hud::draw(){
 
 	for(i = components.begin(); i != components.end(); ++i) {
 		component_t bees = *i;
-		DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
+		//DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
 	}
 }
