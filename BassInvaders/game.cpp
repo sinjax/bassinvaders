@@ -165,6 +165,8 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 	}
 
 	band_separate(udata, stream, len);
+	//((game*)udata)->dt->high_pass(stream, 0.1);
+	//((game*)udata)->dt->low_pass(stream, 0.1);
 }
 
 game::game()
@@ -177,6 +179,7 @@ game::game()
     Mix_OpenAudio( source->spec.freq, MIX_DEFAULT_FORMAT, source->spec.channels, source->spec.samples);
 	int historyBuffer = 1.0 / ((double)(source->spec.samples)/(double)(source->spec.freq));
 	fft = new BandPassFilterFFT (source->spec.freq, source->spec.samples*4);
+	dt = new BandPassFilterDT (source->spec.samples*4);
 	beat = new BeatDetector(historyBuffer, SENSITIVITY, source->spec.samples );
     soundIter = new SoundSourceIterator(source, source->spec.samples*4);
     Mix_HookMusic(MusicPlayer, this);
