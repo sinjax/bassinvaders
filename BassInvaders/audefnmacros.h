@@ -2,7 +2,7 @@
  * audefnmacros.h
  *
  *  Created on: May 2, 2009
- *      Author: Darren Golbourn
+ *      Author: dag
  */
 
 #ifndef AUDIO_STREAM_FMT_MACROS
