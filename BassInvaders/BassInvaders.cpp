@@ -192,6 +192,15 @@ void BassInvaders::doPlayingState()
 
 	/* firstly, draw the background */
 	pBG->redraw(wm.getWindowSurface());
+
+	/* then the hero sprite */
+	pHero->setActions(im.getCurrentActions());
+
+	pHero->render(wm.getWindowSurface());
+
+	/* ... then the hordes of enemies */
+
+	/* ... then the hud/overlay */
 }
 
 /**************************

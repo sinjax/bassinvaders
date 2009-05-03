@@ -61,5 +61,6 @@ uint32_t InputManager::getCurrentActions()
 		}
 	}
 
+
 	return actions;
 }

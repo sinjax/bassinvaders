@@ -59,6 +59,7 @@ public:
 	std::vector<CollisionRect_t> getCollisionRects();
 	AnimationState_t getPendingAnimationState();
 	AnimationState_t getAnimationState();
+	void destroy(); //manually clean up sprite memory
 
 private:
 	void loadSpriteData(FILE* fp);

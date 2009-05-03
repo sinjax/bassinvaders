@@ -25,15 +25,16 @@
 #define ACTION_SHOOT          0x00000010
 #define ACTION_QUIT           0x00000020
 
+#define ACTIONMASK uint32_t
 
 class InputManager {
 public:
 	InputManager();
 	~InputManager();
 
-	void mapKeyToAction(uint32_t action, SDLKey key);
-	uint32_t getKeyAction(SDLKey key);
-	uint32_t getCurrentActions();
+	void mapKeyToAction(ACTIONMASK action, SDLKey key);
+	ACTIONMASK getKeyAction(SDLKey key);
+	ACTIONMASK getCurrentActions();
 
 
 private:
