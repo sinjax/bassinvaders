@@ -1,17 +1,17 @@
 /*
- * Baddie.cpp
+ * Bullet.cpp
  *
  *  Created on: 19-Apr-2009
  *      Author: spijderman
  */
 
-#include "Baddie.h"
+#include "Bullet.h"
 
-Baddie::Baddie() {
+Bullet::Bullet() {
 	// TODO Auto-generated constructor stub
 
 }
 
-Baddie::~Baddie() {
+Bullet::~Bullet() {
 	// TODO Auto-generated destructor stub
 }
