@@ -2,7 +2,23 @@
  * audefnmacros.h
  *
  *  Created on: May 2, 2009
- *      Author: dag
+ *      Author: Darren Golbourn
+ *
+ *   Description: These macros are used to index the arrays used by audio data.
+ *
+ *   Audio data is in the form of RLRLRLRL... where L is left speaker, R is right speaker.
+ *
+ *   Frequency data is in the form of complex amplitudes (R,I) where R is real, I is
+ *   imaginary.  The (R,I) amplitudes are ordered by frequencies as:
+ *	 		0,
+ *			lowest positive,
+ *			...
+ *			highest positive/negative,
+ *			...
+ *			lowest negative.
+ *
+ *	where highest means highest by absolute value and lowest means lowest
+ *	by absolute value.
  */
 
 #ifndef AUDIO_STREAM_FMT_MACROS

@@ -10,9 +10,26 @@
  * 'loops back' on itself.
  *
  * Usage:
- * Initialize the cache: history<class> name(size)
- * Add a new element, replacing the current oldest: name.record(new_element)
- * Return the most recent element: class data = name.current()
+ * 		Initialize the cache:
+ * 			history<type of class> name(max number of elements in history);
+ *
+ * 		Add a new element, replacing the current oldest:
+ * 			name.record(new_element);
+ *
+ * 		Return the most recent element:
+ * 			data = name.current();
+ *
+ * 		Return an element n steps older than current:
+ * 			data = name.current(-n);
+ *
+ * 		Return the oldest element:
+ * 			data = name.current(1);
+ *
+ * 		Return an element which n-1 steps more recent than the oldest:
+ * 			data = name.current(n);
+ *
+ * 		Do statistics to the data:
+ * 			#define WITH_STATS
  */
 
 #ifndef HISTORY_H_
