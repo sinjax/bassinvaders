@@ -9,6 +9,9 @@
 #include "WindowManager.h"
 #include "toolkit.h"
 
+/*
+ * This is called by SDL Music for chunkSampleSize x 4 bytes each time SDL needs it
+ */
 void MusicPlayer(void *udata, Uint8 *stream, int len)
 {
 	SoundSourceIterator* iter = ((BassInvaders*)udata)->soundIter;
@@ -22,12 +25,18 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 	}
 	band_separate(udata, stream, len);
 }
+
+/*
+ * This is called by music player.  The sound stream is fed to band_separate where the
+ * data is analysed and beats are detected.
+ */
 void band_separate( void *udata, uint8_t *stream, int len){
 	uint8_t bandstream[len];
 	BassInvaders* g = (BassInvaders*)udata;
 	g->fft->ingest(stream);
-	g->fft->band_pass(bandstream, 0, 400);
+	g->fft->band_pass(bandstream, 0, 4000);
 	g->beat->detect(bandstream);
+	//g->dt->low_pass(stream, 0.01);
 }
 
 BassInvaders::BassInvaders()
@@ -142,14 +151,31 @@ void BassInvaders::loadLevel()
 	pBG->addLayer(&bgLayer);
 	pHero = new Hero("resources/hero/heroclass.info");
 
-	// The music stuff starts here
+	/*
+	 * Set up the music playback, filters and beat detection environment
+	 */
+
+	// where the music comes from.
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
-	Mix_OpenAudio( soundSource->spec.freq, MIX_DEFAULT_FORMAT, soundSource->spec.channels, soundSource->spec.samples);
-	int historyBuffer = 1.0 / ((double)(soundSource->spec.samples)/(double)(soundSource->spec.freq));
-	soundIter = soundSource->iter(soundSource->spec.samples*4);
-	fft = new BandPassFilterFFT (soundSource->spec.freq, soundSource->spec.samples*4);
-	beat = new BeatDetector(historyBuffer, SENSITIVITY, soundSource->spec.samples );
-	soundIter = new SoundSourceIterator(soundSource, soundSource->spec.samples*4);
+
+	// this is how many 2 x 2byte samples are in a chunk
+	int chunkSampleLength = soundSource->spec.samples * 8;
+
+	// What the music is played by.
+	// OpenAudio should be initialised with chunk_size = samples
+	// and soundIter should be set up to take the appropriate number of bytes (i.e. samples x 4).
+	Mix_OpenAudio( soundSource->spec.freq, MIX_DEFAULT_FORMAT, soundSource->spec.channels, chunkSampleLength);
+	soundIter = soundSource->iter(chunkSampleLength*4);
+
+	// fft and dt filters if you want them.
+	fft = new BandPassFilterFFT (soundSource->spec.freq, chunkSampleLength*4);
+	dt = new BandPassFilterDT (chunkSampleLength*4);
+
+	// set up the beat detector.
+	int historyBuffer = 1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq));
+	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
+
+	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
 }
 /**************************

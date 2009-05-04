@@ -18,6 +18,7 @@
 #include <SDL/SDL_mixer.h>
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
+#include "BandPassFilterDT.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -49,6 +50,7 @@ public:
 	SoundSource * soundSource;
 	SoundSourceIterator * soundIter;
 	BandPassFilterFFT *fft;
+	BandPassFilterDT *dt;
 	BeatDetector *beat;
 	// End level class
 
