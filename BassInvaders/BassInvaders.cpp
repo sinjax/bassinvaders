@@ -132,6 +132,8 @@ void BassInvaders::doLoadingState()
 
 void BassInvaders::loadLevel()
 {
+	ResourceBundle * b = new ResourceBundle("resources/hero/heroclass.info");
+	
 	pBG = new Background(1, 10, SCREEN_HEIGHT, SCREEN_WIDTH);
 	LayerInfo_t bgLayer;
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));

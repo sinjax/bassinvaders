@@ -12,18 +12,18 @@ Sprite::Sprite(char* filename/*ResourceBundle * resources, BassInvaders * game*/
 	/* take a text file as a parameter containing all the data for all the states
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
-		FILE* fp;
-		if((fp = fopen(filename, "r")) == NULL)
-		{
-			printf("Couldn't open file %s\n", filename);
-			return;
-		}
+	FILE* fp;
+	if((fp = fopen(filename, "r")) == NULL)
+	{
+		printf("Couldn't open file %s\n", filename);
+		return;
+	}
 
-		DebugPrint(("loading from %s\n", filename));
-		loadSpriteData(fp);
+	DebugPrint(("loading from %s\n", filename));
+	loadSpriteData(fp);
 
-		currentState = AS_IDLE;
-		pendingState = AS_IDLE;
+	currentState = AS_IDLE;
+	pendingState = AS_IDLE;
 }
 
 Sprite::~Sprite() {

@@ -8,64 +8,80 @@
  */
 
 #include "ResourceBundle.h"
+int ResourceBundle::isInit = 0;
+std::map<char*,DataType> ResourceBundle::supportedTypes;
+void ResourceBundle::initSupportedTypes()
+{
+	ResourceBundle::isInit = 1;
+	ResourceBundle::supportedTypes["filename"] = SURFACE;
+	ResourceBundle::supportedTypes["music"] = SOUND;
+	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
+}
 
+SDL_Surface * ResourceBundle::loadImage(char * filename)
+{
+	SDL_Surface* loadedImage = NULL;
+	SDL_Surface* optimisedImage = NULL;
+	loadedImage = SDL_LoadBMP(filename);
+
+	if( loadedImage != NULL )
+	{
+		optimisedImage = SDL_DisplayFormat( loadedImage );
+		SDL_FreeSurface( loadedImage );
+	}
+
+	return optimisedImage;
+}
 ResourceBundle::ResourceBundle(char * infoFile)
 {
+	
+	if(!ResourceBundle::isInit)
+		ResourceBundle::initSupportedTypes();
+	
 	FILE* fp;
 	if((fp = fopen(infoFile, "r")) == NULL)
 	{
 		printf("Couldn't open file\n");
 		return;
 	}
+	
 	char buffer[255] = {0};
-	char key[255] = {0};
-	char value[255] = {0};
+	
+
+
+	fgets(buffer, 255, fp);
 	while(!feof(fp))
 	{
+		char * key = strtok (buffer,":");
+		char * value = strtok (NULL, "\n");
+		
+		char * pKey = new char[255];
+		char * pVal = new char[255];
+		strcpy(key,pKey);
+		strcpy(value,pVal);
+		DataType d = ResourceBundle::supportedTypes[pKey];
+		switch(d)
+		{
+			case STRING:
+				this->data[pKey] = (void*)pVal;
+			break;
+			case SOUND:
+				this->data[pKey] = (void*)(new SoundSource(pVal));
+			break;
+			case SURFACE:
+				this->data[pKey] = (void*)(ResourceBundle::loadImage(pVal));
+			break;
+			case RESOURCE:
+				this->data[pKey] = (void*)(new ResourceBundle(pVal));
+			break;
+			default:
+				// Unhandled resource datatype
+			break;
+				
+		}
 		fgets(buffer, 255, fp);
-		char * key = strtok(buffer,":");
-		char * value = strtok(NULL,":");
-
-		/*
-		filename:some/file/name
-		colorkey:(1,0,255,0)
-		drawbox:(0,0,128,128)
-		repeatpoint:(768)
-		tiling:(0,0)
-		drawpos:(640,240)
-		scrollRatio:(1.1)
-		numberofstates:1
-		state:1
-		nextstate:1
-		numberofanimationsteps:3
-		ticksperstep:350
-		sheetstartsat:(1,1)
-		spritesize:(47,47)
-		numberofrects:1
-		rect:(1,1,47,47)*/
-		if(strcmp(key,"filename") == 0)
-		{
-			char filename[255];
-			sscanf(value, "%s", filename);
-		}
-		else if(strcmp(key,"colorkey") == 0)
-		{
-			// load a 4 element array
-		}
-		else if(strcmp(key,"drawbox") == 0)
-		{
-			// load a 4 element array
-		}
-
-		/*
-		if(commands[key] == IMAGE)
-		if(commands[key] == ARRAY)
-		if(commands[key] == MUSIC)
-		*/
 	}
-
 }
-
 ResourceBundle::~ResourceBundle()
 {
 }

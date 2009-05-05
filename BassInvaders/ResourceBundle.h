@@ -7,18 +7,35 @@
  *
  */
 
+#ifndef RESOURCEBUNDLE_H_
+#define RESOURCEBUNDLE_H_
 
 #include <map>
-#include <yaml>
+#include <string>
+#include "SDL.h"
+#include "SoundSource.h"
 
-void operator >> (const YAML::Node& node, Monster& monster);
-
-
+typedef enum
+{
+	STRING, // Its just the string value, whatever that is
+	RESOURCE, // Its another resource, load it
+	SURFACE, // SDL_Surface
+	SOUND, // A SoundSource
+	
+}  DataType;
 class ResourceBundle
 {
 public:
-	ResourceBundle();
+	ResourceBundle(char *);
 	virtual ~ResourceBundle ();
-
-	std::map<char*, char*> data;
+	
+	std::map<char*,void*> data;
+public:	 //The static things
+	static int isInit;
+	static std::map<char*,DataType> supportedTypes;
+	static void initSupportedTypes();
+	static SDL_Surface* loadImage(char *);
 };
+
+
+#endif /* end of include guard: RESOURCEBUNDLE_H_ */

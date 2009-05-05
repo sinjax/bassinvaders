@@ -18,7 +18,7 @@
 #include <SDL/SDL_mixer.h>
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
-
+#include "ResourceBundle.h"
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
 /*JG TODO:

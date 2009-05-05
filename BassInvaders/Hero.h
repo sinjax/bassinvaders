@@ -12,6 +12,7 @@
 #include <vector>
 #include "Bullet.h"
 #include "InputManager.h"
+#include "ResourceBundle.h"
 
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 

@@ -7,7 +7,8 @@
 
 #include "Hero.h"
 #include "toolkit.h"
-
+#include <fstream>
+#include <iostream>
 Hero::Hero(const char* filename)
 {
 	FILE* fp;
@@ -41,6 +42,7 @@ Hero::~Hero() {
 
 void Hero::loadHeroData(FILE* fp)
 {
+	
 	char buffer[255] = {0};
 	char filename[255] = {0};
 
