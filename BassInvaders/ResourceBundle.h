@@ -12,27 +12,38 @@
 
 #include <map>
 #include <string>
+#include <fstream>
 #include "SDL.h"
 #include "SoundSource.h"
-
+#include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
+#include <vector>
+using namespace boost;
+using namespace std;
 typedef enum
 {
 	STRING, // Its just the string value, whatever that is
 	RESOURCE, // Its another resource, load it
 	SURFACE, // SDL_Surface
 	SOUND, // A SoundSource
-	
+	INT,
+	DOUBLE,
+	NSECTION,
+	SECTION
 }  DataType;
 class ResourceBundle
 {
+	
+private:
+	int * readIntArray(string cstr);
 public:
 	ResourceBundle(char *);
 	virtual ~ResourceBundle ();
 	
-	std::map<char*,void*> data;
+	std::map<std::string,void*> data;
 public:	 //The static things
 	static int isInit;
-	static std::map<char*,DataType> supportedTypes;
+	static std::map<std::string,DataType> supportedTypes;
 	static void initSupportedTypes();
 	static SDL_Surface* loadImage(char *);
 };

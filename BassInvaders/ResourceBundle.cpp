@@ -9,13 +9,22 @@
 
 #include "ResourceBundle.h"
 int ResourceBundle::isInit = 0;
-std::map<char*,DataType> ResourceBundle::supportedTypes;
+map<string,DataType> ResourceBundle::supportedTypes;
 void ResourceBundle::initSupportedTypes()
 {
 	ResourceBundle::isInit = 1;
 	ResourceBundle::supportedTypes["filename"] = SURFACE;
 	ResourceBundle::supportedTypes["music"] = SOUND;
 	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
+	ResourceBundle::supportedTypes["colorkey"] = INT;
+	ResourceBundle::supportedTypes["sheetstartsat"] = INT;
+	ResourceBundle::supportedTypes["spritesize"] = INT;
+	ResourceBundle::supportedTypes["rect"] = INT;
+	ResourceBundle::supportedTypes["health"] = INT;
+	ResourceBundle::supportedTypes["attackdamage"] = INT;
+	
+	ResourceBundle::supportedTypes["numberofstates"] = NSECTION;
+	ResourceBundle::supportedTypes["state"] = SECTION;
 }
 
 SDL_Surface * ResourceBundle::loadImage(char * filename)
@@ -32,54 +41,81 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 
 	return optimisedImage;
 }
+
+int * ResourceBundle::readIntArray(string cstr)
+{
+	tokenizer< escaped_list_separator<char> > tok(cstr);
+	vector <int> holder;
+	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
+	{
+		holder.push_back(lexical_cast<int>(*beg));
+	}
+	int * ret = new int[holder.size()];
+	vector<int>::iterator itVectorData;
+	int index = 0;
+	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
+	{
+		int a = *(itVectorData);
+		ret[index++] = a;
+	}
+	return ret;
+}
+
 ResourceBundle::ResourceBundle(char * infoFile)
 {
 	
 	if(!ResourceBundle::isInit)
 		ResourceBundle::initSupportedTypes();
 	
-	FILE* fp;
-	if((fp = fopen(infoFile, "r")) == NULL)
+	ifstream inFile;
+	inFile.open(infoFile);
+	if(!inFile)
 	{
 		printf("Couldn't open file\n");
 		return;
 	}
 	
-	char buffer[255] = {0};
-	
-
-
-	fgets(buffer, 255, fp);
-	while(!feof(fp))
+	string sbuffer;
+	while(getline(inFile,sbuffer))
 	{
-		char * key = strtok (buffer,":");
-		char * value = strtok (NULL, "\n");
+		string::size_type loc = sbuffer.find( ":", 0 );
+		string key = sbuffer.substr(0, loc);
+		string value = sbuffer.substr(loc+1,sbuffer.find( "\n", 0 ));
 		
-		char * pKey = new char[255];
-		char * pVal = new char[255];
-		strcpy(key,pKey);
-		strcpy(value,pVal);
-		DataType d = ResourceBundle::supportedTypes[pKey];
+		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces  
+		string::size_type endpos = value.find_last_not_of(" ");
+		value = value.substr( startpos, endpos-startpos+1 ); 
+		char*cstr = new char [value.size()+1];
+		strcpy (cstr, value.c_str());
+		DataType d = ResourceBundle::supportedTypes[key];
+		
 		switch(d)
 		{
 			case STRING:
-				this->data[pKey] = (void*)pVal;
+				this->data[key] = (void*)cstr;
 			break;
 			case SOUND:
-				this->data[pKey] = (void*)(new SoundSource(pVal));
+				this->data[key] = (void*)(new SoundSource(cstr));
 			break;
 			case SURFACE:
-				this->data[pKey] = (void*)(ResourceBundle::loadImage(pVal));
+				this->data[key] = (void*)(ResourceBundle::loadImage(cstr));
 			break;
 			case RESOURCE:
-				this->data[pKey] = (void*)(new ResourceBundle(pVal));
+				this->data[key] = (void*)(new ResourceBundle(cstr));
+			break;
+			case INT:
+				this->data[key] = (void*)this->readIntArray(value);
+				// Read an integer (array or single)
+			break;
+			case DOUBLE:
+				// Read a double (array or single)
 			break;
 			default:
-				// Unhandled resource datatype
-			break;
-				
+				// Unhandled resource datatype, hold the line
+				this->data[key] = (void*)cstr;
+			break;				
 		}
-		fgets(buffer, 255, fp);
+		sbuffer.clear();
 	}
 }
 ResourceBundle::~ResourceBundle()
