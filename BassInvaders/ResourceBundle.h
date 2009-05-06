@@ -35,12 +35,17 @@ class ResourceBundle
 {
 	
 private:
-	int * readIntArray(string cstr);
+	static int * readIntArray(string cstr);
+	static float * readFloatArray(string cstr);
+	static void registerResource(string, void *);
+	
+	static std::map<string,void*> resourceRegister;
 public:
 	ResourceBundle(char *);
 	virtual ~ResourceBundle ();
-	
 	std::map<std::string,void*> data;
+	void * operator[](const char*);
+	void print();
 public:	 //The static things
 	static int isInit;
 	static std::map<std::string,DataType> supportedTypes;

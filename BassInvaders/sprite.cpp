@@ -8,19 +8,11 @@
 #include "Sprite.h"
 #include "toolkit.h"
 
-Sprite::Sprite(char* filename/*ResourceBundle * resources, BassInvaders * game*/) {
+Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	/* take a text file as a parameter containing all the data for all the states
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
-	FILE* fp;
-	if((fp = fopen(filename, "r")) == NULL)
-	{
-		printf("Couldn't open file %s\n", filename);
-		return;
-	}
-
-	DebugPrint(("loading from %s\n", filename));
-	loadSpriteData(fp);
+	loadSpriteData(resources);
 
 	currentState = AS_IDLE;
 	pendingState = AS_IDLE;
@@ -184,7 +176,7 @@ void Sprite::updateStates()
 	}
 }
 
-void Sprite::loadSpriteData(FILE *fp)
+void Sprite::loadSpriteData(ResourceBundle * resource)
 {
 	/*read first line, should be number of states
 	 * then loop through file parsing each line until
@@ -197,70 +189,51 @@ void Sprite::loadSpriteData(FILE *fp)
 	uint32_t B=0;
 	uint32_t numberOfCollisionRects;
 	AnimationState_t state;
-	char buffer[255] = {0};
-	char filename[255] = {0};
 
 
-	fgets(buffer, 255, fp);
-	sscanf(buffer, "numberofstates:%u", &numberOfStates);
+	
+	numberOfStates = *(int*)((*resource)["numberofstates"]);
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
-
+	ResourceBundle * currentState;
 	for (uint32_t i = 0; i<numberOfStates; ++i)
 	{
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "state:%d", (int*)&state);
+		currentState = (ResourceBundle *)(( *((ResourceBundle*)resource) )["statefile"]);
+		state = *((AnimationState_t*)((*currentState)["state"]));
 
 		pData = &(animationStateData[state]);
 		pData->state = state;
 
 			DebugPrint((" loading state 0x%x\n", state));
 
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "filename:%s", filename);
-			DebugPrint(("  filename %s\n", filename));
+		
+		R = ((int*)((*currentState)["colorkey"]))[0];
+		G = ((int*)((*currentState)["colorkey"]))[1];
+		B = ((int*)((*currentState)["colorkey"]))[2];
 
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "colorkey:(%u,%u,%u)", &R, &G, &B );
-			DebugPrint(("  colorkey:(%u,%u,%u)\n", R, G, B));
+		pData->nextState = *((AnimationState_t*)((*currentState)["colorkey"]));
+		pData->numberOfAnimationSteps = *((int*)((*currentState)["numberofanimationsteps"]));
+		pData->ticksPerStep = *((int*)((*currentState)["ticksperstep"]));
 
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "nextstate:%d", (int*)&(pData->nextState));
-			DebugPrint(("  nextstate:%d\n", pData->nextState));
-
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "numberofanimationsteps:%u", (int*)&(pData->numberOfAnimationSteps));
-			DebugPrint(("  numberofanimationsteps:%u\n", pData->numberOfAnimationSteps));
-
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "ticksperstep:%u", &(pData->ticksPerStep));
-			DebugPrint(("  ticksperstep:%u\n", pData->ticksPerStep));
-
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "sheetstartsat:(%d,%d)", (int*)&(pData->sheetStartsAt.x), (int*)&(pData->sheetStartsAt.y) );
-			DebugPrint(("  sheetstartsat:(%d,%d)\n", pData->sheetStartsAt.x, pData->sheetStartsAt.y));
-
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "spritesize:(%d,%d)", &(pData->spriteWidth), &(pData->spriteHeight) );
-			DebugPrint(("  spritesize:(%d,%d)\n", pData->spriteWidth, pData->spriteHeight));
-
-		fgets(buffer, 255, fp);
-		sscanf(buffer, "numberofrects:%u", (int*)&numberOfCollisionRects);
-		DebugPrint(("  numberofrects:%u\n", numberOfCollisionRects));
+		pData->sheetStartsAt.x = ((int*)((*currentState)["sheetstartsat"]))[0];
+		pData->sheetStartsAt.y = ((int*)((*currentState)["sheetstartsat"]))[1];
+		
+		pData->spriteWidth = ((int*)((*currentState)["spritesize"]))[0];
+		pData->spriteHeight = ((int*)((*currentState)["spritesize"]))[1];
+		
+		numberOfCollisionRects = *((int*)((*currentState)["numberofrects"]));
 		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
 		{
 			CollisionRect_t rect = {0,0,0,0};
-
-			fgets(buffer, 255, fp);
-			sscanf(buffer, "rect:(%u,%u,%d,%d)", (int*)&(rect.top),
-												 (int*)&(rect.left),
-												 (int*)&(rect.bottom),
-												 (int*)&(rect.right));
-			DebugPrint(("  rect:(%u,%u,%d,%d)\n", rect.top, rect.left, rect.bottom, rect.right));
+			
+			rect.top = ((int*)((*currentState)["rect"]))[0];
+			rect.left = ((int*)((*currentState)["rect"]))[1];
+			rect.bottom = ((int*)((*currentState)["rect"]))[2];
+			rect.right = ((int*)((*currentState)["rect"]))[3];
 			pData->collisionRects.push_back(rect);
 		}
 
-		pData->spriteSheet = LoadImage(filename);
+		pData->spriteSheet = (SDL_Surface*)((*currentState)["filename"]);
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
 	}

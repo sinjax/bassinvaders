@@ -24,7 +24,7 @@
 
 class Hero: public Renderable {
 public:
-	Hero(const char* filename);
+	Hero(ResourceBundle* filename);
 	virtual ~Hero();
 
 	virtual bool isCollidingWith(Renderable *pRenderable);
@@ -34,7 +34,7 @@ public:
 	void setActions(ACTIONMASK actions);
 
 private:
-	void loadHeroData(FILE *fp);
+	void loadHeroData(ResourceBundle *fp);
 	void doActions();
 
 private:
