@@ -104,7 +104,6 @@ class SoundSource  {
 			uint8_t *audio_buf,
 			int buf_size
 		);
-
 		// Variables
 		static int isInit;
 	AVPacket flush_pkt;

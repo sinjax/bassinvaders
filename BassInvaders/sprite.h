@@ -10,8 +10,11 @@
 
 #include <vector>
 #include <stdio.h>
+#include <string>
 #include <SDL/SDL.h>
+#include "ResourceBundle.h"
 
+using namespace std;
 typedef struct
 {
 	uint32_t top;
@@ -50,7 +53,7 @@ typedef struct
  */
 class Sprite {
 public:
-	Sprite(char*/*ResourceBundle * resources, BassInvaders * game*/);
+	Sprite(ResourceBundle * resources/*, BassInvaders * game*/);
 	~Sprite();
 	void changeState(AnimationState_t state);
 	void renderSprite(SDL_Surface* pScreen);
@@ -62,7 +65,7 @@ public:
 	void destroy(); //manually clean up sprite memory
 
 private:
-	void loadSpriteData(FILE* fp);
+	void loadSpriteData(ResourceBundle * fp);
 	void updateStates();
 	uint8_t getNextAnimationStep(const AnimationStateData_t *pStateData);
 

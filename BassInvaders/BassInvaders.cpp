@@ -141,7 +141,7 @@ void BassInvaders::doLoadingState()
 }
 
 void BassInvaders::loadLevel()
-{
+{	
 	pBG = new Background(1, 10, SCREEN_HEIGHT, SCREEN_WIDTH);
 	LayerInfo_t bgLayer;
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
@@ -150,7 +150,7 @@ void BassInvaders::loadLevel()
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b1.info");
 	pBG->addLayer(&bgLayer);
-	pHero = new Hero("resources/hero/heroclass.info");
+	pHero = new Hero(new ResourceBundle("resources/hero/heroclass.info"));
 
 	/*
 	 * Set up the music playback, filters and beat detection environment

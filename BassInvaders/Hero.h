@@ -12,6 +12,7 @@
 #include <vector>
 #include "Bullet.h"
 #include "InputManager.h"
+#include "ResourceBundle.h"
 
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 
@@ -23,7 +24,7 @@
 
 class Hero: public Renderable {
 public:
-	Hero(const char* filename);
+	Hero(ResourceBundle* filename);
 	virtual ~Hero();
 
 	virtual bool isCollidingWith(Renderable *pRenderable);
@@ -33,7 +34,7 @@ public:
 	void setActions(ACTIONMASK actions);
 
 private:
-	void loadHeroData(FILE *fp);
+	void loadHeroData(ResourceBundle *fp);
 	void doActions();
 
 private:

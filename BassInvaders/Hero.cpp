@@ -7,18 +7,11 @@
 
 #include "Hero.h"
 #include "toolkit.h"
-
-Hero::Hero(const char* filename)
+#include <fstream>
+#include <iostream>
+Hero::Hero(ResourceBundle* resource)
 {
-	FILE* fp;
-	if((fp = fopen(filename, "r")) == NULL)
-	{
-		printf("Couldn't open file %s\n", filename);
-		return;
-	}
-
-	DebugPrint(("loading hero from %s\n", filename));
-	loadHeroData(fp);
+	loadHeroData(resource);
 
 	xvelocity = 0;
 	yvelocity = 0;
@@ -39,21 +32,11 @@ Hero::~Hero() {
 
 }
 
-void Hero::loadHeroData(FILE* fp)
+void Hero::loadHeroData(ResourceBundle* resource)
 {
-	char buffer[255] = {0};
-	char filename[255] = {0};
-
-	fgets(buffer, 255, fp);
-	sscanf(buffer, "health:%u", &this->health);
-
-	fgets(buffer, 255, fp);
-	sscanf(buffer, "attackdamage:%u", &this->attackDamage);
-
-	fgets(buffer, 255, fp);
-	sscanf(buffer, "bodysprite:%s", filename);
-
-	Sprite heroBody(filename);
+	this->health = *((int*)(*resource)["health"]);
+	this->attackDamage = *((int*)(*resource)["attackdamage"]);
+	Sprite heroBody((ResourceBundle*)(*resource)["bodysprite"]);
 
 	sprites.push_back(heroBody);
 

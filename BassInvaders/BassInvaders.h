@@ -18,6 +18,7 @@
 #include <SDL/SDL_mixer.h>
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
+#include "ResourceBundle.h"
 #include "BandPassFilterDT.h"
 
 #define SENSITIVITY 1.3

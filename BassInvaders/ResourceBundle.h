@@ -7,32 +7,52 @@
  *
  */
 
+#ifndef RESOURCEBUNDLE_H_
+#define RESOURCEBUNDLE_H_
 
 #include <map>
-/*
-filename:resources/background/Nebula1.bmp
-colorkey:(1,0,255,0)
-drawbox:(0,0,128,128)
-repeatpoint:(768)
-tiling:(0,0)
-drawpos:(640,240)
-scrollRatio:(1.1)
-numberofstates:1
-state:1
-nextstate:1
-numberofanimationsteps:3
-ticksperstep:350
-sheetstartsat:(1,1)
-spritesize:(47,47)
-numberofrects:1
-rect:(1,1,47,47)*/
-
-
+#include <string>
+#include <fstream>
+#include "SDL.h"
+#include "SoundSource.h"
+#include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
+#include <vector>
+using namespace boost;
+using namespace std;
+typedef enum
+{
+	STRING, // Its just the string value, whatever that is
+	RESOURCE, // Its another resource, load it
+	SURFACE, // SDL_Surface
+	SOUND, // A SoundSource
+	INT,
+	DOUBLE,
+	NSECTION,
+	SECTION
+}  DataType;
 class ResourceBundle
 {
+	
+private:
+	static uint32_t * readIntArray(string cstr);
+	static float * readFloatArray(string cstr);
+	ResourceBundle ** ResourceBundle::readBundleArray(string cstr);
+	static void registerResource(string, void *);
+	
+	static std::map<string,void*> resourceRegister;
 public:
-	ResourceBundle();
+	ResourceBundle(char *);
 	virtual ~ResourceBundle ();
-
-	std::map<char*, char*> data;
+	std::map<std::string,void*> data;
+	void * operator[](const char*);
+	void print();
+public:	 //The static things
+	static int isInit;
+	static std::map<std::string,DataType> supportedTypes;
+	static void initSupportedTypes();
+	static SDL_Surface* loadImage(char *);
 };
+
+
+#endif /* end of include guard: RESOURCEBUNDLE_H_ */

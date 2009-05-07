@@ -1,0 +1,10 @@
+state: 1
+filename: resources/sprites/hero.bmp
+colorkey: 0,255,0
+nextstate: 1
+numberofanimationsteps: 1
+ticksperstep: 1000
+sheetstartsat: 1,1
+spritesize: 136,116
+numberofrects: 1
+rect: 0,0,116,136

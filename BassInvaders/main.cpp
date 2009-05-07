@@ -6,7 +6,6 @@
  */
 
 #include "BassInvaders.h"
-
 int main(int argc, char* argv[])
 {
 	BassInvaders bi;

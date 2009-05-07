@@ -3,6 +3,9 @@
  *
  *  Created on: 19-Apr-2009
  *      Author: spijderman
+
+
+K!
  */
 
 #include "Background.h"
@@ -283,6 +286,11 @@ void Background::accelerate(uint32_t scrollRate, uint32_t acceleration)
 	if(((this->scrollRate - scrollRate)%acceleration)!=0)
 	{
 		DebugPrint(("can't get to %u from %u in increments of %u!\n", scrollRate, this->scrollRate, acceleration));
+		return;
+	}
+
+	if (scrollRate == targetScrollRate)
+	{
 		return;
 	}
 
