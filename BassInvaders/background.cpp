@@ -289,6 +289,11 @@ void Background::accelerate(uint32_t scrollRate, uint32_t acceleration)
 		return;
 	}
 
+	if (scrollRate == targetScrollRate)
+	{
+		return;
+	}
+
 	this->targetScrollRate = scrollRate;
 	this->acceleration = (scrollRate < this->scrollRate) ? -(acceleration) : acceleration;
 	this->accelerationTickCount = SDL_GetTicks();
