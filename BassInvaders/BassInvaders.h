@@ -8,10 +8,10 @@
 #ifndef BASSINVADERS_H_
 #define BASSINVADERS_H_
 
-#include <deque>
+#include <list>
 #include "Renderable.h"
 #include "Hero.h"
-#include "Background.h"
+#include "background.h"
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
@@ -20,6 +20,7 @@
 #include "BandPassFilterFFT.h"
 #include "ResourceBundle.h"
 #include "BandPassFilterDT.h"
+#include "monster.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -76,7 +77,9 @@ private:
 private:
 	bool running;// is the main game loop still running?
 
-	std::deque<Renderable> baddies;
+	std::list <Renderable*> baddies; // should just be queue of pointers to renderables?
+									// also didnt know how to erase from a deque without a seg fault,
+									// so it's temporarily a list :) Darren.
 	/* Baddies contains all the bad-guy renderables
 	 * this deque will get added to/deleted from when goons appear on the screen
 	 *

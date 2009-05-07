@@ -8,7 +8,7 @@
 #ifndef RENDERABLE_H_
 #define RENDERABLE_H_
 
-#include "Sprite.h"
+#include "sprite.h"
 #include <vector>
 /*JG TODO:
  * - baseclass for all on-screen things

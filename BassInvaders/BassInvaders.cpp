@@ -50,15 +50,12 @@ BassInvaders::BassInvaders()
 }
 
 BassInvaders::~BassInvaders() {
-	if (pHero)
-	{
-		delete(pHero);
-	}
-
-	if (pBG)
-	{
-		delete(pBG);
-	}
+	delete pHero;
+	delete pBG;
+	delete dt;
+	delete fft;
+	delete soundSource;
+	delete beat;
 }
 
 void BassInvaders::goGameGo()
@@ -141,7 +138,7 @@ void BassInvaders::doLoadingState()
 }
 
 void BassInvaders::loadLevel()
-{	
+{
 	pBG = new Background(1, 10, SCREEN_HEIGHT, SCREEN_WIDTH);
 	LayerInfo_t bgLayer;
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
@@ -226,8 +223,31 @@ void BassInvaders::doPlayingState()
 	pHero->render(wm.getWindowSurface());
 
 	/* ... then the hordes of enemies */
+	static int enemies = 0;
+	if (enemies == 0) // make one new monster
+	{
+		baddies.push_back(new monster());
+		enemies++;
+	}
+
+	std::list<Renderable*>::iterator i;
+
+	for(i=baddies.begin(); i != baddies.end(); ++i) {
+		Renderable *bees = *i;
+		if (bees->isOffScreen(wm.getWindowSurface()->w, wm.getWindowSurface()->h))
+		{
+			i = baddies.erase(i);
+			delete bees;
+			enemies--;
+		}
+	}
+
+	for(i=baddies.begin(); i != baddies.end(); ++i) {
+		(*i)->render(wm.getWindowSurface());
+	}
 
 	/* ... then the hud/overlay */
+
 }
 
 /**************************
