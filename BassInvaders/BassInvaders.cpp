@@ -254,7 +254,6 @@ void BassInvaders::doPlayingState()
 	/* ... then the hud/overlay */
 	h->displayText(10,10,"Health: %i0",pHero->getHealth());
 	h->draw();
-
 }
 
 /**************************
