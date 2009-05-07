@@ -106,6 +106,9 @@ void BandPassFilterFFT::band_pass(uint8_t *stream, double flo, double fhi)
 /*
  * using the frequency fft data, band pass between frequencies in f[bandlo] <= f <= f[bandhi]
  */
+#define FUDGE_AMPLITUDE 0.25 // if the fft produces amplitudes that are too high and
+							 // and which cause crackling, use this to quieten the sound.
+
 void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t bandlo)
 {
 	/*
@@ -115,10 +118,10 @@ void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t
 	{
 		if ((i <= bandhi) && (i>=bandlo)) // ...and copy over the frequencies in the the band window...
 		{
-			REAL(band_data,POSITIVE(i,samples)) = REAL(fcache,POSITIVE(i,samples));
-			IMAG(band_data,POSITIVE(i,samples)) = IMAG(fcache,POSITIVE(i,samples));
-			REAL(band_data,NEGATIVE(i,samples)) = REAL(fcache,NEGATIVE(i,samples));
-			IMAG(band_data,NEGATIVE(i,samples)) = IMAG(fcache,NEGATIVE(i,samples));
+			REAL(band_data,POSITIVE(i,samples)) = FUDGE_AMPLITUDE*REAL(fcache,POSITIVE(i,samples));
+			IMAG(band_data,POSITIVE(i,samples)) = FUDGE_AMPLITUDE*IMAG(fcache,POSITIVE(i,samples));
+			REAL(band_data,NEGATIVE(i,samples)) = FUDGE_AMPLITUDE*REAL(fcache,NEGATIVE(i,samples));
+			IMAG(band_data,NEGATIVE(i,samples)) = FUDGE_AMPLITUDE*IMAG(fcache,NEGATIVE(i,samples));
 		}
 		else // ...and set the other frequencies to zero.
 		{

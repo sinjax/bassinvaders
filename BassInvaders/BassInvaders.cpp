@@ -36,6 +36,7 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	g->fft->ingest(stream);
 	g->fft->band_pass(bandstream, 0, 4000);
 	g->beat->detect(bandstream);
+	g->fft->band_pass(stream, 300, 4000);
 	//g->dt->low_pass(stream, 0.01);
 }
 
@@ -159,7 +160,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 8;
+	int chunkSampleLength = soundSource->spec.samples * 16;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
