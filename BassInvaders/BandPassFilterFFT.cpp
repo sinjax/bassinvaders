@@ -84,11 +84,17 @@ BandPassFilterFFT::~BandPassFilterFFT() {
 	gsl_fft_complex_workspace_free (workspace);
 }
 
+/*
+ * fourier transform a stream and place the frequency data in the cache
+ */
 void BandPassFilterFFT::ingest(uint8_t *stream)
 {
 	fft_alloc(stream);
 }
 
+/*
+ * copy a chunk containing only frequencies between flo and fhi into stream.
+ */
 void BandPassFilterFFT::band_pass(uint8_t *stream, double flo, double fhi)
 {
 	double band_data[2*samples];
@@ -124,6 +130,9 @@ void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t
 	}
 }
 
+/*
+ * transform frequency domain into stream
+ */
 void BandPassFilterFFT::fft_inverse(double* band_data, uint8_t *stream) {
 	gsl_fft_complex_inverse(band_data, 1, samples, wavetable, workspace); // Then reverse Fourier transform back to the time domain...
 

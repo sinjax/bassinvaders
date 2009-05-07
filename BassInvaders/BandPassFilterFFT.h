@@ -4,7 +4,25 @@
  *  Created on: May 2, 2009
  *      Author: Darren Golbourn
  *
- * Description: This library lets you split an audio stream in to frequency bands.
+ * Description: This library is a band pass filter which works by taking an audio chunk
+ * 				and transforming it in to frequency data using an FFT.
+ *
+ * Usage:
+ * 		Initialize the filter at the beginning:
+ * 			BandPassFilterFFT filter(sample rate <Hz>, chunk size <bytes> );
+ *
+ * 		Feed the filter a chunk:
+ * 			filter.ingest(stream);
+ *
+ * 		Copy a chunk containing only the frequencies f0 < f < f1 of the ingested chunk:
+ * 			uint8_t newstream[chunk size <bytes>];
+ * 			filter.band_pass(newstream, f0 <Hz>, f1 <Hz> );
+ *
+ * 		You only need to set up one filter per [sample rate, chunk size] pair.
+ *
+ * 		You only need to ingest each chunk once, then you can copy out any number of
+ * 		new different band-limited versions of it with band_pass.  When you are finished
+ *		with the chunk simply ingest another to replace it.
  */
 
 #ifndef BANDPASSFILTERFFT_H_
@@ -30,8 +48,8 @@ class BandPassFilterFFT {
 	gsl_interp_accel * faccel; 	// accelerator to help searching for indices of f.
 	fft_t fcache;				// cache of frequency domain data
 	int ffind(double);			// search function for frequency data
-	double* fft_alloc(uint8_t* stream); // allocate the fourier transform
-	void fft_inverse(double* band_data, uint8_t *stream);
+	double* fft_alloc(uint8_t* stream); // do the fourier transform
+	void fft_inverse(double* band_data, uint8_t *stream);	// do the reverse fourier transform
 	void band_window(double*, uint32_t bandhi, uint32_t bandlo); // the band pass filter
 public:
 	BandPassFilterFFT(uint32_t, uint32_t);
