@@ -8,7 +8,7 @@
 #ifndef BASSINVADERS_H_
 #define BASSINVADERS_H_
 
-#include <list>
+#include <deque>
 #include "Renderable.h"
 #include "Hero.h"
 #include "background.h"
@@ -22,6 +22,7 @@
 #include "BandPassFilterDT.h"
 #include "monster.h"
 #include "hud.h"
+#include "renderableManager.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -78,18 +79,7 @@ private:
 private:
 	bool running;// is the main game loop still running?
 
-	std::list <Renderable*> theHorde; // should just be queue of pointers to renderables?
-									// also didnt know how to erase from a deque without a seg fault,
-									// so it's temporarily a list :) Darren.
-	/* Baddies contains all the bad-guy renderables
-	 * this deque will get added to/deleted from when goons appear on the screen
-	 *
-	 * I think double ended queue is the most efficient template to use
-	 * as I expect that bad guys will get killed off generally in the
-	 * order in which they appear, hence having them at the front of the queue.
-	 * And if they are not shot, then they'll get popped off by the engine
-	 * when they drop off the edge of the screen.
-	 */
+	renderableManager* rm;
 	Hero* pHero;
 	Background* pBG;
 	GameStates_t gameState;
