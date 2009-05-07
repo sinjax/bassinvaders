@@ -82,6 +82,7 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::isInit = 1;
 	ResourceBundle::supportedTypes["filename"] = SURFACE;
 	ResourceBundle::supportedTypes["music"] = SOUND;
+	
 	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
 	ResourceBundle::supportedTypes["statefile"] = RESOURCE;
 	
@@ -96,7 +97,6 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["ticksperstep"] = INT;
 	ResourceBundle::supportedTypes["numberofrects"] = INT;
 	ResourceBundle::supportedTypes["state"] = INT;
-	
 	ResourceBundle::supportedTypes["numberofstates"] = INT;
 }
 
@@ -154,57 +154,46 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		DataType d = ResourceBundle::supportedTypes[key];
 		cout << "Loading Resource Variable " << key << ": " << cstr << endl;
 		cout << "\tData type " << d << endl;
+		void* toAdd = 0;
 		switch(d)
 		{
 			case STRING:
-				cout << "\tA STRING" << endl;
-				this->data[key] = (void*)cstr;
+				toAdd = (void*)cstr;
 			break;
 			case SOUND:
-				cout << "\tA SOUND" << endl;
 				if(ResourceBundle::resourceRegister[key] == 0)
 				{
-					this->data[key] = (void*)(new SoundSource(cstr));
 					ResourceBundle::resourceRegister[key] = this->data[key];
 				}
-				else
-					this->data[key] = ResourceBundle::resourceRegister[key];
+				
+				toAdd = (void*)( ResourceBundle::resourceRegister[key]);
 			break;
 			case SURFACE:
-				cout << "\tA SURFACE" << endl;
-				this->data[key] = (void*)(ResourceBundle::loadImage(cstr));
+				toAdd = (void*)(ResourceBundle::loadImage(cstr));
 			break;
 			case RESOURCE:
-				cout << "\tA RESOURCE" << endl;
 				if(ResourceBundle::resourceRegister[key] == 0)
 				{
-					cout << "Resource does NOT exist, loading a new one" << endl;
-					this->data[key] = (void*)(new ResourceBundle(cstr));
+					ResourceBundle::resourceRegister[key] = (void*)(new ResourceBundle(cstr));
 				}
-				else
-				{
-					cout << "Resource does NOT exist, loading a new one" << endl;
-					this->data[key] = ResourceBundle::resourceRegister[key];
-				}
-				
-				cout << "Validating the resource: " << key << endl;
+				toAdd = ResourceBundle::resourceRegister[key];
 				((ResourceBundle*)this->data[key])->print();
 			break;
 			case INT:
-				cout << "\tAN INT" << endl;
-				this->data[key] = (void*)this->readIntArray(value);
+				toAdd = (void*)this->readIntArray(value);
 				// Read an integer (array or single)
 			break;
 			case DOUBLE:
-				cout << "\tA DOUBLE" << endl;
-				this->data[key] = (void*)this->readFloatArray(value);
+				toAdd = (void*)this->readFloatArray(value);
 				// Read a double (array or single)
 			break;
 			default:
 				// Unhandled resource datatype, hold the line
-				this->data[key] = (void*)cstr;
+				toAdd = (void*)cstr;
 			break;				
 		}
+		
+		this->data[key] = (void*)toAdd;
 		sbuffer.clear();
 	}
 }

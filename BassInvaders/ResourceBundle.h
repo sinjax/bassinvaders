@@ -17,6 +17,8 @@
 #include "SoundSource.h"
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
+
 #include <vector>
 using namespace boost;
 using namespace std;
