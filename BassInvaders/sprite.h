@@ -65,6 +65,7 @@ public:
 	void destroy(); //manually clean up sprite memory
 
 private:
+	bool forceStateChange;
 	void loadSpriteData(ResourceBundle * fp);
 	void updateStates();
 	uint8_t getNextAnimationStep(const AnimationStateData_t *pStateData);

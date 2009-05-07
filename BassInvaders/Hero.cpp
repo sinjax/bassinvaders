@@ -36,7 +36,7 @@ void Hero::loadHeroData(ResourceBundle* resource)
 {
 	this->health = *((int*)(*resource)["health"]);
 	this->attackDamage = *((int*)(*resource)["attackdamage"]);
-	Sprite heroBody((ResourceBundle*)(*resource)["bodysprite"]);
+	Sprite heroBody(((ResourceBundle**)(*resource)["bodysprite"])[0]);
 
 	sprites.push_back(heroBody);
 
@@ -109,6 +109,24 @@ void Hero::setActions(ACTIONMASK actions)
 	if (actions & ACTION_SHOOT)
 	{
 	}
+	
+	if (actions & ACTION_DIE)
+	{
+		std::vector<Sprite>::iterator pos;
+		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+		{
+			(*pos).changeState(AS_DAMAGED);
+		}
+	}
+	
+	if (actions & ACTION_LIVE)
+	{
+		std::vector<Sprite>::iterator pos;
+		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+		{
+			(*pos).changeState(AS_IDLE);
+		}
+	}
 }
 
 void Hero::doActions()
@@ -122,4 +140,6 @@ void Hero::doActions()
 		ypos += yvelocity;
 		lastTickCount = now;
 	}
+	
+	
 }

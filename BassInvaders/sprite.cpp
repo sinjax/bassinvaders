@@ -13,7 +13,7 @@ Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
 	loadSpriteData(resources);
-
+	forceStateChange = 0;
 	currentState = AS_IDLE;
 	pendingState = AS_IDLE;
 }
@@ -52,13 +52,14 @@ void Sprite::changeState(AnimationState_t newState)
 		DebugPrint(("Can't transition to state with no data\n"));
 		return;
 	}
-
+	forceStateChange = 1;
 	switch(currentState)
 	{
 		/* JG TODO: do we need any further logic?*/
 		case AS_IDLE:
 		{
 			pendingState = newState;
+			
 		}break;
 
 		case AS_DAMAGED:
@@ -89,18 +90,15 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 		} break;
 		case AS_DAMAGED:
 		{
-			cout << "rendering damaged!" << endl;
 			pTempState = &(animationStateData[AS_DAMAGED]);
 		} break;
 		case AS_DYING:
 		{
-			cout << "Rendering dying!" << endl;
 			pTempState = &(animationStateData[AS_DYING]);
 		} break;
 		case AS_DEAD:
 		default:
 		{
-			cout << "Not rendering sprit!" << endl;
 			/* dead sprites (or bad states) do not get rendered */
 			return;
 		}break;
@@ -145,10 +143,11 @@ void Sprite::updateStates()
 	AnimationStateData_t* pCurrentState = &animationStateData[currentState];
 
 	/* this may be the last frame in a single pass state. if so , setup the next state here*/
-	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1))
+	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1) && !forceStateChange)
 	{
 		pendingState = pCurrentState->nextState;
 	}
+	forceStateChange = 0;
 
 	/* change state if we are not in the one we
 	 * should be in
@@ -199,9 +198,9 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
 	ResourceBundle * currentState;
-	for (uint32_t i = 0; i<numberOfStates; ++i)
+	for (uint32_t i = 0; i<numberOfStates; i++)
 	{
-		currentState = (ResourceBundle *)(( *((ResourceBundle*)resource) )["statefile"]);
+		currentState = ((ResourceBundle **)(( *((ResourceBundle*)resource) )["statefiles"]))[i];
 		state = *((AnimationState_t*)((*currentState)["state"]));
 
 		pData = &(animationStateData[state]);

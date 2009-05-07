@@ -39,7 +39,7 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	g->fft->band_pass(stream, 300, 4000);
 	//g->dt->low_pass(stream, 0.01);
 }
-
+BassInvaders * BassInvaders::theGame = 0;
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -47,6 +47,7 @@ BassInvaders::BassInvaders()
 	gameState = Initialising;
 	nextState = Loading;
 	running = true;
+	BassInvaders::theGame = this;
 }
 
 BassInvaders::~BassInvaders() {
@@ -194,7 +195,7 @@ void BassInvaders::doPlayingState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))
@@ -203,7 +204,7 @@ void BassInvaders::doPlayingState()
 			}
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_a) &&
 					(event.key.state == SDL_RELEASED))
@@ -235,15 +236,19 @@ void BassInvaders::doPlayingState()
 		enemies++;
 	}
 
-	std::list<Renderable*>::iterator i;
+	std::deque<Renderable*>::iterator i=theHorde.begin();
 
-	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
+	for(; i != theHorde.end(); ) {
 		Renderable *bees = *i;
 		if (bees->isOffScreen(wm.getWindowSurface()->w, wm.getWindowSurface()->h))
 		{
 			i = theHorde.erase(i);
 			delete bees;
 			enemies--;
+		}
+		else
+		{
+			i++;
 		}
 	}
 

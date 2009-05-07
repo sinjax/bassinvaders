@@ -15,42 +15,44 @@ map<string,void*> ResourceBundle::resourceRegister;
 ResourceBundle* ResourceBundle::getResource(char* file){
 	if(ResourceBundle::resourceRegister[file] == 0)
 	{
-		ResourceBundle::resourceRegister[file] = new ResourceBundle(file);
+		ResourceBundle ** r = new ResourceBundle*[1];
+		r[0] = new ResourceBundle(file);
+		ResourceBundle::resourceRegister[file] = r;
 	}
 
-	return (ResourceBundle*)ResourceBundle::resourceRegister[file];
+	return ((ResourceBundle**)ResourceBundle::resourceRegister[file])[0];
 }
 
 
 void * ResourceBundle::operator[](const char * s)
 {
-	cout << "Accessing: " << s  << " - " << this->data[s] << endl;
 	return this->data[s];
 }
-/*
-ResourceBundle ** ResourceBundle::readBundleArray(string cstr)
+
+ResourceBundle ** ResourceBundle::readResourceArray(string cstr)
 {
 	tokenizer< escaped_list_separator<char> > tok(cstr);
-	vector <ResourceBundle *> holder;
+	vector <char*> holder;
 	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
 	{
-		if(ResourceBundle::resourceRegister[*beg] == 0)
-		{
-			ResourceBundle::resourceRegister[*beg] = (void*)(new ResourceBundle(*beg))
-		}
-		holder.push_back(ResourceBundle::resourceRegister[*beg]);
-
+		string resource = lexical_cast<string>(*beg);
+		char * cstr = new char[resource.size()+1];
+		strcpy (cstr, resource.c_str());
+		holder.push_back(cstr);
 	}
+	
 	ResourceBundle ** ret = new ResourceBundle*[holder.size()];
-	vector<ResourceBundle*>::iterator itVectorData;
+	vector<char*>::iterator itVectorData;
 	int index = 0;
 	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
 	{
-		ret[index++] = *(itVectorData);
+		ResourceBundle * a = ResourceBundle::getResource(*(itVectorData));
+		ret[index++] = a;
 	}
 	return ret;
 }
-*/
+
+
 float * ResourceBundle::readFloatArray(string cstr)
 {
 	tokenizer< escaped_list_separator<char> > tok(cstr);
@@ -95,7 +97,7 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["music"] = SOUND;
 	
 	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
-	ResourceBundle::supportedTypes["statefile"] = RESOURCE;
+	ResourceBundle::supportedTypes["statefiles"] = RESOURCE;
 
 	ResourceBundle::supportedTypes["colorkey"] = INT;
 	ResourceBundle::supportedTypes["sheetstartsat"] = INT;
@@ -141,7 +143,6 @@ ResourceBundle::ResourceBundle(char * infoFile)
 	if(!ResourceBundle::isInit)
 		ResourceBundle::initSupportedTypes();
 	cout << "Loading Resource" << infoFile << endl;
-	ResourceBundle::resourceRegister[infoFile] = this;
 
 	ifstream inFile;
 	inFile.open(infoFile);
@@ -183,11 +184,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 				toAdd = (void*)(ResourceBundle::loadImage(cstr));
 			break;
 			case RESOURCE:
-				if(ResourceBundle::resourceRegister[key] == 0)
-				{
-					ResourceBundle::resourceRegister[key] = (void*)(new ResourceBundle(cstr));
-				}
-				toAdd = ResourceBundle::resourceRegister[key];
+					toAdd = (void*)(ResourceBundle::readResourceArray(cstr));
 			break;
 			case INT:
 				toAdd = (void*)this->readIntArray(value);
@@ -203,7 +200,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			break;
 		}
 		
-		this->data[key] = (void*)toAdd;
+		this->data[key] = toAdd;
 		sbuffer.clear();
 	}
 }

@@ -18,6 +18,8 @@ InputManager::InputManager()
 	keyMap[SDLK_RIGHT] = ACTION_MOVE_RIGHT;
 	keyMap[SDLK_SPACE] = ACTION_SHOOT;
 	keyMap[SDLK_ESCAPE] = ACTION_QUIT;
+	keyMap[SDLK_v] = ACTION_DIE;
+	keyMap[SDLK_b] = ACTION_LIVE;
 
 }
 

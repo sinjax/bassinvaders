@@ -8,7 +8,7 @@
 #ifndef BASSINVADERS_H_
 #define BASSINVADERS_H_
 
-#include <list>
+#include <deque>
 #include "Renderable.h"
 #include "Hero.h"
 #include "background.h"
@@ -55,6 +55,8 @@ public:
 	BandPassFilterFFT *fft;
 	BandPassFilterDT *dt;
 	BeatDetector *beat;
+	
+	static BassInvaders * theGame;
 	// End level class
 
 private:
@@ -78,7 +80,7 @@ private:
 private:
 	bool running;// is the main game loop still running?
 
-	std::list <Renderable*> theHorde; // should just be queue of pointers to renderables?
+	std::deque <Renderable*> theHorde; // should just be queue of pointers to renderables?
 									// also didnt know how to erase from a deque without a seg fault,
 									// so it's temporarily a list :) Darren.
 	/* Baddies contains all the bad-guy renderables

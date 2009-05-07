@@ -33,8 +33,9 @@ monster::~monster() {
 
 void monster::loadMonsterData()
 {
-	ResourceBundle* resource = ResourceBundle::getResource("resources/hero/heroclass.info");
-	Sprite monsterBody((ResourceBundle*)(*resource)["bodysprite"]);
+	ResourceBundle* resource = &(*(ResourceBundle::getResource("resources/hero/heroclass.info")));
+	ResourceBundle ** setOfBalls = (ResourceBundle**)((*resource)["bodysprite"]);
+	Sprite monsterBody(setOfBalls[0]);
 
 	sprites.push_back(monsterBody);
 
