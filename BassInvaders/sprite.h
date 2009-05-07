@@ -15,13 +15,7 @@
 #include "ResourceBundle.h"
 
 using namespace std;
-typedef struct
-{
-	uint32_t top;
-	uint32_t bottom;
-	uint32_t left;
-	uint32_t right;
-} CollisionRect_t;
+typedef SDL_Rect CollisionRect_t;
 
 typedef enum
 {
@@ -58,12 +52,13 @@ public:
 	void changeState(AnimationState_t state);
 	void renderSprite(SDL_Surface* pScreen);
 	void setLocation(uint32_t xpos, uint32_t ypos);
-	bool isCollidingWith(std::vector<CollisionRect_t> other);
+	//bool isCollidingWith(std::vector<CollisionRect_t> other);
 	std::vector<CollisionRect_t> getCollisionRects();
 	AnimationState_t getPendingAnimationState();
 	AnimationState_t getAnimationState();
 	void destroy(); //manually clean up sprite memory
-
+	uint32_t xpos;
+	uint32_t ypos;
 private:
 	void loadSpriteData(ResourceBundle * fp);
 	void updateStates();
@@ -74,8 +69,6 @@ private:
 	AnimationState_t pendingState;
 	uint32_t statesSupported; // bitmask of which AnimationStates are implemented by this sprite
 	AnimationStateData_t animationStateData[AS_STATES_SIZE]; // space-ineffecient but fast-indexed array of animation states
-	uint32_t xpos;
-	uint32_t ypos;
 };
 
 #endif /* SPRITE_H_ */

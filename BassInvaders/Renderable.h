@@ -40,14 +40,17 @@ public:
 	Renderable();
 	virtual ~Renderable();
 
-	virtual bool isCollidingWith(Renderable* pRenderable) = 0;
+	//bool isCollidingWith(Renderable* pRenderable) = 0;
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
 	virtual void changeState(RenderableState_t newState);
 	virtual RenderableState_t getState();
+	virtual RenderableType_t getType();
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
 	uint32_t getHealth();
+	virtual void collide(Renderable*);
+	vector<Sprite>* getSprites();
 
 protected:
 	std::vector<Sprite> sprites;

@@ -36,7 +36,7 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	g->fft->ingest(stream);
 	g->fft->band_pass(bandstream, 0, 4000);
 	g->beat->detect(bandstream);
-	g->fft->band_pass(stream, 300, 4000);
+	//g->fft->band_pass(stream, 300, 4000);
 	//g->dt->low_pass(stream, 0.01);
 }
 
@@ -199,7 +199,7 @@ void BassInvaders::doPlayingState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))
@@ -208,7 +208,7 @@ void BassInvaders::doPlayingState()
 			}
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_a) &&
 					(event.key.state == SDL_RELEASED))
@@ -232,13 +232,13 @@ void BassInvaders::doPlayingState()
 
 	/* ... then the hordes of enemies */
 	static int enemies = 0;
-	if (enemies == 0) // make one new monster
+	if (enemies%100 == 0) // make one new monster
 	{
 		rm->theHorde.push_back(new monster());
-		enemies++;
-	}
+	}enemies++;
 
 	rm->clean_up();
+	rm->check_collision();
 	rm->render();
 
 	/* ... then the hud/overlay */

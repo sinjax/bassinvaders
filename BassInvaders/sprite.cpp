@@ -229,10 +229,10 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.top = ((int*)((*currentState)["rect"]))[0];
-			rect.left = ((int*)((*currentState)["rect"]))[1];
-			rect.bottom = ((int*)((*currentState)["rect"]))[2];
-			rect.right = ((int*)((*currentState)["rect"]))[3];
+			rect.x = ((int*)((*currentState)["rect"]))[0];
+			rect.y = ((int*)((*currentState)["rect"]))[1];
+			rect.w = ((int*)((*currentState)["rect"]))[2];
+			rect.h = ((int*)((*currentState)["rect"]))[3];
 			pData->collisionRects.push_back(rect);
 		}
 
@@ -246,4 +246,9 @@ void Sprite::setLocation(uint32_t xpos, uint32_t ypos)
 {
 	this->xpos = xpos;
 	this->ypos = ypos;
+}
+
+std::vector<CollisionRect_t> Sprite::getCollisionRects()
+{
+	return animationStateData[currentState].collisionRects;
 }
