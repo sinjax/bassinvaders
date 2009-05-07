@@ -31,6 +31,7 @@ typedef enum
 	NSECTION,
 	SECTION
 }  DataType;
+
 class ResourceBundle
 {
 
@@ -41,10 +42,10 @@ private:
 	static void registerResource(string, void *);
 
 	static std::map<string,void*> resourceRegister;
-public:
-	ResourceBundle(char *);
-	virtual ~ResourceBundle ();
 	std::map<std::string,void*> data;
+	ResourceBundle(char *);
+public:
+	virtual ~ResourceBundle ();
 	void * operator[](const char*);
 	void print();
 public:	 //The static things
@@ -52,6 +53,7 @@ public:	 //The static things
 	static std::map<std::string,DataType> supportedTypes;
 	static void initSupportedTypes();
 	static SDL_Surface* loadImage(char *);
+	static ResourceBundle* getResource(char*);
 };
 
 

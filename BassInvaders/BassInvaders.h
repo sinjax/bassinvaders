@@ -21,6 +21,7 @@
 #include "ResourceBundle.h"
 #include "BandPassFilterDT.h"
 #include "monster.h"
+#include "hud.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -77,7 +78,7 @@ private:
 private:
 	bool running;// is the main game loop still running?
 
-	std::list <Renderable*> baddies; // should just be queue of pointers to renderables?
+	std::list <Renderable*> theHorde; // should just be queue of pointers to renderables?
 									// also didnt know how to erase from a deque without a seg fault,
 									// so it's temporarily a list :) Darren.
 	/* Baddies contains all the bad-guy renderables
@@ -95,7 +96,7 @@ private:
 	GameStates_t nextState;
 	WindowManager wm;
 	InputManager im;
-
+	hud *h;
 
 	SDL_Surface* pPauseGameScreen; /* when the pause state is invoked,
 									* the current playing screen is grabbed

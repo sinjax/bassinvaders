@@ -147,7 +147,7 @@ void BassInvaders::loadLevel()
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b1.info");
 	pBG->addLayer(&bgLayer);
-	pHero = new Hero(new ResourceBundle("resources/hero/heroclass.info"));
+	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
 
 	/*
 	 * Set up the music playback, filters and beat detection environment
@@ -175,7 +175,12 @@ void BassInvaders::loadLevel()
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
+
+	/* set up the HUD */
+	SDL_Color c = {55, 255, 25};
+	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
 }
+
 /**************************
  * Playing logic of game loop
  *************************/
@@ -226,27 +231,29 @@ void BassInvaders::doPlayingState()
 	static int enemies = 0;
 	if (enemies == 0) // make one new monster
 	{
-		baddies.push_back(new monster());
+		theHorde.push_back(new monster());
 		enemies++;
 	}
 
 	std::list<Renderable*>::iterator i;
 
-	for(i=baddies.begin(); i != baddies.end(); ++i) {
+	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
 		Renderable *bees = *i;
 		if (bees->isOffScreen(wm.getWindowSurface()->w, wm.getWindowSurface()->h))
 		{
-			i = baddies.erase(i);
+			i = theHorde.erase(i);
 			delete bees;
 			enemies--;
 		}
 	}
 
-	for(i=baddies.begin(); i != baddies.end(); ++i) {
+	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
 		(*i)->render(wm.getWindowSurface());
 	}
 
 	/* ... then the hud/overlay */
+	h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->draw();
 
 }
 

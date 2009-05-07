@@ -38,3 +38,8 @@ RenderableState_t Renderable::getState()
 {
 	return currentState;
 }
+
+uint32_t Renderable::getHealth()
+{
+	return health;
+}
