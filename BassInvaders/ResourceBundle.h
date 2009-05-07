@@ -14,7 +14,7 @@
 #include <string>
 #include <fstream>
 #include "SDL.h"
-#include "SoundSource.h"
+#include "soundSource.h"
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
@@ -33,13 +33,13 @@ typedef enum
 }  DataType;
 class ResourceBundle
 {
-	
+
 private:
 	static uint32_t * readIntArray(string cstr);
 	static float * readFloatArray(string cstr);
 	ResourceBundle ** ResourceBundle::readBundleArray(string cstr);
 	static void registerResource(string, void *);
-	
+
 	static std::map<string,void*> resourceRegister;
 public:
 	ResourceBundle(char *);
