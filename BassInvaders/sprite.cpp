@@ -30,13 +30,13 @@ Sprite::~Sprite() {
 
 void Sprite::destroy()
 {
-	for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
+	/*for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
 	{
 		if (animationStateData[i].state != 0)
 		{
 			//SDL_FreeSurface(animationStateData[i].spriteSheet);
 		}
-	}
+	}*/
 }
 
 void Sprite::changeState(AnimationState_t newState)
@@ -194,7 +194,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 	AnimationState_t state;
 
 
-	
+
 	numberOfStates = *(int*)((*resource)["numberofstates"]);
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
@@ -209,7 +209,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 
 			DebugPrint((" loading state 0x%x\n", state));
 
-		
+
 		R = ((int*)((*currentState)["colorkey"]))[0];
 		G = ((int*)((*currentState)["colorkey"]))[1];
 		B = ((int*)((*currentState)["colorkey"]))[2];
@@ -220,15 +220,15 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 
 		pData->sheetStartsAt.x = ((int*)((*currentState)["sheetstartsat"]))[0];
 		pData->sheetStartsAt.y = ((int*)((*currentState)["sheetstartsat"]))[1];
-		
+
 		pData->spriteWidth = ((int*)((*currentState)["spritesize"]))[0];
 		pData->spriteHeight = ((int*)((*currentState)["spritesize"]))[1];
-		
+
 		numberOfCollisionRects = *((int*)((*currentState)["numberofrects"]));
 		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
 		{
 			CollisionRect_t rect = {0,0,0,0};
-			
+
 			rect.top = ((int*)((*currentState)["rect"]))[0];
 			rect.left = ((int*)((*currentState)["rect"]))[1];
 			rect.bottom = ((int*)((*currentState)["rect"]))[2];

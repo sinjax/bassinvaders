@@ -305,4 +305,7 @@ SoundSample * SoundSourceIterator::next()
 	return this->soundSample;
 }
 
+SoundSource::~SoundSource()
+{
 
+}

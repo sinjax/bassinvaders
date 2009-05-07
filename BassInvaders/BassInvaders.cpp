@@ -36,6 +36,7 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	g->fft->ingest(stream);
 	g->fft->band_pass(bandstream, 0, 4000);
 	g->beat->detect(bandstream);
+	g->fft->band_pass(stream, 300, 4000);
 	//g->dt->low_pass(stream, 0.01);
 }
 
@@ -49,15 +50,12 @@ BassInvaders::BassInvaders()
 }
 
 BassInvaders::~BassInvaders() {
-	if (pHero)
-	{
-		delete(pHero);
-	}
-
-	if (pBG)
-	{
-		delete(pBG);
-	}
+	delete pHero;
+	delete pBG;
+	delete dt;
+	delete fft;
+	delete soundSource;
+	delete beat;
 }
 
 void BassInvaders::goGameGo()
@@ -140,7 +138,7 @@ void BassInvaders::doLoadingState()
 }
 
 void BassInvaders::loadLevel()
-{	
+{
 	pBG = new Background(1, 10, SCREEN_HEIGHT, SCREEN_WIDTH);
 	LayerInfo_t bgLayer;
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
@@ -149,7 +147,7 @@ void BassInvaders::loadLevel()
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b1.info");
 	pBG->addLayer(&bgLayer);
-	pHero = new Hero(new ResourceBundle("resources/hero/heroclass.info"));
+	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
 
 	/*
 	 * Set up the music playback, filters and beat detection environment
@@ -159,7 +157,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 8;
+	int chunkSampleLength = soundSource->spec.samples * 16;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
@@ -177,7 +175,12 @@ void BassInvaders::loadLevel()
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
+
+	/* set up the HUD */
+	SDL_Color c = {55, 255, 25};
+	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
 }
+
 /**************************
  * Playing logic of game loop
  *************************/
@@ -225,8 +228,33 @@ void BassInvaders::doPlayingState()
 	pHero->render(wm.getWindowSurface());
 
 	/* ... then the hordes of enemies */
+	static int enemies = 0;
+	if (enemies == 0) // make one new monster
+	{
+		theHorde.push_back(new monster());
+		enemies++;
+	}
+
+	std::list<Renderable*>::iterator i;
+
+	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
+		Renderable *bees = *i;
+		if (bees->isOffScreen(wm.getWindowSurface()->w, wm.getWindowSurface()->h))
+		{
+			i = theHorde.erase(i);
+			delete bees;
+			enemies--;
+		}
+	}
+
+	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
+		(*i)->render(wm.getWindowSurface());
+	}
 
 	/* ... then the hud/overlay */
+	h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->draw();
+
 }
 
 /**************************

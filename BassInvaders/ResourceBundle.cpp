@@ -11,6 +11,17 @@
 int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
 map<string,void*> ResourceBundle::resourceRegister;
+
+ResourceBundle* ResourceBundle::getResource(char* file){
+	if(ResourceBundle::resourceRegister[file] == 0)
+	{
+		ResourceBundle::resourceRegister[file] = new ResourceBundle(file);
+	}
+
+	return (ResourceBundle*)ResourceBundle::resourceRegister[file];
+}
+
+
 void * ResourceBundle::operator[](const char * s)
 {
 	cout << "Accessing: " << s  << " - " << this->data[s] << endl;
@@ -26,9 +37,9 @@ ResourceBundle ** ResourceBundle::readBundleArray(string cstr)
 		if(ResourceBundle::resourceRegister[*beg] == 0)
 		{
 			ResourceBundle::resourceRegister[*beg] = (void*)(new ResourceBundle(*beg))
-		} 
+		}
 		holder.push_back(ResourceBundle::resourceRegister[*beg]);
-			
+
 	}
 	ResourceBundle ** ret = new ResourceBundle*[holder.size()];
 	vector<ResourceBundle*>::iterator itVectorData;
@@ -85,7 +96,7 @@ void ResourceBundle::initSupportedTypes()
 	
 	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
 	ResourceBundle::supportedTypes["statefile"] = RESOURCE;
-	
+
 	ResourceBundle::supportedTypes["colorkey"] = INT;
 	ResourceBundle::supportedTypes["sheetstartsat"] = INT;
 	ResourceBundle::supportedTypes["spritesize"] = INT;
@@ -117,21 +128,21 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 		}
 		return optimisedImage;
 	}
-	
+
 	return (SDL_Surface*)resource;
-	
+
 }
 
 
 
 ResourceBundle::ResourceBundle(char * infoFile)
 {
-	
+
 	if(!ResourceBundle::isInit)
 		ResourceBundle::initSupportedTypes();
 	cout << "Loading Resource" << infoFile << endl;
 	ResourceBundle::resourceRegister[infoFile] = this;
-	
+
 	ifstream inFile;
 	inFile.open(infoFile);
 	if(!inFile)
@@ -145,11 +156,11 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		string::size_type loc = sbuffer.find( ":", 0 );
 		string key = sbuffer.substr(0, loc);
 		string value = sbuffer.substr(loc+1,sbuffer.find( "\n", 0 ));
-		
-		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces  
+
+		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces
 		string::size_type endpos = value.find_last_not_of(" ");
-		value = value.substr( startpos, endpos-startpos+1 ); 
-		char*cstr = new char [value.size()+1];
+		value = value.substr( startpos, endpos-startpos+1 );
+		char cstr[value.size()+1];
 		strcpy (cstr, value.c_str());
 		DataType d = ResourceBundle::supportedTypes[key];
 		cout << "Loading Resource Variable " << key << ": " << cstr << endl;
@@ -177,7 +188,6 @@ ResourceBundle::ResourceBundle(char * infoFile)
 					ResourceBundle::resourceRegister[key] = (void*)(new ResourceBundle(cstr));
 				}
 				toAdd = ResourceBundle::resourceRegister[key];
-				((ResourceBundle*)this->data[key])->print();
 			break;
 			case INT:
 				toAdd = (void*)this->readIntArray(value);
@@ -189,8 +199,8 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			break;
 			default:
 				// Unhandled resource datatype, hold the line
-				toAdd = (void*)cstr;
-			break;				
+				this->data[key] = (void*)cstr;
+			break;
 		}
 		
 		this->data[key] = (void*)toAdd;
@@ -203,12 +213,12 @@ void ResourceBundle::print()
 	ResourceBundle * b = this;
 	for(std::map<std::string, void*>::const_iterator it = b->data.begin(); it != b->data.end(); ++it)
 	{
-		
+
 		if(b->supportedTypes[it->first] == STRING)
 		{
 			std::cout << it->first;
 			std::cout << " : " << (char*)(it->second) << std::endl;
-		} 
+		}
 		if(b->supportedTypes[it->first] == INT)
 		{
 			std::cout << it->first;
@@ -221,14 +231,10 @@ void ResourceBundle::print()
 		else{
 			std::cout << "OTHER!!" << std::endl;
 		}
-        
+
     }
 }
+
 ResourceBundle::~ResourceBundle()
 {
 }
-
-
-
-
-

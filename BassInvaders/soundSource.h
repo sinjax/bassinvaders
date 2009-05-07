@@ -70,7 +70,7 @@ private:
 class SoundSource  {
 	public:
 		SoundSource(char * filename);
-		~SoundSource();
+	    ~SoundSource();
 
 		SoundSourceIterator * iter(int);
 		/*

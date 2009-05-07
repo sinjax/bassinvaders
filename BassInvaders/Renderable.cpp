@@ -15,12 +15,12 @@ Renderable::Renderable() {
 
 Renderable::~Renderable() {
 	//tidy up all our sprites
-	std::vector<Sprite>::iterator pos;
+	/*std::vector<Sprite>::iterator pos;
 
 	for (pos = sprites.begin(); pos !=sprites.end(); ++pos)
 	{
 		pos->destroy();
-	}
+	}*/
 }
 
 void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
@@ -37,4 +37,9 @@ void Renderable::changeState(RenderableState_t newState)
 RenderableState_t Renderable::getState()
 {
 	return currentState;
+}
+
+uint32_t Renderable::getHealth()
+{
+	return health;
 }
