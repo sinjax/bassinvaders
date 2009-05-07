@@ -35,8 +35,9 @@ class ResourceBundle
 {
 	
 private:
-	static int * readIntArray(string cstr);
+	static uint32_t * readIntArray(string cstr);
 	static float * readFloatArray(string cstr);
+	ResourceBundle ** ResourceBundle::readBundleArray(string cstr);
 	static void registerResource(string, void *);
 	
 	static std::map<string,void*> resourceRegister;

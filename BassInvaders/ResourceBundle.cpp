@@ -16,6 +16,30 @@ void * ResourceBundle::operator[](const char * s)
 	cout << "Accessing: " << s  << " - " << this->data[s] << endl;
 	return this->data[s];
 }
+/*
+ResourceBundle ** ResourceBundle::readBundleArray(string cstr)
+{
+	tokenizer< escaped_list_separator<char> > tok(cstr);
+	vector <ResourceBundle *> holder;
+	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
+	{
+		if(ResourceBundle::resourceRegister[*beg] == 0)
+		{
+			ResourceBundle::resourceRegister[*beg] = (void*)(new ResourceBundle(*beg))
+		} 
+		holder.push_back(ResourceBundle::resourceRegister[*beg]);
+			
+	}
+	ResourceBundle ** ret = new ResourceBundle*[holder.size()];
+	vector<ResourceBundle*>::iterator itVectorData;
+	int index = 0;
+	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
+	{
+		ret[index++] = *(itVectorData);
+	}
+	return ret;
+}
+*/
 float * ResourceBundle::readFloatArray(string cstr)
 {
 	tokenizer< escaped_list_separator<char> > tok(cstr);
@@ -35,20 +59,20 @@ float * ResourceBundle::readFloatArray(string cstr)
 	return ret;
 }
 
-int * ResourceBundle::readIntArray(string cstr)
+uint32_t * ResourceBundle::readIntArray(string cstr)
 {
 	tokenizer< escaped_list_separator<char> > tok(cstr);
-	vector <int> holder;
+	vector <uint32_t> holder;
 	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
 	{
 		holder.push_back(lexical_cast<int>(*beg));
 	}
-	int * ret = new int[holder.size()];
-	vector<int>::iterator itVectorData;
+	uint32_t * ret = new uint32_t[holder.size()];
+	vector<uint32_t>::iterator itVectorData;
 	int index = 0;
 	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
 	{
-		int a = *(itVectorData);
+		uint32_t a = *(itVectorData);
 		ret[index++] = a;
 	}
 	return ret;
@@ -71,6 +95,7 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["numberofanimationsteps"] = INT;
 	ResourceBundle::supportedTypes["ticksperstep"] = INT;
 	ResourceBundle::supportedTypes["numberofrects"] = INT;
+	ResourceBundle::supportedTypes["state"] = INT;
 	
 	ResourceBundle::supportedTypes["numberofstates"] = INT;
 }

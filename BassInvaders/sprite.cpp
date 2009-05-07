@@ -89,15 +89,18 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 		} break;
 		case AS_DAMAGED:
 		{
+			cout << "rendering damaged!" << endl;
 			pTempState = &(animationStateData[AS_DAMAGED]);
 		} break;
 		case AS_DYING:
 		{
+			cout << "Rendering dying!" << endl;
 			pTempState = &(animationStateData[AS_DYING]);
 		} break;
 		case AS_DEAD:
 		default:
 		{
+			cout << "Not rendering sprit!" << endl;
 			/* dead sprites (or bad states) do not get rendered */
 			return;
 		}break;
@@ -211,7 +214,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		G = ((int*)((*currentState)["colorkey"]))[1];
 		B = ((int*)((*currentState)["colorkey"]))[2];
 
-		pData->nextState = *((AnimationState_t*)((*currentState)["colorkey"]));
+		pData->nextState = *((AnimationState_t*)((*currentState)["nextstate"]));
 		pData->numberOfAnimationSteps = *((int*)((*currentState)["numberofanimationsteps"]));
 		pData->ticksPerStep = *((int*)((*currentState)["ticksperstep"]));
 
