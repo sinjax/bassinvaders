@@ -49,9 +49,11 @@ uint32_t Renderable::getHealth()
 	return health;
 }
 
+/*
 void Renderable::collide(Renderable*)
 {
 }
+*/
 
 vector<Sprite>* Renderable::getSprites()
 {

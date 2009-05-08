@@ -71,3 +71,5 @@ void monster::render(SDL_Surface* pScreen)
 	sprites[0].renderSprite(pScreen);
 }
 
+void monster::collide(Renderable* b){
+}

@@ -24,7 +24,7 @@ public:
 	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
-
+	void collide(Renderable*);
 private:
 	void loadMonsterData();
 	uint32_t velocityTicks;

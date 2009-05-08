@@ -140,6 +140,13 @@ void Hero::doActions()
 		ypos += yvelocity;
 		lastTickCount = now;
 	}
-	
-	
+}
+
+void Hero::collide(Renderable *)
+{
+	std::vector<Sprite>::iterator pos;
+	for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+	{
+		(*pos).changeState(AS_DAMAGED);
+	}
 }

@@ -32,6 +32,7 @@ public:
 	virtual void render(SDL_Surface *pScreen);
 
 	void setActions(ACTIONMASK actions);
+	void collide(Renderable*);
 
 private:
 	void loadHeroData(ResourceBundle *fp);

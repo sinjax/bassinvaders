@@ -49,7 +49,7 @@ public:
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
 	uint32_t getHealth();
-	virtual void collide(Renderable*);
+	virtual void collide(Renderable*) = 0;
 	vector<Sprite>* getSprites();
 
 protected:
