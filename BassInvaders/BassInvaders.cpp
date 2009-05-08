@@ -247,7 +247,7 @@ void BassInvaders::doPlayingState()
 	rm->render();
 
 	/* ... then the hud/overlay */
-	h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->displayText(10,10,"Health: %i",pHero->getHealth());
 	h->draw();
 }
 

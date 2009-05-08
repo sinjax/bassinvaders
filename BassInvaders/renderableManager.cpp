@@ -31,8 +31,8 @@ void renderableManager::check_collision(){
 
 			if (renderableIntersect(*i, *j))
 			{
-				(*i)->collide((*j));
 				(*j)->collide((*i));
+				(*i)->collide((*j));
 			}
 		}
 	}

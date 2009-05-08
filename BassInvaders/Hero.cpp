@@ -144,9 +144,11 @@ void Hero::doActions()
 
 void Hero::collide(Renderable * b)
 {
-	if ((b->getType() == ENEMY)&&(b->getState() == RS_DEAD)) health -=100;
+	if ((b->getType() == ENEMY)/*&&(b->getState() == RS_DEAD)*/) health -=1;
 
-	if (health < 300)
+	if (health < 0) health = 0;
+
+	if (health < 40)
 	{
 		std::vector<Sprite>::iterator pos;
 		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
@@ -154,6 +156,4 @@ void Hero::collide(Renderable * b)
 			(*pos).changeState(AS_DAMAGED);
 		}
 	}
-
-	if (health < 0) health = 0;
 }
