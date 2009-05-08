@@ -109,7 +109,7 @@ void Hero::setActions(ACTIONMASK actions)
 	if (actions & ACTION_SHOOT)
 	{
 	}
-	
+
 	if (actions & ACTION_DIE)
 	{
 		std::vector<Sprite>::iterator pos;
@@ -118,7 +118,7 @@ void Hero::setActions(ACTIONMASK actions)
 			(*pos).changeState(AS_DAMAGED);
 		}
 	}
-	
+
 	if (actions & ACTION_LIVE)
 	{
 		std::vector<Sprite>::iterator pos;
@@ -142,11 +142,18 @@ void Hero::doActions()
 	}
 }
 
-void Hero::collide(Renderable *)
+void Hero::collide(Renderable * b)
 {
-	std::vector<Sprite>::iterator pos;
-	for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+	if ((b->getType() == ENEMY)&&(b->getState() == RS_DEAD)) health -=100;
+
+	if (health < 300)
 	{
-		(*pos).changeState(AS_DAMAGED);
+		std::vector<Sprite>::iterator pos;
+		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+		{
+			(*pos).changeState(AS_DAMAGED);
+		}
 	}
+
+	if (health < 0) health = 0;
 }

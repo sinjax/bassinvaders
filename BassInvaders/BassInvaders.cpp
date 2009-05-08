@@ -34,12 +34,12 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	uint8_t bandstream[len];
 	BassInvaders* g = (BassInvaders*)udata;
 	g->fft->ingest(stream);
-	g->fft->band_pass(bandstream, 0, 4000);
+	g->fft->band_pass(bandstream, 0, 400);
 	g->beat->detect(bandstream);
-	//g->fft->band_pass(stream, 300, 4000);
-	//g->dt->low_pass(stream, 0.01);
 }
+
 BassInvaders * BassInvaders::theGame = 0;
+
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -232,11 +232,15 @@ void BassInvaders::doPlayingState()
 	pHero->setActions(im.getCurrentActions());
 
 	/* ... then the hordes of enemies */
-	static int enemies = 0;
-	if (enemies%100 == 0) // make one new monster
+	static uint32_t now, delta, lastTickCount, velocityTicks = 200;
+	now = SDL_GetTicks();
+	delta = now - lastTickCount;
+
+	if ((delta > velocityTicks) && (beat->isBeat()))
 	{
-		rm->theHorde.push_back(new monster());
-	}enemies++;
+		rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
+		lastTickCount = now;
+	}
 
 	rm->clean_up();
 	rm->check_collision();

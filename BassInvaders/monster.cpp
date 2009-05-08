@@ -10,14 +10,15 @@
 #include <fstream>
 #include "WindowManager.h"
 #include <iostream>
-monster::monster()
+
+monster::monster(uint32_t height)
 {
 	loadMonsterData();
 
 	xvelocity = MONSTER_X_SPEED;
 	yvelocity = MONSTER_Y_SPEED;
 	xpos = SCREEN_WIDTH;
-	ypos = 100;
+	ypos = height;
 	type = ENEMY;
 	currentState = RS_ACTIVE;
 	pendingState = RS_ACTIVE;
@@ -29,7 +30,6 @@ monster::monster()
 }
 
 monster::~monster() {
-
 }
 
 void monster::loadMonsterData()
@@ -48,7 +48,7 @@ bool monster::isCollidingWith(Renderable* pRenderable)
 
 bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 {
-	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) || (ypos < 0) || (ypos > (int32_t)screenHeight) )
+	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) )
 		return true;
 
 	return false;
@@ -72,9 +72,14 @@ void monster::render(SDL_Surface* pScreen)
 }
 
 void monster::collide(Renderable* b){
-	std::vector<Sprite>::iterator pos;
-	for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+	if (b->getType() == FRIENDLY)
 	{
-		(*pos).changeState(AS_DAMAGED);
+		changeState(RS_DEAD);
+
+		std::vector<Sprite>::iterator pos;
+		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+		{
+			(*pos).changeState(AS_DAMAGED);
+		}
 	}
 }

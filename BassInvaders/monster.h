@@ -18,7 +18,7 @@
 
 class monster: public Renderable {
 public:
-	monster();
+	monster(uint32_t);
 	virtual ~monster();
 
 	virtual bool isCollidingWith(Renderable *pRenderable);
