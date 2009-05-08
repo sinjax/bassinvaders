@@ -16,7 +16,7 @@ typedef Uint32* coords; // x1, y1, x2, y2
 
 class renderableManager {
 	SDL_Surface* pScreen;
-	bool rendrableIntersect(Renderable*, Renderable*);
+	bool renderableIntersect(Renderable*, Renderable*);
 	bool spriteIntersect(Sprite*, Sprite*);
 	bool rectIntersect(CollisionRect_t* A, CollisionRect_t* B, coords);
 public:

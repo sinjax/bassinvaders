@@ -29,7 +29,7 @@ void renderableManager::check_collision(){
 	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
 		for(j=i+1; j != theHorde.end(); ++j) {
 
-			if (spriteCollide(*i, *j))
+			if (renderableIntersect(*i, *j))
 			{
 				(*i)->collide((*j));
 				(*j)->collide((*i));
