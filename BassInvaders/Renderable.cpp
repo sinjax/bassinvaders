@@ -39,7 +39,21 @@ RenderableState_t Renderable::getState()
 	return currentState;
 }
 
+RenderableType_t Renderable::getType()
+{
+	return type;
+}
+
 uint32_t Renderable::getHealth()
 {
 	return health;
+}
+
+void Renderable::collide(Renderable*)
+{
+}
+
+vector<Sprite>* Renderable::getSprites()
+{
+	return &sprites;
 }
