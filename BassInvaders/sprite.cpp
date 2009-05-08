@@ -59,7 +59,7 @@ void Sprite::changeState(AnimationState_t newState)
 		case AS_IDLE:
 		{
 			pendingState = newState;
-			
+
 		}break;
 
 		case AS_DAMAGED:

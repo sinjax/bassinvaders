@@ -61,8 +61,8 @@ protected:
 	RenderableState_t pendingState;
 	uint32_t attackDamage;
 	uint32_t health;
-	uint32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
-	uint32_t ypos;
+	int32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
+	int32_t ypos;
 };
 
 #endif /* RENDERABLE_H_ */

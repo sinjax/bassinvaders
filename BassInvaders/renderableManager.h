@@ -16,8 +16,8 @@ typedef Uint32* coords; // x1, y1, x2, y2
 
 class renderableManager {
 	SDL_Surface* pScreen;
-	bool spriteCollide(Renderable*, Renderable*);
-	bool isCollidingWith(Sprite*, Sprite*);
+	bool rendrableIntersect(Renderable*, Renderable*);
+	bool spriteIntersect(Sprite*, Sprite*);
 	bool rectIntersect(CollisionRect_t* A, CollisionRect_t* B, coords);
 public:
 	std::deque <Renderable*> theHorde;

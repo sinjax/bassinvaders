@@ -13,7 +13,7 @@
 #include "InputManager.h"
 #include "ResourceBundle.h"
 
-#define MONSTER_X_SPEED 5
+#define MONSTER_X_SPEED -2
 #define MONSTER_Y_SPEED 0
 
 class monster: public Renderable {

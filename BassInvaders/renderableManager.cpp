@@ -52,7 +52,7 @@ void renderableManager::clean_up(){
 	}
 }
 
-bool renderableManager::spriteCollide(Renderable* i, Renderable* j)
+bool renderableManager::renderableIntersect(Renderable* i, Renderable* j)
 {
 	vector<Sprite>* I = i->getSprites();
 	vector<Sprite>* J = j->getSprites();
@@ -61,7 +61,7 @@ bool renderableManager::spriteCollide(Renderable* i, Renderable* j)
 
 	for(m=I->begin(); m != I->end(); ++m) {
 		for(n=J->begin(); n != J->end(); ++n) {
-			if (isCollidingWith(&(*n), &(*m)))
+			if (spriteIntersect(&(*n), &(*m)))
 			{
 				return true;
 			}
@@ -71,7 +71,7 @@ bool renderableManager::spriteCollide(Renderable* i, Renderable* j)
 	return false;
 }
 
-bool renderableManager::isCollidingWith(Sprite* A, Sprite* B){
+bool renderableManager::spriteIntersect(Sprite* A, Sprite* B){
 	vector<CollisionRect_t> X = A->getCollisionRects();
 	vector<CollisionRect_t> Y = B->getCollisionRects();
 	vector<CollisionRect_t>::iterator i;
