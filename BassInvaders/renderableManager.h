@@ -12,7 +12,7 @@
 #include "sprite.h"
 #include "SDL.h"
 
-typedef Uint32* coords; // x1, y1, x2, y2
+typedef Uint32* coords; // x2, y2, x1, y1
 
 class renderableManager {
 	SDL_Surface* pScreen;
