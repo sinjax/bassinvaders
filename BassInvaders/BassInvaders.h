@@ -24,8 +24,10 @@
 #include "hud.h"
 #include "renderableManager.h"
 
-#define SENSITIVITY 1.1
+#define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
+#define COOLDOWN 200
+
 /*JG TODO:
  * - game state machine
  * - game loop

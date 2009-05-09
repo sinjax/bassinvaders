@@ -176,7 +176,7 @@ void BassInvaders::loadLevel()
 
 	// set up the beat detector.
 	int historyBuffer = 1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq));
-	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
+	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength, COOLDOWN );
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
@@ -236,11 +236,7 @@ void BassInvaders::doPlayingState()
 	now = SDL_GetTicks();
 	delta = now - lastTickCount;
 
-	if ((delta > velocityTicks) && (beat->isBeat()))
-	{
-		rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
-		lastTickCount = now;
-	}
+	if (beat->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 
 	rm->clean_up();
 	rm->check_collision();
