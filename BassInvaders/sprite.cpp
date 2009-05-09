@@ -192,49 +192,49 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 	uint32_t numberOfCollisionRects;
 	AnimationState_t state;
 
-
-
-	numberOfStates = *(int*)((*resource)["numberofstates"]);
+	/* comments are left in currently in case we decide we don't like the GET_RESOURCE preprocessor macro */
+	numberOfStates = GET_RESOURCE(int32_t, *resource, "numberofstates", 0);//*(int*)((*resource)["numberofstates"]);
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
 	ResourceBundle * currentState;
 	for (uint32_t i = 0; i<numberOfStates; i++)
 	{
-		currentState = ((ResourceBundle **)(( *((ResourceBundle*)resource) )["statefiles"]))[i];
-		state = *((AnimationState_t*)((*currentState)["state"]));
+		currentState = GET_RESOURCE(ResourceBundle*, *resource, "statefiles", i);
+		state = GET_RESOURCE(AnimationState_t, *currentState, "state", 0);//*((AnimationState_t*)((*currentState)["state"]));
 
 		pData = &(animationStateData[state]);
 		pData->state = state;
 
-			DebugPrint((" loading state 0x%x\n", state));
+		DebugPrint((" loading state 0x%x\n", state));
 
+		R = GET_RESOURCE(int32_t, *currentState, "colorkey", 0); //((int*)((*currentState)["colorkey"]))[0];
+		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1); //((int*)((*currentState)["colorkey"]))[1];
+		B = GET_RESOURCE(int32_t, *currentState, "colorkey", 2); //((int*)((*currentState)["colorkey"]))[2];
 
-		R = ((int*)((*currentState)["colorkey"]))[0];
-		G = ((int*)((*currentState)["colorkey"]))[1];
-		B = ((int*)((*currentState)["colorkey"]))[2];
+		pData->nextState = GET_RESOURCE(AnimationState_t, *currentState, "nextstate", 0); //*((AnimationState_t*)((*currentState)["nextstate"]));
+		pData->numberOfAnimationSteps = GET_RESOURCE(int32_t, *currentState, "numberofanimationsteps", 0); //*((int*)((*currentState)["numberofanimationsteps"]));
+		pData->ticksPerStep = GET_RESOURCE(int32_t, *currentState, "ticksperstep", 0);//*((int*)((*currentState)["ticksperstep"]));
 
-		pData->nextState = *((AnimationState_t*)((*currentState)["nextstate"]));
-		pData->numberOfAnimationSteps = *((int*)((*currentState)["numberofanimationsteps"]));
-		pData->ticksPerStep = *((int*)((*currentState)["ticksperstep"]));
+		pData->sheetStartsAt.x = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 0);//((int*)((*currentState)["sheetstartsat"]))[0];
+		pData->sheetStartsAt.y = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 1);//((int*)((*currentState)["sheetstartsat"]))[1];
 
-		pData->sheetStartsAt.x = ((int*)((*currentState)["sheetstartsat"]))[0];
-		pData->sheetStartsAt.y = ((int*)((*currentState)["sheetstartsat"]))[1];
+		pData->spriteWidth = GET_RESOURCE(int32_t, *currentState, "spritesize", 0);//((int*)((*currentState)["spritesize"]))[0];
+		pData->spriteHeight = GET_RESOURCE(int32_t, *currentState, "spritesize", 1);//((int*)((*currentState)["spritesize"]))[1];
 
-		pData->spriteWidth = ((int*)((*currentState)["spritesize"]))[0];
-		pData->spriteHeight = ((int*)((*currentState)["spritesize"]))[1];
+		numberOfCollisionRects = GET_RESOURCE(int32_t, *currentState, "numberofrects", 0);//*((int*)((*currentState)["numberofrects"]));
 
-		numberOfCollisionRects = *((int*)((*currentState)["numberofrects"]));
 		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.x = ((int*)((*currentState)["rect"]))[0];
-			rect.y = ((int*)((*currentState)["rect"]))[1];
-			rect.w = ((int*)((*currentState)["rect"]))[2];
-			rect.h = ((int*)((*currentState)["rect"]))[3];
+			rect.x = GET_RESOURCE(int32_t, *currentState, "rect", 0);
+			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
+			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
+			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
 			pData->collisionRects.push_back(rect);
 		}
 
+		// this doesn't work with GET_RESOURCE, I guess because filename doesn't return an array maybe?
 		pData->spriteSheet = (SDL_Surface*)((*currentState)["filename"]);
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
