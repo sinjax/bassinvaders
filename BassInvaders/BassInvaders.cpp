@@ -232,10 +232,6 @@ void BassInvaders::doPlayingState()
 	pHero->setActions(im.getCurrentActions());
 
 	/* ... then the hordes of enemies */
-	static uint32_t now, delta, lastTickCount, velocityTicks = 200;
-	now = SDL_GetTicks();
-	delta = now - lastTickCount;
-
 	if (beat->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 
 	rm->clean_up();
