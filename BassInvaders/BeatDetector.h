@@ -51,6 +51,14 @@ public:
 	virtual ~BeatDetector();
 	void detect(uint8_t* stream);
 	bool isBeat();
-};
+};/*
+class BeatIterator{
+	BeatIterator(uint32_t coolDown, BeatDetector*);
+	virtual ~BeatDetector();
+	uint32_t coolDown; // minimum number of milliseconds to wait between reporting a positive beat
+	BeatDetector* b;
+	uint32_t lastTickCount;
+	bool isBeat();
+};*/
 
 #endif /* BEATDETECTOR_H_ */

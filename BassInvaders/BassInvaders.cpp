@@ -34,7 +34,7 @@ void band_separate( void *udata, uint8_t *stream, int len){
 	//uint8_t bandstream[len];
 	BassInvaders* g = (BassInvaders*)udata;
 	//g->fft->ingest(stream);
-	//g->fft->band_pass(bandstream, 300, 600);
+	//g->fft->hann_pass(stream, 2000, 0.25);
 	g->beat->detect(stream);
 }
 
