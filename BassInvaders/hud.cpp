@@ -6,7 +6,7 @@
  */
 
 #include "hud.h"
-/* for now, when initializing the HUD, choose a single point and colour of font */
+/* for now, when initializing the HUD, choose a single point size and colour of font */
 hud::hud(const char* fnt, int sz, SDL_Color c, SDL_Surface* dest) {
 	TTF_Init();
 	font = TTF_OpenFont( fnt, sz );

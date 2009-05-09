@@ -8,6 +8,7 @@
  */
 
 #include "ResourceBundle.h"
+
 int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
 map<string,void*> ResourceBundle::resourceRegister;
@@ -22,7 +23,6 @@ ResourceBundle* ResourceBundle::getResource(char* file){
 
 	return ((ResourceBundle**)ResourceBundle::resourceRegister[file])[0];
 }
-
 
 void * ResourceBundle::operator[](const char * s)
 {

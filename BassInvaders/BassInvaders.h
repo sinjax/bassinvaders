@@ -24,7 +24,7 @@
 #include "hud.h"
 #include "renderableManager.h"
 
-#define SENSITIVITY 1.3
+#define SENSITIVITY 1.1
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
 /*JG TODO:
  * - game state machine
@@ -56,7 +56,7 @@ public:
 	BandPassFilterFFT *fft;
 	BandPassFilterDT *dt;
 	BeatDetector *beat;
-	
+
 	static BassInvaders * theGame;
 	// End level class
 

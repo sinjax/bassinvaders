@@ -31,11 +31,11 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
  * data is analysed and beats are detected.
  */
 void band_separate( void *udata, uint8_t *stream, int len){
-	uint8_t bandstream[len];
+	//uint8_t bandstream[len];
 	BassInvaders* g = (BassInvaders*)udata;
-	g->fft->ingest(stream);
-	g->fft->band_pass(bandstream, 0, 400);
-	g->beat->detect(bandstream);
+	//g->fft->ingest(stream);
+	//g->fft->band_pass(bandstream, 300, 600);
+	g->beat->detect(stream);
 }
 
 BassInvaders * BassInvaders::theGame = 0;
@@ -162,7 +162,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 16;
+	int chunkSampleLength = soundSource->spec.samples;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
@@ -270,7 +270,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))
