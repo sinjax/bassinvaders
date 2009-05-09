@@ -14,8 +14,8 @@ BandPassFilterDT::BandPassFilterDT(uint32_t chunk_size) {
 }
 
 BandPassFilterDT::~BandPassFilterDT() {
-	delete []L;
-	delete []R;
+	delete L;
+	delete R;
 }
 
 void BandPassFilterDT::low_pass(uint8_t *stream, double alpha)
