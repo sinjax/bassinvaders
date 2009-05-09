@@ -79,7 +79,7 @@ template <class type> history<type>::history(unsigned long int s) {
 }
 
 template <class type> history<type>::~history() {
-	delete[] data;
+	delete []data;
 }
 
 /*

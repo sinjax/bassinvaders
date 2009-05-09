@@ -43,7 +43,7 @@ class BeatDetector {
 	history<double> *H;// history
 	double sensitivity; // sensitivity of beat detector
 	uint32_t samples; // number of samples in stream
-	uint32_t coolDown; // number of milliseconds to wait between reporting a positive beat
+	uint32_t coolDown; // minimum number of milliseconds to wait between reporting a positive beat
 
 	uint32_t lastTickCount;
 public:
