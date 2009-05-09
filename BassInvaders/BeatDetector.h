@@ -25,7 +25,7 @@
  *					wont report a new one until at least coolDown ms later, thus if you
  *					want to remember a beat has happened you must store it in a variable
  *					as polling isBeat a second or further time will respond false if
- *					within coolDown ms.
+ *					within the coolDown time.
  */
 
 #ifndef BEATDETECTOR_H_
