@@ -3,6 +3,22 @@
  *
  *  Created on: May 2, 2009
  *      Author: Darren Golbourn
+ *
+ *  Description:  	This is a simple beat detector.
+ *  				It takes a stereo audio stream and calculates whether the
+ *  				current volume is louder than the recent average volume,
+ *  				If the current volume is sufficiently louder - it's a beat!
+ *
+ *  Usage:			Initialize the detector:
+ *						BeatDetector B( number of audio chunks to hold in memory,
+ *										sensitivity of detector <from 1 to 2 works best>,
+ *										number of 2x2byte samples per chunk);
+ *
+ *					Process a chunk and detect beats:
+ *						B.detect(audio stream);
+ *
+ *					Poll the detector to see if there is a beat currently:
+ *						B.isBeat();
  */
 
 #ifndef BEATDETECTOR_H_
