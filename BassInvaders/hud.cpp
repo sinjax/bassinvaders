@@ -22,13 +22,22 @@ hud::~hud() {
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
-
 void hud::displayText(int x, int y, char* text,...)
 {
 	char *buffer;
 	va_list args;
 	va_start (args, text);
+
+/*
+ * due to cross-platform compatibility, some systems do not have access to
+ * certain extensions to glibc.  In this case use vsprintf with a fixed sized buffer for now.
+ */
+#if !defined(_ANSI_SOURCE) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
 	vasprintf(&buffer,text, args);
+#else
+	buffer = malloc(1024*sizeof(char));
+	vsprintf(buffer, text, args);
+#endif
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
