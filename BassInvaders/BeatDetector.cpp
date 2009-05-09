@@ -30,6 +30,7 @@ void BeatDetector::detect(uint8_t* stream){
 		average_energy += L*L + R*R;
 	}
 
+	/* if local average is greater than S x global average then it's a beat! */
 	beat = (average_energy * history_len) > (sensitivity * H->total);
 
 	/* update history buffer */
