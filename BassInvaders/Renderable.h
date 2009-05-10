@@ -44,8 +44,8 @@ public:
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
 	virtual void changeState(RenderableState_t newState);
-	virtual RenderableState_t getState();
-	virtual RenderableType_t getType();
+	RenderableState_t getState();
+	RenderableType_t getType();
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
 	uint32_t getHealth();
@@ -60,9 +60,9 @@ protected:
 	RenderableState_t currentState;
 	RenderableState_t pendingState;
 	uint32_t attackDamage;
-	uint32_t health;
-	uint32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
-	uint32_t ypos;
+	int32_t health;
+	int32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
+	int32_t ypos;
 };
 
 #endif /* RENDERABLE_H_ */

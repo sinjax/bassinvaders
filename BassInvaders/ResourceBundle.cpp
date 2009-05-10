@@ -8,6 +8,7 @@
  */
 
 #include "ResourceBundle.h"
+
 int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
 map<string,void*> ResourceBundle::resourceRegister;
@@ -22,7 +23,6 @@ ResourceBundle* ResourceBundle::getResource(char* file){
 
 	return ((ResourceBundle**)ResourceBundle::resourceRegister[file])[0];
 }
-
 
 void * ResourceBundle::operator[](const char * s)
 {
@@ -40,7 +40,7 @@ ResourceBundle ** ResourceBundle::readResourceArray(string cstr)
 		strcpy (cstr, resource.c_str());
 		holder.push_back(cstr);
 	}
-	
+
 	ResourceBundle ** ret = new ResourceBundle*[holder.size()];
 	vector<char*>::iterator itVectorData;
 	int index = 0;
@@ -52,50 +52,12 @@ ResourceBundle ** ResourceBundle::readResourceArray(string cstr)
 	return ret;
 }
 
-
-float * ResourceBundle::readFloatArray(string cstr)
-{
-	tokenizer< escaped_list_separator<char> > tok(cstr);
-	vector <float> holder;
-	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
-	{
-		holder.push_back(lexical_cast<float>(*beg));
-	}
-	float * ret = new float[holder.size()];
-	vector<float>::iterator itVectorData;
-	int index = 0;
-	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
-	{
-		float a = *(itVectorData);
-		ret[index++] = a;
-	}
-	return ret;
-}
-
-uint32_t * ResourceBundle::readIntArray(string cstr)
-{
-	tokenizer< escaped_list_separator<char> > tok(cstr);
-	vector <uint32_t> holder;
-	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
-	{
-		holder.push_back(lexical_cast<int>(*beg));
-	}
-	uint32_t * ret = new uint32_t[holder.size()];
-	vector<uint32_t>::iterator itVectorData;
-	int index = 0;
-	for(itVectorData = holder.begin(); itVectorData != holder.end(); itVectorData++)
-	{
-		uint32_t a = *(itVectorData);
-		ret[index++] = a;
-	}
-	return ret;
-}
 void ResourceBundle::initSupportedTypes()
 {
 	ResourceBundle::isInit = 1;
 	ResourceBundle::supportedTypes["filename"] = SURFACE;
 	ResourceBundle::supportedTypes["music"] = SOUND;
-	
+
 	ResourceBundle::supportedTypes["bodysprite"] = RESOURCE;
 	ResourceBundle::supportedTypes["statefiles"] = RESOURCE;
 
@@ -134,8 +96,6 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 	return (SDL_Surface*)resource;
 
 }
-
-
 
 ResourceBundle::ResourceBundle(char * infoFile)
 {
@@ -177,7 +137,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 				{
 					ResourceBundle::resourceRegister[key] = this->data[key];
 				}
-				
+
 				toAdd = (void*)( ResourceBundle::resourceRegister[key]);
 			break;
 			case SURFACE:
@@ -187,11 +147,11 @@ ResourceBundle::ResourceBundle(char * infoFile)
 					toAdd = (void*)(ResourceBundle::readResourceArray(cstr));
 			break;
 			case INT:
-				toAdd = (void*)this->readIntArray(value);
+				toAdd = (void*)this->readArray<int>(value);
 				// Read an integer (array or single)
 			break;
 			case DOUBLE:
-				toAdd = (void*)this->readFloatArray(value);
+				toAdd = (void*)this->readArray<double>(value);
 				// Read a double (array or single)
 			break;
 			default:
@@ -199,7 +159,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 				this->data[key] = (void*)cstr;
 			break;
 		}
-		
+
 		this->data[key] = toAdd;
 		sbuffer.clear();
 	}

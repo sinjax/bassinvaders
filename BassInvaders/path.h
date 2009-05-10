@@ -29,7 +29,10 @@ public:
 	path(uint32_t dist);
 	virtual ~path();
 	void add(waypoint_t pos);
+	void add(int32_t, int32_t);
 	waypoint_t next(waypoint_t pos);
+	waypoint_t get_directions(int32_t, int32_t);
+	waypoint_t get_directions(waypoint_t pos);
 };
 
 #endif /* PATH_H_ */

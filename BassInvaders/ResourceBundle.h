@@ -34,12 +34,38 @@ typedef enum
 	SECTION
 }  DataType;
 
+/*
+ * utility to help format getting resources from a bundle
+ *
+ * example:
+ * int R = GET_RESOURCE(int, bundle, "colorkey", 0);
+ */
+#define GET_RESOURCE(CLASS, BUNDLE, STRING, INDEX) ((CLASS*)(BUNDLE)[(STRING)])[(INDEX)]
+
 class ResourceBundle
 {
 
 private:
-	static uint32_t * readIntArray(string cstr);
-	static float * readFloatArray(string cstr);
+	// readArray template class replaces readIntArray and readFloatArray
+	template<class type> static type* ResourceBundle::readArray(string cstr)
+	{
+		tokenizer< escaped_list_separator<char> > tok(cstr);
+		vector <type> holder;
+		for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
+		{
+			holder.push_back(lexical_cast<type>(*beg));
+		}
+
+		type * ret = new type[holder.size()];
+		uint32_t index = 0;
+		while(index!=holder.size())
+		{
+			type a = holder[index];
+			ret[index++] = a;
+		}
+		return ret;
+	}
+
 	ResourceBundle ** ResourceBundle::readResourceArray(string cstr);
 	static void registerResource(string, void *);
 
