@@ -1,10 +1,10 @@
 state: 1
-filename: resources/sprites/ship3.bmp
+filename: resources/sprites/dummymonsteridle.bmp
 colorkey: 0,255,0
 nextstate: 1
-numberofanimationsteps: 3
-ticksperstep: 1000
-sheetstartsat: 1,1
-spritesize: 23,23
+numberofanimationsteps: 4
+ticksperstep: 100
+sheetstartsat: 0,0
+spritesize: 128,128
 numberofrects: 1
-rect: 1,1,23,23
+rect: 0,0,128,128

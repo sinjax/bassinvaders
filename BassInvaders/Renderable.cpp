@@ -13,14 +13,12 @@ Renderable::Renderable() {
 
 }
 
-Renderable::~Renderable() {
-	//tidy up all our sprites
-	/*std::vector<Sprite>::iterator pos;
-
-	for (pos = sprites.begin(); pos !=sprites.end(); ++pos)
-	{
-		pos->destroy();
-	}*/
+Renderable::~Renderable()
+{
+	/* you'd think it would make sense to free up all the sdl surfaces that
+	 * were allocated to make this Renderable here, but actually they are
+	 * handled by the Resource Bundle.
+	 */
 }
 
 void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
@@ -47,15 +45,4 @@ RenderableType_t Renderable::getType()
 uint32_t Renderable::getHealth()
 {
 	return health;
-}
-
-/*
-void Renderable::collide(Renderable*)
-{
-}
-*/
-
-vector<Sprite>* Renderable::getSprites()
-{
-	return &sprites;
 }

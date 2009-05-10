@@ -13,8 +13,10 @@
 #include "InputManager.h"
 #include "ResourceBundle.h"
 
-#define MONSTER_X_SPEED -2
+#define MONSTER_X_SPEED 0
 #define MONSTER_Y_SPEED 0
+
+#define MAIN_SPRITE 0
 
 class monster: public Renderable {
 public:
@@ -24,7 +26,11 @@ public:
 	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
-	void collide(Renderable*);
+	virtual bool canBeRemoved();
+
+protected:
+	virtual void updateStates();
+
 private:
 	void loadMonsterData();
 	uint32_t velocityTicks;

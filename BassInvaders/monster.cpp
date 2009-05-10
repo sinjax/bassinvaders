@@ -17,7 +17,7 @@ monster::monster(uint32_t height)
 
 	xvelocity = MONSTER_X_SPEED;
 	yvelocity = MONSTER_Y_SPEED;
-	xpos = SCREEN_WIDTH;
+	xpos = 400;
 	ypos = height;
 	type = ENEMY;
 	currentState = RS_ACTIVE;
@@ -56,6 +56,7 @@ bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 
 void monster::render(SDL_Surface* pScreen)
 {
+	updateStates();
 
 	uint32_t now = SDL_GetTicks();
 	uint32_t delta = now - lastTickCount;
@@ -67,19 +68,44 @@ void monster::render(SDL_Surface* pScreen)
 		lastTickCount = now;
 	}
 
-	sprites[0].setLocation(this->xpos, this->ypos);
-	sprites[0].renderSprite(pScreen);
+	sprites[MAIN_SPRITE].setLocation(this->xpos, this->ypos);
+	sprites[MAIN_SPRITE].renderSprite(pScreen);
 }
 
-void monster::collide(Renderable* b){
-	if (b->getType() == FRIENDLY)
-	{
-		changeState(RS_DEAD);
+void monster::updateStates()
+{
+	currentState = pendingState;
 
-		std::vector<Sprite>::iterator pos;
-		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+	switch(currentState)
+	{
+		case RS_ACTIVE:
 		{
-			(*pos).changeState(AS_DAMAGED);
-		}
+			sprites[MAIN_SPRITE].changeState(AS_IDLE);
+		}break;
+
+		case RS_DEAD:
+		{
+			/* the monster has been killed, so trigger the dying animation */
+			sprites[MAIN_SPRITE].changeState(AS_DYING);
+		}break;
 	}
+}
+
+/* monster can be removed if they are off-screen
+ * or if they are dead
+ */
+bool monster::canBeRemoved()
+{
+	if (isOffScreen(SCREEN_WIDTH, SCREEN_HEIGHT)) //JG TODO fix this hack
+	{
+		return true;
+	}
+
+	if ((currentState == RS_DEAD) &&
+			(sprites[MAIN_SPRITE].getAnimationState() == AS_DEAD))
+	{
+		return true;
+	}
+
+	return false;
 }

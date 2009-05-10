@@ -40,17 +40,19 @@ public:
 	Renderable();
 	virtual ~Renderable();
 
-	//bool isCollidingWith(Renderable* pRenderable) = 0;
+	virtual bool isCollidingWith(Renderable* pRenderable) = 0;
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
-	virtual void changeState(RenderableState_t newState);
+	void changeState(RenderableState_t newState);
 	RenderableState_t getState();
 	RenderableType_t getType();
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
 	uint32_t getHealth();
-	virtual void collide(Renderable*) = 0;
-	vector<Sprite>* getSprites();
+	virtual bool canBeRemoved() = 0; //the renderable is either dead or off screen and can be removed permanently from the game
+
+protected:
+	virtual void updateStates() = 0;
 
 protected:
 	std::vector<Sprite> sprites;

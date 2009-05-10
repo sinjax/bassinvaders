@@ -1,2 +1,2 @@
 numberofstates: 2
-statefiles: resources/sprites/heroidle.info,resources/sprites/herodying.info
+statefiles: resources/sprites/heroactive.info,resources/sprites/herodamaged.info

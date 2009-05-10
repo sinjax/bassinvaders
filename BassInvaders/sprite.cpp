@@ -13,7 +13,6 @@ Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
 	loadSpriteData(resources);
-	forceStateChange = 0;
 	currentState = AS_IDLE;
 	pendingState = AS_IDLE;
 }
@@ -30,13 +29,13 @@ Sprite::~Sprite() {
 
 void Sprite::destroy()
 {
-	/*for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
+	for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
 	{
 		if (animationStateData[i].state != 0)
 		{
-			//SDL_FreeSurface(animationStateData[i].spriteSheet);
+			SDL_FreeSurface(animationStateData[i].spriteSheet);
 		}
-	}*/
+	}
 }
 
 void Sprite::changeState(AnimationState_t newState)
@@ -52,7 +51,7 @@ void Sprite::changeState(AnimationState_t newState)
 		DebugPrint(("Can't transition to state with no data\n"));
 		return;
 	}
-	forceStateChange = 1;
+
 	switch(currentState)
 	{
 		/* JG TODO: do we need any further logic?*/
@@ -71,7 +70,8 @@ void Sprite::changeState(AnimationState_t newState)
 		case AS_DEAD:
 		default:
 		{
-			//there's no return from '86...
+			/* cannot transition away from dying or dead.
+			 * Once a sprite is dead, it should be removed and cleaned up */
 		}break;
 	}
 }
@@ -143,11 +143,10 @@ void Sprite::updateStates()
 	AnimationStateData_t* pCurrentState = &animationStateData[currentState];
 
 	/* this may be the last frame in a single pass state. if so , setup the next state here*/
-	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1) && !forceStateChange)
+	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1))
 	{
 		pendingState = pCurrentState->nextState;
 	}
-	forceStateChange = 0;
 
 	/* change state if we are not in the one we
 	 * should be in
@@ -205,7 +204,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		pData = &(animationStateData[state]);
 		pData->state = state;
 
-		DebugPrint((" loading state 0x%x\n", state));
+		DebugPrint(("Loading sprite state 0x%x...", state));
 
 		R = GET_RESOURCE(int32_t, *currentState, "colorkey", 0); //((int*)((*currentState)["colorkey"]))[0];
 		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1); //((int*)((*currentState)["colorkey"]))[1];
@@ -227,10 +226,10 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.x = GET_RESOURCE(int32_t, *currentState, "rect", 0);
-			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
-			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
-			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			rect.top = GET_RESOURCE(int32_t, *currentState, "rect", 0);
+			rect.bottom = GET_RESOURCE(int32_t, *currentState, "rect", 1);
+			rect.left = GET_RESOURCE(int32_t, *currentState, "rect", 2);
+			rect.right = GET_RESOURCE(int32_t, *currentState, "rect", 3);
 			pData->collisionRects.push_back(rect);
 		}
 
@@ -238,6 +237,8 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		pData->spriteSheet = (SDL_Surface*)((*currentState)["filename"]);
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
+
+		DebugPrint(("success\n"));
 	}
 }
 
@@ -245,9 +246,21 @@ void Sprite::setLocation(uint32_t xpos, uint32_t ypos)
 {
 	this->xpos = xpos;
 	this->ypos = ypos;
+	/* JG TODO: update the collision rects now that the position has been updated */
 }
 
+/* returns the collision boxes of the current animation state*/
 std::vector<CollisionRect_t> Sprite::getCollisionRects()
 {
 	return animationStateData[currentState].collisionRects;
+}
+
+AnimationState_t Sprite::getPendingAnimationState()
+{
+	return pendingState;
+}
+
+AnimationState_t Sprite::getAnimationState()
+{
+	return currentState;
 }

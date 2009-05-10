@@ -37,6 +37,7 @@ void hud::displayText(int x, int y, char* text,...)
 	char *buffer = NULL;
 	va_list args;
 	va_start (args, text);
+
 	/*
 	* due to cross-platform compatibility, some systems do not have access to
 	* certain extensions to glibc. In this case use vsprintf with a fixed sized buffer for now.
