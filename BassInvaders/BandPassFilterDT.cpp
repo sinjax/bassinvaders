@@ -7,6 +7,18 @@
 
 #include "BandPassFilterDT.h"
 
+double BandPassFilterDT::alpha = 0.1;
+
+void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, void *udata)
+{
+	((BandPassFilterDT*)udata)->high_pass((uint8_t*)stream, alpha);
+}
+
+void BandPassFilterDT::lowPassFilterEffect(int chan, void *stream, int len, void *udata)
+{
+	((BandPassFilterDT*)udata)->low_pass((uint8_t*)stream, alpha);
+}
+
 BandPassFilterDT::BandPassFilterDT(uint32_t chunk_size) {
 	samples = chunk_size/4;
 	Lout = 0;
@@ -60,14 +72,14 @@ void BandPassFilterDT::high_pass(uint8_t *stream, double alpha)
 		RIGHT(Sout,i) = alpha * ( RIGHT(Sout,i-1) + (double)RIGHT(Sin,i) - (double)RIGHT(Sin,i-1));
 	}
 
-	Lout=(int16_t)(LEFT(Sout,i-1));
-	Rout=(int16_t)(RIGHT(Sout,i-1));
+	Lout=(int16_t)((LEFT(Sout,i-1))/alpha);
+	Rout=(int16_t)((RIGHT(Sout,i-1))/alpha);
 	Lin=(LEFT(Sin,i-1));
 	Rin=(RIGHT(Sin,i-1));
 
 	for(i=0; i<samples; i++)
 	{
-		LEFT(Sin,i) = (int16_t)LEFT(Sout,i);
-		RIGHT(Sin,i) = (int16_t)RIGHT(Sout,i);
+		LEFT(Sin,i) = (int16_t)(LEFT(Sout,i)/alpha);
+		RIGHT(Sin,i) = (int16_t)(RIGHT(Sout,i)/alpha);
 	}
 }

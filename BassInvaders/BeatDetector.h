@@ -40,6 +40,9 @@
  *
  *					Poll the broadcaster, if a beat is detected everyone's onBeat() is called:
  *						BB->isBeat();
+ *
+ *					To hook a detector in to SDL_Mixer sound functions use the process static method:
+ *						BeatDetector::process( pointer to beat detector, stream, length of stream <bytes>);
  */
 
 #ifndef BEATDETECTOR_H_
@@ -72,6 +75,8 @@ public:
 	bool isBeat();
 	BeatIterator* iterator(uint32_t cooldown);
 	BeatBroadcaster* broadcaster(uint32_t cooldown);
+
+	void static process( void *udata, uint8_t *stream, int len);
 };
 
 /*

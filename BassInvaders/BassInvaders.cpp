@@ -23,20 +23,8 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 			stream[i] = sample->sample[i];
 		}
 	}
-	soundProcessor(udata, stream, len);
-}
 
-/*
- * This is called by music player.  The sound stream is fed to beat where the
- * data is analysed and beats are detected.
- */
-void soundProcessor( void *udata, uint8_t *stream, int len){
-	//uint8_t bandstream[len];
-	BassInvaders* g = (BassInvaders*)udata;
-	//g->fft->ingest(stream);
-	//g->fft->hann_pass(stream, 2000, 0.25);
-	//g->dt->high_pass(stream, 0.1);
-	g->beat->detect(stream);
+	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
 
 BassInvaders * BassInvaders::theGame = 0;
@@ -224,6 +212,31 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
+			}
+		}
+
+		// sound effect test
+		static int isRegistered = 0;
+		if (event.type == SDL_KEYUP)
+		{
+			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
+			{
+				if (!isRegistered)
+				{
+					BandPassFilterDT::alpha = 0.1;
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
+					isRegistered = 1;
+				}
+			}
+
+			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
+			{
+				if (isRegistered)
+				{
+					BandPassFilterDT::alpha = 0.;
+					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
+					isRegistered = 0;
+				}
 			}
 		}
 	}

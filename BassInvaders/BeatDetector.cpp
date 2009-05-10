@@ -6,7 +6,10 @@
  */
 
 #include "BeatDetector.h"
-
+void BeatDetector::process( void *udata, uint8_t *stream, int len)
+{
+	((BeatDetector*)udata)->detect(stream);
+}
 
 BeatBroadcaster* BeatDetector::broadcaster(uint32_t cooldown){
 	return new BeatBroadcaster(cooldown, this);
