@@ -183,7 +183,7 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	//h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
+	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
 
 }
 
@@ -231,12 +231,7 @@ void BassInvaders::doPlayingState()
 	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
 
-	/* ... then the hordes of enemies */
-	static int enemies = 0;
-	if (enemies%100 == 0) // make one new monster
-	{
-		rm->theHorde.push_back(new monster());
-	}enemies++;
+	if (beatIter->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 
 	rm->clean_up();
 	rm->check_collision();
@@ -244,7 +239,7 @@ void BassInvaders::doPlayingState()
 
 	/* ... then the hud/overlay */
 	//h->displayText(10,10,"Health: %i0",pHero->getHealth());
-	//h->draw();
+	h->draw();
 }
 
 /**************************
