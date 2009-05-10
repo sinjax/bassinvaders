@@ -7,12 +7,34 @@
 
 #include "BeatDetector.h"
 
-BeatDetector::BeatDetector(uint32_t history_len, double sensitivity, uint32_t samples, uint32_t coolDown){
+BeatIterator::BeatIterator(uint32_t coolDown, BeatDetector* b) {
+	this-> coolDown = coolDown;
+	lastTickCount = SDL_GetTicks();
+	this->b=b;
+}
+
+bool BeatIterator::isBeat(){
+	uint32_t now = SDL_GetTicks();
+	uint32_t delta = now - lastTickCount;
+
+	if ((delta > coolDown) && b->isBeat())
+	{
+		lastTickCount = now;
+		return true;
+	}
+
+	return false;
+}
+
+BeatIterator* BeatDetector::iterator(uint32_t cooldown)
+{
+	return new BeatIterator(cooldown, this);
+}
+
+BeatDetector::BeatDetector(uint32_t history_len, double sensitivity, uint32_t samples){
 	this->samples = samples;
 	this->history_len = history_len;
 	this->sensitivity = sensitivity;
-	this->coolDown = coolDown;
-	lastTickCount = SDL_GetTicks();
 	H = new history<double>(history_len);
 	beat = false;
 }
@@ -40,14 +62,5 @@ void BeatDetector::detect(uint8_t* stream){
 }
 
 bool BeatDetector::isBeat(){
-	uint32_t now = SDL_GetTicks();
-	uint32_t delta = now - lastTickCount;
-
-	if ((delta > coolDown) && beat)
-	{
-		lastTickCount = now;
-		return true;
-	}
-
-	return false;
+	return beat;
 }

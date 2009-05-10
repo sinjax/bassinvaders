@@ -58,6 +58,7 @@ public:
 	BandPassFilterFFT *fft;
 	BandPassFilterDT *dt;
 	BeatDetector *beat;
+	BeatIterator *beatIter;
 
 	static BassInvaders * theGame;
 	// End level class
