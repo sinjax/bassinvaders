@@ -25,10 +25,10 @@ hud::~hud() {
 
 void hud::displayText(int x, int y, char* text,...)
 {
-	char *buffer;
+	char *buffer = NULL;
 	va_list args;
 	va_start (args, text);
-	vasprintf(&buffer,text, args);
+	//vasprintf(&buffer,text, args);
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);

@@ -14,9 +14,10 @@
 #define HUD_H_
 
 #include <SDL/SDL.h>
-#include "SDL_ttf.h"
+#include <SDL/SDL_ttf.h>
 #include <list>
 #include <string>
+#include <stdio.h>
 /*
  * Stores all the data needed to display an SDL_Surface on the screen
  */
@@ -37,7 +38,7 @@ class hud {
 public:
 	hud(const char* fnt, int sz, SDL_Color c, SDL_Surface* dest);
 	virtual ~hud();
-	void displayText(int x, int y, char * text,...);	
+	void displayText(int x, int y, char * text,...);
 	void draw();
 	void registerSurface(Uint32 x, Uint32 y, SDL_Surface* component, SDL_Rect* clip);
 };
