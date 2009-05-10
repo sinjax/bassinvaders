@@ -183,7 +183,7 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
+	h = new hud("C:\\WINDOWS\\Fonts\\ARIAL.TTF", 20, c, wm.getWindowSurface());
 
 }
 
@@ -238,7 +238,7 @@ void BassInvaders::doPlayingState()
 	rm->render();
 
 	/* ... then the hud/overlay */
-	//h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->displayText(10,10,"Health: %i0",pHero->getHealth());
 	h->draw();
 }
 
