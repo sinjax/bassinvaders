@@ -23,23 +23,12 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 			stream[i] = sample->sample[i];
 		}
 	}
-	band_separate(udata, stream, len);
+
+	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
 
-/*
- * This is called by music player.  The sound stream is fed to band_separate where the
- * data is analysed and beats are detected.
- */
-void band_separate( void *udata, uint8_t *stream, int len){
-	uint8_t bandstream[len];
-	BassInvaders* g = (BassInvaders*)udata;
-	g->fft->ingest(stream);
-	g->fft->band_pass(bandstream, 0, 4000);
-	g->beat->detect(bandstream);
-	//g->fft->band_pass(stream, 300, 4000);
-	//g->dt->low_pass(stream, 0.01);
-}
 BassInvaders * BassInvaders::theGame = 0;
+
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -52,7 +41,8 @@ BassInvaders::BassInvaders()
 
 BassInvaders::~BassInvaders() {
 	delete pHero;
-	delete pBG;
+	//delete pBG; //The background is being deleted wrongly and acting like a dick.
+					// TODO Background needs reworking to use the resourceBundle anyway.
 	delete dt;
 	delete fft;
 	delete soundSource;
@@ -162,7 +152,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 16;
+	int chunkSampleLength = soundSource->spec.samples;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
@@ -176,7 +166,8 @@ void BassInvaders::loadLevel()
 
 	// set up the beat detector.
 	int historyBuffer = 1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq));
-	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
+	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength);
+	beatIter = beat->iterator(COOLDOWN);
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
@@ -224,6 +215,31 @@ void BassInvaders::doPlayingState()
 				pBG->accelerate(1, 1);
 			}
 		}
+
+		// sound effect test
+		static int isRegistered = 0;
+		if (event.type == SDL_KEYUP)
+		{
+			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
+			{
+				if (!isRegistered)
+				{
+					BandPassFilterDT::alpha = 0.1;
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
+					isRegistered = 1;
+				}
+			}
+
+			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
+			{
+				if (isRegistered)
+				{
+					BandPassFilterDT::alpha = 0.;
+					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
+					isRegistered = 0;
+				}
+			}
+		}
 	}
 
 	/* firstly, draw the background */
@@ -233,18 +249,14 @@ void BassInvaders::doPlayingState()
 	pHero->setActions(im.getCurrentActions());
 
 	/* ... then the hordes of enemies */
-	static int enemies = 0;
-	if (enemies%100 == 0) // make one new monster
-	{
-		rm->theHorde.push_back(new monster());
-	}enemies++;
+	if (beatIter->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 
 	rm->clean_up();
 	rm->check_collision();
 	rm->render();
 
 	/* ... then the hud/overlay */
-	h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->displayText(10,10,"Health: %i",pHero->getHealth());
 	h->draw();
 }
 
@@ -267,7 +279,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))

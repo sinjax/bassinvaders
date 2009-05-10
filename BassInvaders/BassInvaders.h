@@ -26,6 +26,8 @@
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
+#define COOLDOWN 200
+
 /*JG TODO:
  * - game state machine
  * - game loop
@@ -56,7 +58,8 @@ public:
 	BandPassFilterFFT *fft;
 	BandPassFilterDT *dt;
 	BeatDetector *beat;
-	
+	BeatIterator *beatIter;
+
 	static BassInvaders * theGame;
 	// End level class
 
@@ -99,6 +102,6 @@ private:
 };
 
 void MusicPlayer(void *udata, Uint8 *stream, int len);
-void band_separate( void *udata, uint8_t *stream, int len);
+void soundProcessor( void *udata, uint8_t *stream, int len);
 #endif /* BASSINVADERS_H_ */
 

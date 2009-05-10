@@ -3,9 +3,6 @@
  *
  *  Created on: 19-Apr-2009
  *      Author: spijderman
-
-
-K!
  */
 
 #include "Background.h"

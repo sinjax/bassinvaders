@@ -6,7 +6,7 @@
  */
 
 #include "hud.h"
-/* for now, when initializing the HUD, choose a single point and colour of font */
+/* for now, when initializing the HUD, choose a single point size and colour of font */
 hud::hud(const char* fnt, int sz, SDL_Color c, SDL_Surface* dest) {
 	TTF_Init();
 	font = TTF_OpenFont( fnt, sz );
@@ -22,13 +22,22 @@ hud::~hud() {
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
-
 void hud::displayText(int x, int y, char* text,...)
 {
 	char *buffer;
 	va_list args;
 	va_start (args, text);
+
+/*
+ * due to cross-platform compatibility, some systems do not have access to
+ * certain extensions to glibc.  In this case use vsprintf with a fixed sized buffer for now.
+ */
+#if !defined(_ANSI_SOURCE) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
 	vasprintf(&buffer,text, args);
+#else
+	buffer = malloc(1024*sizeof(char));
+	vsprintf(buffer, text, args);
+#endif
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
@@ -64,6 +73,6 @@ void hud::draw(){
 
 	for(i = components.begin(); i != components.end(); ++i) {
 		component_t bees = *i;
-		//DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
+		DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
 	}
 }

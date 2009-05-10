@@ -37,7 +37,7 @@
 #include<math.h>
 
 template <class type> class history {
-	unsigned long int index; // current array index
+	long int index; // current array index
 	unsigned long int size; // size of history array
 	type *data;				//history array
 
@@ -79,7 +79,7 @@ template <class type> history<type>::history(unsigned long int s) {
 }
 
 template <class type> history<type>::~history() {
-	delete[] data;
+	delete []data;
 }
 
 /*

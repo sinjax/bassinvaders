@@ -56,6 +56,7 @@ public:
 	virtual ~BandPassFilterFFT();
 	void ingest(uint8_t *stream); // eat a stream and fourier-transform it.
 	void band_pass(uint8_t *stream, double flo, double fhi); // copy band passed version ingested data to stream.
+	void hann_pass(uint8_t *stream, double f0, double p);
 	void writef(double*, char* file); //write frequency data to file
 };
 

@@ -1,0 +1,10 @@
+state: 1
+filename: resources/sprites/ship3.bmp
+colorkey: 0,255,0
+nextstate: 1
+numberofanimationsteps: 3
+ticksperstep: 1000
+sheetstartsat: 1,1
+spritesize: 23,23
+numberofrects: 1
+rect: 1,1,23,23

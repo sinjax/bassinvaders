@@ -24,8 +24,8 @@ BandPassFilterFFT::BandPassFilterFFT(uint32_t sample_rate, uint32_t chunk_size){
 	f = new double[samples];
 	f[0] = 0;
 	for (int i=1; i<=(int)freqs; i++){
-		f[i]=i/(samples*delta);
 		f[samples-i]=-i/(samples*delta);
+		f[i]=i/(samples*delta);
 	}
 
 	faccel = gsl_interp_accel_alloc () ;
@@ -54,7 +54,7 @@ void BandPassFilterFFT::writef(double* data, char* file)
  * f[i] < freq <f[i+1]
  */
 int BandPassFilterFFT::ffind(double freq){
-	return /*gsl_interp_bsearch(f, freq, 0, freqs);*/gsl_interp_accel_find (faccel, f, freqs, freq );
+	return gsl_interp_accel_find (faccel, f, freqs, freq );
 }
 
 /*
@@ -106,9 +106,6 @@ void BandPassFilterFFT::band_pass(uint8_t *stream, double flo, double fhi)
 /*
  * using the frequency fft data, band pass between frequencies in f[bandlo] <= f <= f[bandhi]
  */
-#define FUDGE_AMPLITUDE 0.25 // if the fft produces amplitudes that are too high and
-							 // and which cause crackling, use this to quieten the sound.
-
 void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t bandlo)
 {
 	/*
@@ -118,10 +115,10 @@ void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t
 	{
 		if ((i <= bandhi) && (i>=bandlo)) // ...and copy over the frequencies in the the band window...
 		{
-			REAL(band_data,POSITIVE(i,samples)) = FUDGE_AMPLITUDE*REAL(fcache,POSITIVE(i,samples));
-			IMAG(band_data,POSITIVE(i,samples)) = FUDGE_AMPLITUDE*IMAG(fcache,POSITIVE(i,samples));
-			REAL(band_data,NEGATIVE(i,samples)) = FUDGE_AMPLITUDE*REAL(fcache,NEGATIVE(i,samples));
-			IMAG(band_data,NEGATIVE(i,samples)) = FUDGE_AMPLITUDE*IMAG(fcache,NEGATIVE(i,samples));
+			REAL(band_data,POSITIVE(i,samples)) = REAL(fcache,POSITIVE(i,samples));
+			IMAG(band_data,POSITIVE(i,samples)) = IMAG(fcache,POSITIVE(i,samples));
+			REAL(band_data,NEGATIVE(i,samples)) = REAL(fcache,NEGATIVE(i,samples));
+			IMAG(band_data,NEGATIVE(i,samples)) = IMAG(fcache,NEGATIVE(i,samples));
 		}
 		else // ...and set the other frequencies to zero.
 		{
@@ -143,4 +140,28 @@ void BandPassFilterFFT::fft_inverse(double* band_data, uint8_t *stream) {
 		RIGHT((int16_t*)stream,i)=(int16_t)REAL(band_data,i);
 		LEFT((int16_t*)stream,i)=(int16_t)IMAG(band_data,i);
 	}
+}
+
+void BandPassFilterFFT::hann_pass(uint8_t *stream, double f0, double p)
+{
+	double band_data[2*samples];
+	double F = f[freqs]* p;
+
+	/*
+	 * Split the data in to frequency bands.
+	 */
+	for(uint32_t i=0; i<=freqs; i++) // Go over each frequency...
+	{
+		double df = f[i] - f0;
+		double hann = 0.5 * ( 1.0 - cos(2.0*M_PI*df/F));
+		if (df < 0) hann = 0.;
+		if (df < f0-0.5*F) hann = 0.;
+		if (df > f0+0.5*F) hann = 0.;
+		REAL(band_data,POSITIVE(i,samples)) = hann * REAL(fcache,POSITIVE(i,samples));
+		IMAG(band_data,POSITIVE(i,samples)) = hann * IMAG(fcache,POSITIVE(i,samples));
+		REAL(band_data,NEGATIVE(i,samples)) = hann * REAL(fcache,NEGATIVE(i,samples));
+		IMAG(band_data,NEGATIVE(i,samples)) = hann * IMAG(fcache,NEGATIVE(i,samples));
+	}
+
+	fft_inverse(band_data, stream);
 }
