@@ -7,6 +7,27 @@
 
 #include "BeatDetector.h"
 
+
+BeatBroadcaster* BeatDetector::broadcaster(uint32_t cooldown){
+	return new BeatBroadcaster(cooldown, this);
+}
+
+BeatBroadcaster::BeatBroadcaster(uint32_t cooldown, BeatDetector* detector)
+{
+	iterator = detector->iterator(cooldown);
+}
+
+void BeatBroadcaster::isBeat(){
+	if (iterator->isBeat())
+	{
+		std::vector<BeatListener*>::iterator i;
+
+		for(i=listeners.begin(); i != listeners.end(); ++i) {
+			(*i)->onBeat();
+		}
+	}
+}
+
 BeatIterator::BeatIterator(uint32_t coolDown, BeatDetector* b) {
 	this-> coolDown = coolDown;
 	lastTickCount = SDL_GetTicks();
