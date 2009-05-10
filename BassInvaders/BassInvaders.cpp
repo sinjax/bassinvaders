@@ -52,12 +52,13 @@ BassInvaders::BassInvaders()
 }
 
 BassInvaders::~BassInvaders() {
-	delete pHero;
+	// one of these guys is being deleted wrongly and causing a pain in the ass.
+	/*delete pHero;
 	delete pBG;
 	delete dt;
 	delete fft;
 	delete soundSource;
-	delete beat;
+	delete beat;*/
 }
 
 void BassInvaders::goGameGo()
