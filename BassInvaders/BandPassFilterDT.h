@@ -28,12 +28,13 @@
 #include "inttypes.h"
 #include "audefnmacros.h"
 #include "history.h"
+#include <stdlib.h>
+#include <string.h>
 
 class BandPassFilterDT {
 	uint32_t samples;		// number of 2 x 16bit samples per chunk
-	history<int16_t> *L;	// cache of left speaker
-	history<int16_t> *R;	// cache of right speaker
-
+	int16_t Lout, Rout, Lin, Rin;
+	double *Sout;
 public:
 	BandPassFilterDT(uint32_t);
 	virtual ~BandPassFilterDT();

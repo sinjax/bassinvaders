@@ -54,7 +54,7 @@ void BandPassFilterFFT::writef(double* data, char* file)
  * f[i] < freq <f[i+1]
  */
 int BandPassFilterFFT::ffind(double freq){
-	return /*gsl_interp_bsearch(f, freq, 0, freqs);*/gsl_interp_accel_find (faccel, f, freqs, freq );
+	return gsl_interp_accel_find (faccel, f, freqs, freq );
 }
 
 /*

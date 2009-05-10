@@ -102,6 +102,6 @@ private:
 };
 
 void MusicPlayer(void *udata, Uint8 *stream, int len);
-void band_separate( void *udata, uint8_t *stream, int len);
+void soundProcessor( void *udata, uint8_t *stream, int len);
 #endif /* BASSINVADERS_H_ */
 

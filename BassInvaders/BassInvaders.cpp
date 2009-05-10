@@ -23,18 +23,19 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 			stream[i] = sample->sample[i];
 		}
 	}
-	band_separate(udata, stream, len);
+	soundProcessor(udata, stream, len);
 }
 
 /*
- * This is called by music player.  The sound stream is fed to band_separate where the
+ * This is called by music player.  The sound stream is fed to beat where the
  * data is analysed and beats are detected.
  */
-void band_separate( void *udata, uint8_t *stream, int len){
+void soundProcessor( void *udata, uint8_t *stream, int len){
 	//uint8_t bandstream[len];
 	BassInvaders* g = (BassInvaders*)udata;
 	//g->fft->ingest(stream);
 	//g->fft->hann_pass(stream, 2000, 0.25);
+	//g->dt->high_pass(stream, 0.1);
 	g->beat->detect(stream);
 }
 
