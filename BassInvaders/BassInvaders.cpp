@@ -198,6 +198,7 @@ void BassInvaders::doPlayingState()
 		if (event.type == SDL_QUIT)
 		{
 			running = false;
+			return;
 		}
 
 		if (event.type == SDL_KEYUP)
@@ -278,3 +279,4 @@ void BassInvaders::doPausedState()
 
 	pBG->redraw(wm.getWindowSurface()); //it isn't really redrawing, it's updating the bg's tick counts
 }
+
