@@ -52,13 +52,13 @@ BassInvaders::BassInvaders()
 }
 
 BassInvaders::~BassInvaders() {
-	// one of these guys is being deleted wrongly and causing a pain in the ass.
-	/*delete pHero;
-	delete pBG;
+	delete pHero;
+	//delete pBG; //The background is being deleted wrongly and acting like a dick.
+					// TODO Background needs reworking to use the resourceBundle anyway.
 	delete dt;
 	delete fft;
 	delete soundSource;
-	delete beat;*/
+	delete beat;
 }
 
 void BassInvaders::goGameGo()
