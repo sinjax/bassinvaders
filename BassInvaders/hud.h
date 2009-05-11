@@ -13,11 +13,11 @@
 #ifndef HUD_H_
 #define HUD_H_
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include "SDL_ttf.h"
 #include <list>
 #include <string>
-#include "toolkit.h"
+#include <stdio.h>
 /*
  * Stores all the data needed to display an SDL_Surface on the screen
  */

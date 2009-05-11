@@ -121,7 +121,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces
 		string::size_type endpos = value.find_last_not_of(" ");
 		value = value.substr( startpos, endpos-startpos+1 );
-		char cstr[value.size()+1];
+		char * cstr = new char[value.size()+1];
 		strcpy (cstr, value.c_str());
 		DataType d = ResourceBundle::supportedTypes[key];
 		cout << "Loading Resource Variable " << key << ": " << cstr << endl;
@@ -135,7 +135,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			case SOUND:
 				if(ResourceBundle::resourceRegister[key] == 0)
 				{
-					ResourceBundle::resourceRegister[key] = this->data[key];
+					ResourceBundle::resourceRegister[key] = new SoundSource(cstr);
 				}
 
 				toAdd = (void*)( ResourceBundle::resourceRegister[key]);

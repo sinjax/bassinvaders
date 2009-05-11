@@ -13,7 +13,7 @@
 #include <map>
 #include <string>
 #include <fstream>
-#include "SDL.h"
+#include <SDL/SDL.h>
 #include "soundSource.h"
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
