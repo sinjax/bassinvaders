@@ -266,7 +266,10 @@ void BassInvaders::doPlayingState()
 	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
 
-	if (beatIter->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
+	if (beatIter->isBeat()){
+		cout << "Creating monster!" << endl;
+		rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
+	} 
 
 	rm->clean_up();
 	rm->check_collision();
