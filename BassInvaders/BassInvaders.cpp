@@ -26,9 +26,7 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 
 	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
-
 BassInvaders * BassInvaders::theGame = 0;
-
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -152,7 +150,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples;
+	int chunkSampleLength = soundSource->spec.samples * 16;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
@@ -166,15 +164,14 @@ void BassInvaders::loadLevel()
 
 	// set up the beat detector.
 	int historyBuffer = 1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq));
-	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength);
-	beatIter = beat->iterator(COOLDOWN);
+	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(MusicPlayer, this);
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
+	h = new hud("C:\\WINDOWS\\Fonts\\ARIAL.TTF", 20, c, wm.getWindowSurface());
 
 }
 
@@ -247,7 +244,6 @@ void BassInvaders::doPlayingState()
 	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
 
-	/* ... then the hordes of enemies */
 	if (beatIter->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 
 	rm->clean_up();
@@ -255,7 +251,7 @@ void BassInvaders::doPlayingState()
 	rm->render();
 
 	/* ... then the hud/overlay */
-	h->displayText(10,10,"Health: %i",pHero->getHealth());
+	h->displayText(10,10,"Health: %i0",pHero->getHealth());
 	h->draw();
 }
 
@@ -278,7 +274,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type == SDL_KEYUP)
+		if (event.type = SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))

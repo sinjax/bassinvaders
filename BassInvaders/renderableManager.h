@@ -10,7 +10,7 @@
 #include <deque>
 #include "Renderable.h"
 #include "sprite.h"
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 typedef Uint32* coords; // x2, y2, x1, y1
 
