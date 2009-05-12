@@ -42,6 +42,5 @@ public:
 	void draw();
 	void registerSurface(Uint32 x, Uint32 y, SDL_Surface* component, SDL_Rect* clip);
 };
-static int int_vasprintf (char ** result, const char * format, va_list args);
 
 #endif /* HUD_H_ */

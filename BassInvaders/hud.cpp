@@ -29,6 +29,8 @@ hud::~hud() {
     TTF_Quit();
 }
 
+static int int_vasprintf (char ** result, const char * format, va_list args);
+
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */

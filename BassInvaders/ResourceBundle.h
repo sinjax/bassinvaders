@@ -18,8 +18,8 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <vector>
 
+#include <vector>
 using namespace boost;
 using namespace std;
 typedef enum
