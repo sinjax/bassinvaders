@@ -41,11 +41,6 @@ void monster::loadMonsterData()
 
 }
 
-bool monster::isCollidingWith(Renderable* pRenderable)
-{
-	return false;
-}
-
 bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 {
 	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) )

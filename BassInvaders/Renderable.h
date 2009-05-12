@@ -39,8 +39,6 @@ class Renderable {
 public:
 	Renderable();
 	virtual ~Renderable();
-
-	//bool isCollidingWith(Renderable* pRenderable) = 0;
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
 	virtual void changeState(RenderableState_t newState);
