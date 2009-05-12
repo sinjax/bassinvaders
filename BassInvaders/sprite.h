@@ -16,13 +16,7 @@
 
 using namespace std;
 
-typedef struct
-{
-	uint32_t top;
-	uint32_t bottom;
-	uint32_t left;
-	uint32_t right;
-} CollisionRect_t;
+typedef SDL_Rect CollisionRect_t;
 
 typedef enum
 {

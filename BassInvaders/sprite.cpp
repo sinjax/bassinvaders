@@ -8,6 +8,8 @@
 #include "Sprite.h"
 #include "toolkit.h"
 
+#define DEBUG_COLLISIONS
+
 Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	/* take a text file as a parameter containing all the data for all the states
 	 * then pass file into a function which populates an AnimationState_t
@@ -15,6 +17,9 @@ Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	loadSpriteData(resources);
 	currentState = AS_IDLE;
 	pendingState = AS_IDLE;
+
+	xpos = 0;
+	ypos = 0;
 }
 
 Sprite::~Sprite() {
@@ -119,6 +124,19 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 	spriteRect.w = pTempState->spriteWidth;
 	spriteRect.h = pTempState->spriteHeight;
 
+#ifdef DEBUG_COLLISIONS
+	std::vector<CollisionRect_t>::iterator pos;
+
+	for (pos = pTempState->collisionRects.begin(); pos != pTempState->collisionRects.end(); ++pos)
+	{
+		SDL_Rect foo;
+		foo.x = pos->x;
+		foo.y = pos->y;
+		foo.h = pos->h;
+		foo.w = pos->w;
+		SDL_FillRect(pScreen, &foo, SDL_MapRGB( pScreen->format, 255, 255, 255 ));
+	}
+#endif
 	DrawToSurface(xpos,
 				  ypos,
 				  pTempState->spriteSheet,
@@ -226,11 +244,13 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.top = GET_RESOURCE(int32_t, *currentState, "rect", 0);
-			rect.bottom = GET_RESOURCE(int32_t, *currentState, "rect", 1);
-			rect.left = GET_RESOURCE(int32_t, *currentState, "rect", 2);
-			rect.right = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			rect.x = GET_RESOURCE(int32_t, *currentState, "rect", 0);
+			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
+			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
+			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
 			pData->collisionRects.push_back(rect);
+
 		}
 
 		// this doesn't work with GET_RESOURCE, I guess because filename doesn't return an array maybe?
@@ -244,9 +264,41 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 
 void Sprite::setLocation(uint32_t xpos, uint32_t ypos)
 {
+	int32_t xdelta = xpos - this->xpos;
+	int32_t ydelta = ypos - this->ypos;
+
+	/* update the collision rects now that the position has been updated */
+	std::vector<CollisionRect_t>::iterator pos;
+	uint32_t state = AS_IDLE;
+	AnimationStateData_t* pAnimState;
+
+	/* iterate through each sprite state, and then through each collision rect list,
+	 * updating the collision rect postions if we've changed position.
+	 * don't waste time doing any of this is the change is zero */
+	if ((ydelta != 0 ) || (xdelta != 0))
+	{
+		while(state < AS_STATES_SIZE)
+		{
+			pAnimState = &(animationStateData[state]);
+
+			for(pos=pAnimState->collisionRects.begin(); pos!=pAnimState->collisionRects.end(); ++pos)
+			{
+				if (ydelta != 0)
+				{
+					pos->y += ydelta;
+				}
+
+				if (xdelta != 0)
+				{
+					pos->x += xdelta;
+				}
+			}
+			state<<=1;
+		}
+	}
+	/* and finally set the position for the sprite object itself*/
 	this->xpos = xpos;
 	this->ypos = ypos;
-	/* JG TODO: update the collision rects now that the position has been updated */
 }
 
 /* returns the collision boxes of the current animation state*/
