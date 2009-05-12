@@ -15,7 +15,7 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
-#include <SDL/SDL_mixer.h>
+#include "SDL_mixer.h"
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
 #include "ResourceBundle.h"

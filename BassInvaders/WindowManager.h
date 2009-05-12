@@ -8,7 +8,7 @@
 #ifndef WINDOWMANAGER_H_
 #define WINDOWMANAGER_H_
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
