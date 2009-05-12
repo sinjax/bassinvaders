@@ -10,6 +10,16 @@
 hud::hud(const char* fnt, int sz, SDL_Color c, SDL_Surface* dest) {
 	TTF_Init();
 	font = TTF_OpenFont( fnt, sz );
+
+	if(!font)
+	{
+		DebugPrint(("couldn't open font %s\n", fnt));
+	}
+	else
+	{
+		DebugPrint(("opened font %s\n", fnt));
+	}
+
     textColor = c;
     baseSurface = dest;
 }
@@ -24,20 +34,11 @@ hud::~hud() {
  */
 void hud::displayText(int x, int y, char* text,...)
 {
-	char *buffer;
+	char *buffer = NULL;
 	va_list args;
 	va_start (args, text);
 
-/*
- * due to cross-platform compatibility, some systems do not have access to
- * certain extensions to glibc.  In this case use vsprintf with a fixed sized buffer for now.
- */
-#if !defined(_ANSI_SOURCE) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
 	vasprintf(&buffer,text, args);
-#else
-	buffer = malloc(1024*sizeof(char));
-	vsprintf(buffer, text, args);
-#endif
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
@@ -57,7 +58,7 @@ void hud::displayText(int x, int y, char* text,...)
 }
 
 /**
- * Use this, along with to register SDL surfaces to be displayed on the HUD when draw is called
+ * Use this to register SDL surfaces to be displayed on the HUD when draw is called
  */
 void hud::registerSurface(Uint32 x, Uint32 y, SDL_Surface* component, SDL_Rect* clip = NULL){
 	SDL_Rect temp ={x,y,0,0};

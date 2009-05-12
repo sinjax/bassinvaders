@@ -174,7 +174,7 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
+	h = new hud("./resources/fonts/Batang.ttf", 20, c, wm.getWindowSurface());
 
 }
 
