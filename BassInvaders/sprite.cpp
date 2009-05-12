@@ -319,7 +319,10 @@ AnimationState_t Sprite::getAnimationState()
 
 bool Sprite::isCollidingWith(std::vector<CollisionRect_t> other)
 {
-	std::vector<CollisionRect_t>::iterator myrects;
+	std::vector<CollisionRect_t>::iterator myRects;
+	std::vector<CollisionRect_t>::iterator otherRects;
+	AnimationStateData_t* pData = &(animationStateData[currentState]);
 
+	//for (myRects = pData->collisionRects.begin(); myRects)
 	return true;
 }
