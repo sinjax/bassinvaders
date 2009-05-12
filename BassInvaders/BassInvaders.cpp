@@ -26,7 +26,9 @@ void MusicPlayer(void *udata, Uint8 *stream, int len)
 
 	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
+
 BassInvaders * BassInvaders::theGame = 0;
+
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -150,7 +152,7 @@ void BassInvaders::loadLevel()
 	soundSource = new SoundSource(INSERT_YOUR_SONG_PATH_HERE);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 16;
+	int chunkSampleLength = soundSource->spec.samples;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
@@ -171,8 +173,7 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	h = new hud("C:\\WINDOWS\\Fonts\\ARIAL.TTF", 20, c, wm.getWindowSurface());
-
+	h = new hud("./resources/fonts/Batang.ttf", 20, c, wm.getWindowSurface());
 }
 
 /**************************
@@ -251,7 +252,7 @@ void BassInvaders::doPlayingState()
 	rm->render();
 
 	/* ... then the hud/overlay */
-	h->displayText(10,10,"Health: %i0",pHero->getHealth());
+	h->displayText(10,10,"Health: %i",pHero->getHealth());
 	h->draw();
 }
 

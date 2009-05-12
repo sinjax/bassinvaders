@@ -37,17 +37,8 @@ void hud::displayText(int x, int y, char* text,...)
 	char *buffer = NULL;
 	va_list args;
 	va_start (args, text);
-	/*
-	* due to cross-platform compatibility, some systems do not have access to
-	* certain extensions to glibc. In this case use vsprintf with a fixed sized buffer for now.
-	*/
-	#if defined (__GLIBC__)
-	  vasprintf(&buffer,text, args);
-	#else
-	  buffer = (char*) malloc(1024*sizeof(char));
-	  vsprintf(buffer, text, args);
-	#endif
 
+	vasprintf(&buffer,text, args);
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
@@ -67,7 +58,7 @@ void hud::displayText(int x, int y, char* text,...)
 }
 
 /**
- * Use this, along with to register SDL surfaces to be displayed on the HUD when draw is called
+ * Use this to register SDL surfaces to be displayed on the HUD when draw is called
  */
 void hud::registerSurface(Uint32 x, Uint32 y, SDL_Surface* component, SDL_Rect* clip = NULL){
 	SDL_Rect temp ={x,y,0,0};
@@ -83,6 +74,6 @@ void hud::draw(){
 
 	for(i = components.begin(); i != components.end(); ++i) {
 		component_t bees = *i;
-		//DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
+		DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
 	}
 }
