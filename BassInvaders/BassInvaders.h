@@ -92,6 +92,7 @@ private:
 	hud *pHUD;
 
 	monster* pMonster;
+	std::deque<Renderable*> monsterList;
 };
 
 void MusicPlayer(void *udata, Uint8 *stream, int len);
