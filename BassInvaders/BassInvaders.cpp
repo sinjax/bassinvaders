@@ -218,6 +218,7 @@ void BassInvaders::doPlayingState()
 
 				if (!isRegistered)
 				{
+					BandPassFilterDT::alpha0 = 1;
 					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
@@ -245,6 +246,7 @@ void BassInvaders::doPlayingState()
 			{
 				if (!isRegistered)
 				{
+					BandPassFilterDT::alpha0 = 1;
 					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}

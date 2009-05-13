@@ -6,17 +6,41 @@
  */
 
 #include "BandPassFilterDT.h"
+#include "SDL.h"
 
 double BandPassFilterDT::alpha = 0.1;
+double BandPassFilterDT::alpha0 = 1;
 
 void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
-	((BandPassFilterDT*)udata)->high_pass((uint8_t*)stream, alpha);
+	static uint32_t lastTickCount = 0;
+	static uint32_t coolDown = 3;
+	uint32_t now = SDL_GetTicks();
+	uint32_t delta = now - lastTickCount;
+
+	if ((delta > coolDown) && fabs(alpha0 - alpha)>1e-6 )
+	{
+		lastTickCount = now;
+		alpha0 += 0.01 * (alpha0 > alpha ? -1: 1);
+	}
+
+	((BandPassFilterDT*)udata)->high_pass((uint8_t*)stream, alpha0);
 }
 
 void BandPassFilterDT::lowPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
-	((BandPassFilterDT*)udata)->low_pass((uint8_t*)stream, alpha);
+	static uint32_t lastTickCount = 0;
+	static uint32_t coolDown = 3;
+	uint32_t now = SDL_GetTicks();
+	uint32_t delta = now - lastTickCount;
+
+	if ((delta > coolDown) && fabs(alpha0 - alpha)>1e-6 )
+	{
+		lastTickCount = now;
+		alpha0 += 0.01 * (alpha0 > alpha ? -1: 1);
+	}
+
+	((BandPassFilterDT*)udata)->low_pass((uint8_t*)stream, alpha0);
 }
 
 BandPassFilterDT::BandPassFilterDT(uint32_t chunk_size) {
