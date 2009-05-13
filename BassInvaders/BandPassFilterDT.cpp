@@ -14,7 +14,7 @@ double BandPassFilterDT::alpha0 = 1;
 void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
 	static uint32_t lastTickCount = 0;
-	static uint32_t coolDown = 3;
+	static uint32_t coolDown = 2;
 	uint32_t now = SDL_GetTicks();
 	uint32_t delta = now - lastTickCount;
 
@@ -30,7 +30,7 @@ void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, voi
 void BandPassFilterDT::lowPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
 	static uint32_t lastTickCount = 0;
-	static uint32_t coolDown = 3;
+	static uint32_t coolDown = 2;
 	uint32_t now = SDL_GetTicks();
 	uint32_t delta = now - lastTickCount;
 

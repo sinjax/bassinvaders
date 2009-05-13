@@ -215,11 +215,11 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(10, 1);
+				BandPassFilterDT::alpha = 0.1;
 
 				if (!isRegistered)
 				{
-					BandPassFilterDT::alpha0 = 1;
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
 			}
@@ -228,11 +228,12 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
-				if (isRegistered)
+				BandPassFilterDT::alpha = 1;
+
+				if (!isRegistered)
 				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
-					isRegistered = 0;
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
+					isRegistered = 1;
 				}
 			}
 			if ((event.key.keysym.sym == SDLK_x) &&
@@ -242,21 +243,11 @@ void BassInvaders::doPlayingState()
 
 			}
 
-			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
-			{
-				if (!isRegistered)
-				{
-					BandPassFilterDT::alpha0 = 1;
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
-					isRegistered = 1;
-				}
-			}
-
 			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
 			{
+				BandPassFilterDT::alpha0 = 1;
 				if (isRegistered)
 				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
 					isRegistered = 0;
 				}
