@@ -12,7 +12,7 @@
 /*
  * This is called by SDL Music for chunkSampleSize x 4 bytes each time SDL needs it
  */
-void MusicPlayer(void *udata, Uint8 *stream, int len)
+void BassInvaders::MusicPlayer(void *udata, Uint8 *stream, int len)
 {
 	SoundSourceIterator* iter = ((BassInvaders*)udata)->soundIter;
 	if(iter->hasNext())
@@ -170,11 +170,11 @@ void BassInvaders::loadLevel()
 	beatIter = beat->iterator(COOLDOWN);
 
 	// hook the game in to the music via the MusicPlayer function.
-	Mix_HookMusic(MusicPlayer, this);
+	Mix_HookMusic(BassInvaders::MusicPlayer, this);
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	h = new hud("Batang.ttf", 20, c, wm.getWindowSurface());
+	h = new hud("./resources/fonts/Batang.ttf", 20, c, wm.getWindowSurface());
 
 }
 
@@ -201,30 +201,36 @@ void BassInvaders::doPlayingState()
 			}
 		}
 
+		static int isRegistered = 0;
 		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_a) &&
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(10, 1);
+
+				if (!isRegistered)
+				{
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
+					isRegistered = 1;
+				}
 			}
 
 			if ((event.key.keysym.sym == SDLK_d) &&
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
+				if (isRegistered)
+				{
+					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
+					isRegistered = 0;
+				}
 			}
-		}
 
-		// sound effect test
-		static int isRegistered = 0;
-		if (event.type == SDL_KEYUP)
-		{
 			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
 			{
 				if (!isRegistered)
 				{
-					BandPassFilterDT::alpha = 0.1;
 					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
@@ -234,7 +240,6 @@ void BassInvaders::doPlayingState()
 			{
 				if (isRegistered)
 				{
-					BandPassFilterDT::alpha = 0.;
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
 					isRegistered = 0;
 				}
@@ -249,7 +254,20 @@ void BassInvaders::doPlayingState()
 	pHero->setActions(im.getCurrentActions());
 
 	/* ... then the hordes of enemies */
-	if (beatIter->isBeat()) rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
+	static int isMonster = 0;
+	if (beatIter->isBeat())
+	{
+		if (isMonster!=4)
+		{
+			rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
+			isMonster++;
+		}
+		else
+		{
+			rm->theHorde.push_back(new bomb(rand()%SCREEN_HEIGHT));
+			isMonster = 0;
+		}
+	}
 
 	rm->clean_up();
 	rm->check_collision();
@@ -257,6 +275,8 @@ void BassInvaders::doPlayingState()
 
 	/* ... then the hud/overlay */
 	h->displayText(10,10,"Health: %i",pHero->getHealth());
+	h->displayText(300,10,"Score: %i",pHero->score);
+
 	h->draw();
 }
 

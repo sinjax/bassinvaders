@@ -9,10 +9,11 @@
 #include "toolkit.h"
 #include <fstream>
 #include <iostream>
+
 Hero::Hero(ResourceBundle* resource)
 {
 	loadHeroData(resource);
-
+	score = 0;
 	xvelocity = 0;
 	yvelocity = 0;
 	xpos = 100;
@@ -40,11 +41,6 @@ void Hero::loadHeroData(ResourceBundle* resource)
 
 	sprites.push_back(heroBody);
 
-}
-
-bool Hero::isCollidingWith(Renderable* pRenderable)
-{
-	return false;
 }
 
 bool Hero::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
@@ -138,13 +134,15 @@ void Hero::doActions()
 	{
 		xpos += xvelocity;
 		ypos += yvelocity;
+
 		lastTickCount = now;
 	}
 }
 
 void Hero::collide(Renderable * b)
 {
-	if ((b->getType() == ENEMY)/*&&(b->getState() == RS_DEAD)*/) health -=1;
+	if ((b->getType() == ENEMY)&&(b->getState() != RS_DEAD)) health -=1;
+	if ((b->getType() == AMMO)&&(b->getState() != RS_DEAD)) score +=1;
 
 	if (health < 0) health = 0;
 

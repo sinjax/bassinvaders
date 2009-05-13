@@ -19,7 +19,7 @@
 #ifndef BACKGROUND_H_
 #define BACKGROUND_H_
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include <vector>
 #include "toolkit.h"
 

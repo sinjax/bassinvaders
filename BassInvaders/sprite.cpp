@@ -30,13 +30,6 @@ Sprite::~Sprite() {
 
 void Sprite::destroy()
 {
-	/*for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
-	{
-		if (animationStateData[i].state != 0)
-		{
-			//SDL_FreeSurface(animationStateData[i].spriteSheet);
-		}
-	}*/
 }
 
 void Sprite::changeState(AnimationState_t newState)
@@ -192,36 +185,35 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 	uint32_t numberOfCollisionRects;
 	AnimationState_t state;
 
-	/* comments are left in currently in case we decide we don't like the GET_RESOURCE preprocessor macro */
-	numberOfStates = GET_RESOURCE(int32_t, *resource, "numberofstates", 0);//*(int*)((*resource)["numberofstates"]);
+	numberOfStates = GET_RESOURCE(int32_t, *resource, "numberofstates", 0);
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
 	ResourceBundle * currentState;
 	for (uint32_t i = 0; i<numberOfStates; i++)
 	{
 		currentState = GET_RESOURCE(ResourceBundle*, *resource, "statefiles", i);
-		state = GET_RESOURCE(AnimationState_t, *currentState, "state", 0);//*((AnimationState_t*)((*currentState)["state"]));
+		state = GET_RESOURCE(AnimationState_t, *currentState, "state", 0);
 
 		pData = &(animationStateData[state]);
 		pData->state = state;
 
 		DebugPrint((" loading state 0x%x\n", state));
 
-		R = GET_RESOURCE(int32_t, *currentState, "colorkey", 0); //((int*)((*currentState)["colorkey"]))[0];
-		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1); //((int*)((*currentState)["colorkey"]))[1];
-		B = GET_RESOURCE(int32_t, *currentState, "colorkey", 2); //((int*)((*currentState)["colorkey"]))[2];
+		R = GET_RESOURCE(int32_t, *currentState, "colorkey", 0);
+		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1);
+		B = GET_RESOURCE(int32_t, *currentState, "colorkey", 2);
 
-		pData->nextState = GET_RESOURCE(AnimationState_t, *currentState, "nextstate", 0); //*((AnimationState_t*)((*currentState)["nextstate"]));
-		pData->numberOfAnimationSteps = GET_RESOURCE(int32_t, *currentState, "numberofanimationsteps", 0); //*((int*)((*currentState)["numberofanimationsteps"]));
-		pData->ticksPerStep = GET_RESOURCE(int32_t, *currentState, "ticksperstep", 0);//*((int*)((*currentState)["ticksperstep"]));
+		pData->nextState = GET_RESOURCE(AnimationState_t, *currentState, "nextstate", 0);
+		pData->numberOfAnimationSteps = GET_RESOURCE(int32_t, *currentState, "numberofanimationsteps", 0);
+		pData->ticksPerStep = GET_RESOURCE(int32_t, *currentState, "ticksperstep", 0);
 
-		pData->sheetStartsAt.x = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 0);//((int*)((*currentState)["sheetstartsat"]))[0];
-		pData->sheetStartsAt.y = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 1);//((int*)((*currentState)["sheetstartsat"]))[1];
+		pData->sheetStartsAt.x = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 0);
+		pData->sheetStartsAt.y = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 1);
 
-		pData->spriteWidth = GET_RESOURCE(int32_t, *currentState, "spritesize", 0);//((int*)((*currentState)["spritesize"]))[0];
-		pData->spriteHeight = GET_RESOURCE(int32_t, *currentState, "spritesize", 1);//((int*)((*currentState)["spritesize"]))[1];
+		pData->spriteWidth = GET_RESOURCE(int32_t, *currentState, "spritesize", 0);
+		pData->spriteHeight = GET_RESOURCE(int32_t, *currentState, "spritesize", 1);
 
-		numberOfCollisionRects = GET_RESOURCE(int32_t, *currentState, "numberofrects", 0);//*((int*)((*currentState)["numberofrects"]));
+		numberOfCollisionRects = GET_RESOURCE(int32_t, *currentState, "numberofrects", 0);
 
 		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
 		{

@@ -13,7 +13,7 @@
 #ifndef HUD_H_
 #define HUD_H_
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include "SDL_ttf.h"
 #include <list>
 #include <string>

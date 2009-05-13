@@ -11,7 +11,7 @@
 #include <vector>
 #include <stdio.h>
 #include <string>
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include "ResourceBundle.h"
 
 using namespace std;

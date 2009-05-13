@@ -11,11 +11,11 @@
 #include <deque>
 #include "Renderable.h"
 #include "Hero.h"
-#include "background.h"
+#include "Background.h"
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
-#include <SDL/SDL_mixer.h>
+#include "SDL_mixer.h"
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
 #include "ResourceBundle.h"
@@ -23,6 +23,7 @@
 #include "monster.h"
 #include "hud.h"
 #include "renderableManager.h"
+#include "bomb.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -62,6 +63,7 @@ public:
 
 	static BassInvaders * theGame;
 	// End level class
+	static void MusicPlayer(void *udata, Uint8 *stream, int len);
 
 private:
 	void injectState(GameStates_t newState);
@@ -101,7 +103,5 @@ private:
 	Sprite* foo;
 };
 
-void MusicPlayer(void *udata, Uint8 *stream, int len);
-void soundProcessor( void *udata, uint8_t *stream, int len);
 #endif /* BASSINVADERS_H_ */
 

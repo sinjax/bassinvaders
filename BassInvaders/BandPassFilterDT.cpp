@@ -49,6 +49,8 @@ void BandPassFilterDT::low_pass(uint8_t *stream, double alpha)
 
 	Lout=(int16_t)LEFT(Sout,i-1);
 	Rout=(int16_t)RIGHT(Sout,i-1);
+	Lin=(LEFT(Sin,i-1));
+	Rin=(RIGHT(Sin,i-1));
 
 	for(i=0; i<samples; i++)
 	{

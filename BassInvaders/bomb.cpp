@@ -1,25 +1,25 @@
 /*
- * monster.cpp
+ * bomb.cpp
  *
- *  Created on: 8/5/09
+ *  Created on: 12/5/09
  *      Author: Darren Golbourn
  */
 
-#include "monster.h"
+#include "bomb.h"
 #include "toolkit.h"
 #include <fstream>
 #include "WindowManager.h"
 #include <iostream>
 
-monster::monster(uint32_t height)
+bomb::bomb(uint32_t height)
 {
-	loadMonsterData();
+	loadBombData();
 
-	xvelocity = MONSTER_X_SPEED;
-	yvelocity = MONSTER_Y_SPEED;
+	xvelocity = BOMB_X_SPEED;
+	yvelocity = BOMB_Y_SPEED;
 	xpos = SCREEN_WIDTH;
 	ypos = height;
-	type = ENEMY;
+	type = AMMO;
 	currentState = RS_ACTIVE;
 	pendingState = RS_ACTIVE;
 
@@ -29,19 +29,19 @@ monster::monster(uint32_t height)
 	this->velocityTicks = 10;
 }
 
-monster::~monster() {
+bomb::~bomb() {
 }
 
-void monster::loadMonsterData()
+void bomb::loadBombData()
 {
-	ResourceBundle* resource = &(*(ResourceBundle::getResource("resources/sprites/monster.info")));
-	Sprite monsterBody(resource);
+	ResourceBundle* resource = &(*(ResourceBundle::getResource("resources/sprites/bomb.info")));
+	Sprite bombBody(resource);
 
-	sprites.push_back(monsterBody);
+	sprites.push_back(bombBody);
 
 }
 
-bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
+bool bomb::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 {
 	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) )
 		return true;
@@ -49,7 +49,7 @@ bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 	return false;
 }
 
-void monster::render(SDL_Surface* pScreen)
+void bomb::render(SDL_Surface* pScreen)
 {
 
 	uint32_t now = SDL_GetTicks();
@@ -66,15 +66,15 @@ void monster::render(SDL_Surface* pScreen)
 	sprites[0].renderSprite(pScreen);
 }
 
-void monster::collide(Renderable* b){
+void bomb::collide(Renderable* b){
 	if (b->getType() == FRIENDLY)
 	{
 		changeState(RS_DEAD);
 
-		std::vector<Sprite>::iterator pos;
+		/*std::vector<Sprite>::iterator pos;
 		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
 		{
-			(*pos).changeState(AS_DAMAGED);
-		}
+			(*pos).changeState(AS_DEAD);
+		}*/
 	}
 }

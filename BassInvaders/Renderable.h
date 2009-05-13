@@ -8,7 +8,7 @@
 #ifndef RENDERABLE_H_
 #define RENDERABLE_H_
 
-#include "sprite.h"
+#include "Sprite.h"
 #include <vector>
 /*JG TODO:
  * - baseclass for all on-screen things
@@ -39,8 +39,6 @@ class Renderable {
 public:
 	Renderable();
 	virtual ~Renderable();
-
-	//bool isCollidingWith(Renderable* pRenderable) = 0;
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
 	virtual void changeState(RenderableState_t newState);
