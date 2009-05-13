@@ -243,10 +243,10 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.x = GET_RESOURCE(int32_t, *currentState, "rect", 0);
-			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
-			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
-			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			rect.x = GET_RESOURCE(int32_t*, *currentState, "rect", j)[0];
+			rect.y = GET_RESOURCE(int32_t*, *currentState, "rect", j)[1];
+			rect.w = GET_RESOURCE(int32_t*, *currentState, "rect", j)[2];
+			rect.h = GET_RESOURCE(int32_t*, *currentState, "rect", j)[3];
 			DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
 			pData->collisionRects.push_back(rect);
 

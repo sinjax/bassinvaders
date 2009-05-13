@@ -33,6 +33,59 @@ template<class type> type* ResourceBundle::readArray(string cstr)
 	return ret;
 }
 
+
+template<class type> type** ResourceBundle::readArrayArray(string cstr)
+{
+	char_separator<char> sep("","()",keep_empty_tokens);
+	tokenizer< char_separator<char> > tok(cstr,sep);
+	vector <type*> holder;
+	tokenizer<char_separator<char> >::iterator beg=tok.begin();
+	/*
+	Format must be:
+	([(](.+)[)])+
+	*/
+	BasicParse lookingFor = LEFTBRACKET;
+	while(beg!=tok.end())
+	{
+		switch (lookingFor)
+		{
+			case LEFTBRACKET:
+				if(string("(").compare(*beg) == 0)
+				{
+					lookingFor = TEXT;
+				}
+			break;
+			case TEXT:
+				holder.push_back(ResourceBundle::readArray<type>(*beg));
+				lookingFor = RIGHTBRACKET;
+			break;
+			case RIGHTBRACKET:
+				if(string(")").compare(*beg) == 0)
+				{
+					lookingFor = LEFTBRACKET;
+				}
+			break;
+			default:
+				lookingFor = LEFTBRACKET;
+			break;
+		}
+		beg++;
+	}
+	
+	if(lookingFor!=LEFTBRACKET){
+		return 0;
+	}
+
+	type ** ret = new type*[holder.size()];
+	uint32_t index = 0;
+	while(index!=holder.size())
+	{
+		type * a = holder[index];
+		ret[index++] = a;
+	}
+	return ret;
+}
+
 ResourceBundle* ResourceBundle::getResource(char* file){
 	if(ResourceBundle::resourceRegister[file] == 0)
 	{
@@ -84,7 +137,6 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["colorkey"] = INT;
 	ResourceBundle::supportedTypes["sheetstartsat"] = INT;
 	ResourceBundle::supportedTypes["spritesize"] = INT;
-	ResourceBundle::supportedTypes["rect"] = INT;
 	ResourceBundle::supportedTypes["health"] = INT;
 	ResourceBundle::supportedTypes["attackdamage"] = INT;
 	ResourceBundle::supportedTypes["nextstate"] = INT;
@@ -93,6 +145,10 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["numberofrects"] = INT;
 	ResourceBundle::supportedTypes["state"] = INT;
 	ResourceBundle::supportedTypes["numberofstates"] = INT;
+	
+	ResourceBundle::supportedTypes["rect"] = INTARR;
+	
+	
 }
 
 SDL_Surface * ResourceBundle::loadImage(char * filename)
@@ -172,6 +228,10 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			break;
 			case INT:
 				toAdd = (void*)this->readArray<int>(value);
+				// Read an integer (array or single)
+			break;
+			case INTARR:
+				toAdd = (void*)this->readArrayArray<int>(value);
 				// Read an integer (array or single)
 			break;
 			case DOUBLE:

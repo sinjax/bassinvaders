@@ -7,4 +7,4 @@ ticksperstep: 100
 sheetstartsat: 0,0
 spritesize: 128,128
 numberofrects: 1
-rect: 42,30,42,51
+rect: (42,30,42,51)
