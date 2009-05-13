@@ -22,6 +22,18 @@
 using namespace boost;
 using namespace std;
 
+/*
+Now, you might notice i've used the word parse here. This is a hack, a horrible hack. Though
+can be approximated to a LL1 consumption parser using the tokenizer in boost. 
+
+Its bad, boost has a parser called spirit, we should use it, its good. For now this will do
+*/
+typedef enum{
+	LEFTBRACKET,
+	TEXT,
+	RIGHTBRACKET,
+} BasicParse;
+
 typedef enum
 {
 	STRING, // Its just the string value, whatever that is
@@ -30,8 +42,7 @@ typedef enum
 	SOUND, // A SoundSource
 	INT,
 	DOUBLE,
-	NSECTION,
-	SECTION
+	INTARR,
 }  DataType;
 
 /*
