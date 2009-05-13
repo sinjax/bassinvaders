@@ -43,6 +43,9 @@ class BandPassFilterDT {
 	uint32_t samples;		// number of 2 x 16bit samples per chunk
 	int16_t Lout, Rout, Lin, Rin; // cache
 	double *Sout;
+
+	static uint32_t coolDown; // milliseconds between steps
+	static double step; // step size to change alpha
 public:
 	BandPassFilterDT(uint32_t);
 	virtual ~BandPassFilterDT();

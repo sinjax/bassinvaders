@@ -10,18 +10,19 @@
 
 double BandPassFilterDT::alpha = 0.1;
 double BandPassFilterDT::alpha0 = 1;
+uint32_t BandPassFilterDT::coolDown = 2;
+double BandPassFilterDT::step = 0.01;
 
 void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
 	static uint32_t lastTickCount = 0;
-	static uint32_t coolDown = 2;
 	uint32_t now = SDL_GetTicks();
 	uint32_t delta = now - lastTickCount;
 
-	if ((delta > coolDown) && fabs(alpha0 - alpha)>0.01 )
+	if ((delta > coolDown) && fabs(alpha0 - alpha)>step )
 	{
 		lastTickCount = now;
-		alpha0 += 0.01 * (alpha0 > alpha ? -1: 1);
+		alpha0 += step * (alpha0 > alpha ? -1: 1);
 	}
 
 	((BandPassFilterDT*)udata)->high_pass((uint8_t*)stream, alpha0);
@@ -30,14 +31,13 @@ void BandPassFilterDT::highPassFilterEffect(int chan, void *stream, int len, voi
 void BandPassFilterDT::lowPassFilterEffect(int chan, void *stream, int len, void *udata)
 {
 	static uint32_t lastTickCount = 0;
-	static uint32_t coolDown = 2;
 	uint32_t now = SDL_GetTicks();
 	uint32_t delta = now - lastTickCount;
 
-	if ((delta > coolDown) && fabs(alpha0 - alpha)>0.01 )
+	if ((delta > coolDown) && fabs(alpha0 - alpha)>step )
 	{
 		lastTickCount = now;
-		alpha0 += 0.01 * (alpha0 > alpha ? -1: 1);
+		alpha0 += step * (alpha0 > alpha ? -1: 1);
 	}
 
 	((BandPassFilterDT*)udata)->low_pass((uint8_t*)stream, alpha0);
