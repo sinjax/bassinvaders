@@ -131,10 +131,7 @@ void BassInvaders::doLoadingState()
 void BassInvaders::loadLevel()
 {
 	/* Load the level */
-	ResourceBundle *level = (ResourceBundle::getResource(
-		"resources/levels/level-test.info"
-	));
-
+	ResourceBundle *level = ResourceBundle::getResource("resources/levels/level-test.info");
 
 	/* set up background */
 
