@@ -160,7 +160,7 @@ void BassInvaders::loadLevel()
 	soundSource = (SoundSource*)(level["music"]);
 
 	// this is how many 2 x 2byte samples are in a chunk
-	int chunkSampleLength = soundSource->spec.samples * 16;
+	int chunkSampleLength = soundSource->spec.samples;
 
 	// What the music is played by.
 	// OpenAudio should be initialised with chunk_size = samples
