@@ -5,7 +5,7 @@
  *      Author: spijderman
  */
 
-#include "Sprite.h"
+#include "sprite.h"
 #include "toolkit.h"
 
 #define DEBUG_COLLISIONS
