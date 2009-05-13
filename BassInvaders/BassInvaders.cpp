@@ -131,7 +131,7 @@ void BassInvaders::doLoadingState()
 void BassInvaders::loadLevel()
 {
 	/* Load the level */
-	ResourceBundle level = *(ResourceBundle::getResource(
+	ResourceBundle *level = (ResourceBundle::getResource(
 		"resources/levels/level-test.info"
 	));
 
@@ -157,7 +157,7 @@ void BassInvaders::loadLevel()
 	 * Set up the music playback, filters and beat detection environment
 	 */
 	// where the music comes from.
-	soundSource = (SoundSource*)(level["music"]);
+	soundSource = (SoundSource*)((*level)["music"]);
 
 	// this is how many 2 x 2byte samples are in a chunk
 	int chunkSampleLength = soundSource->spec.samples;
@@ -181,8 +181,8 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	cout << "Loading HUD with font: " << (char*)(level["scorefont"]) << endl;
-	pHUD = new hud((char*)(level["scorefont"]), 20, c, wm.getWindowSurface());
+	cout << "Loading HUD with font: " << (char*)((*level)["scorefont"]) << endl;
+	pHUD = new hud((char*)((*level)["scorefont"]), 20, c, wm.getWindowSurface());
 }
 
 /**************************
@@ -230,6 +230,7 @@ void BassInvaders::doPlayingState()
 				if (isRegistered)
 				{
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
+					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
 					isRegistered = 0;
 				}
 			}
@@ -253,6 +254,7 @@ void BassInvaders::doPlayingState()
 			{
 				if (isRegistered)
 				{
+					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
 					isRegistered = 0;
 				}
@@ -315,7 +317,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))
