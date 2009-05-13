@@ -228,7 +228,7 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
-				BandPassFilterDT::alpha = 1;
+				BandPassFilterDT::alpha = 1.;
 
 				if (!isRegistered)
 				{
