@@ -26,20 +26,9 @@ void BassInvaders::MusicPlayer(void *udata, Uint8 *stream, int len)
 
 	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
-/*
- * This is called by music player.  The sound stream is fed to band_separate where the
- * data is analysed and beats are detected.
- */
-void band_separate( void *udata, uint8_t *stream, int len){
-	uint8_t bandstream[len];
-	BassInvaders* g = (BassInvaders*)udata;
-	g->fft->ingest(stream);
-	g->fft->band_pass(bandstream, 0, 4000);
-	g->beat->detect(bandstream);
-	//g->fft->band_pass(stream, 300, 4000);
-	//g->dt->low_pass(stream, 0.01);
-}
+
 BassInvaders * BassInvaders::theGame = 0;
+
 BassInvaders::BassInvaders()
 {
 	pHero = NULL;
@@ -143,12 +132,12 @@ void BassInvaders::loadLevel()
 {
 	/* Load the level */
 	ResourceBundle level = *(ResourceBundle::getResource(
-		"levels/level-test.info"
+		"resources/levels/level-test.info"
 	));
-	
-	
+
+
 	/* set up background */
-	
+
 	pBG = new Background(1, 10, SCREEN_HEIGHT, SCREEN_WIDTH);
 	LayerInfo_t bgLayer;
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
@@ -278,7 +267,7 @@ void BassInvaders::doPlayingState()
 	pHero->setActions(im.getCurrentActions());
 	pHero->render(wm.getWindowSurface());
 
-	/* ... then the hordes of enemies 
+	/* ... then the hordes of enemies
 
 		static int isMonster = 0;
 		if (beatIter->isBeat())
@@ -298,7 +287,7 @@ void BassInvaders::doPlayingState()
 			cout << "Creating monster!" << endl;
 			rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
 		} */
-	
+
 	pMonster->render(wm.getWindowSurface());
 	/* ... then the hud/overlay */
 	pHUD->displayText(10,10,"Health: %i",pHero->getHealth());
