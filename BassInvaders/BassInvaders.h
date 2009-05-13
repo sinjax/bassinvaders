@@ -22,8 +22,6 @@
 #include "BandPassFilterDT.h"
 #include "monster.h"
 #include "hud.h"
-#include "renderableManager.h"
-#include "bomb.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -81,26 +79,21 @@ private:
 
 private:
 	void doLoadingState();
-	void loadLevel(); /* JG TODO: load up background, hero, music etc... */
+	void loadLevel();
 
 private:
 	bool running;// is the main game loop still running?
 
-	renderableManager* rm;
 	Hero* pHero;
 	Background* pBG;
 	GameStates_t gameState;
 	GameStates_t nextState;
 	WindowManager wm;
 	InputManager im;
-	hud *h;
+	hud *pHUD;
 
-	SDL_Surface* pPauseGameScreen; /* when the pause state is invoked,
-									* the current playing screen is grabbed
-									* and then drawn as the first thing in the background
-									*/
-
-	Sprite* foo;
+	monster* pMonster;
+	std::deque<Renderable*> monsterList;
 };
 
 #endif /* BASSINVADERS_H_ */

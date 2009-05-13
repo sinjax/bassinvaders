@@ -17,7 +17,7 @@
 #include "SDL_ttf.h"
 #include <list>
 #include <string>
-#include "toolkit.h"
+#include <stdio.h>
 /*
  * Stores all the data needed to display an SDL_Surface on the screen
  */

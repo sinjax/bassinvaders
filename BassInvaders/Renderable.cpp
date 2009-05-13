@@ -13,7 +13,12 @@ Renderable::Renderable() {
 
 }
 
-Renderable::~Renderable() {
+Renderable::~Renderable()
+{
+	/* you'd think it would make sense to free up all the sdl surfaces that
+	 * were allocated to make this Renderable here, but actually they are
+	 * handled by the Resource Bundle.
+	 */
 }
 
 void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
@@ -42,7 +47,3 @@ uint32_t Renderable::getHealth()
 	return health;
 }
 
-vector<Sprite>* Renderable::getSprites()
-{
-	return &sprites;
-}

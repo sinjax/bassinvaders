@@ -8,6 +8,7 @@
  */
 
 #include "ResourceBundle.h"
+#include "toolkit.h"
 
 int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
@@ -80,7 +81,7 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 	void * resource = ResourceBundle::resourceRegister[filename];
 	if(resource==0)
 	{
-		cout << "Surface does not exist, loading it now" << endl;
+		DebugPrint(("Surface does not exist, loading it now\n"));
 		SDL_Surface* loadedImage = NULL;
 		SDL_Surface* optimisedImage = NULL;
 		loadedImage = SDL_LoadBMP(filename);
@@ -89,6 +90,10 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 		{
 			optimisedImage = SDL_DisplayFormat( loadedImage );
 			SDL_FreeSurface( loadedImage );
+		}
+		else
+		{
+			DebugPrint(("File \"%s\" not found!\n", filename));
 		}
 		return optimisedImage;
 	}
@@ -121,7 +126,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces
 		string::size_type endpos = value.find_last_not_of(" ");
 		value = value.substr( startpos, endpos-startpos+1 );
-		char cstr[value.size()+1];
+		char * cstr = new char[value.size()+1];
 		strcpy (cstr, value.c_str());
 		DataType d = ResourceBundle::supportedTypes[key];
 		cout << "Loading Resource Variable " << key << ": " << cstr << endl;
@@ -135,7 +140,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			case SOUND:
 				if(ResourceBundle::resourceRegister[key] == 0)
 				{
-					ResourceBundle::resourceRegister[key] = this->data[key];
+					ResourceBundle::resourceRegister[key] = new SoundSource(cstr);
 				}
 
 				toAdd = (void*)( ResourceBundle::resourceRegister[key]);

@@ -1,0 +1,7 @@
+filename:resources/background/dummybg3.bmp
+colorkey:(1,0,255,0)
+drawbox:(0,0,128,128)
+repeatpoint:(1156)
+tiling:(0,0)
+drawpos:(1024,200)
+scrollRatio:(1.2)

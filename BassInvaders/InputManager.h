@@ -23,9 +23,6 @@
 #define ACTION_MOVE_LEFT      0x00000004
 #define ACTION_MOVE_RIGHT     0x00000008
 #define ACTION_SHOOT          0x00000010
-#define ACTION_QUIT           0x00000020
-#define ACTION_DIE            0x00000040
-#define ACTION_LIVE            0x00000080
 
 #define ACTIONMASK uint32_t
 

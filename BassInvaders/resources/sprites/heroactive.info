@@ -1,0 +1,10 @@
+state: 1
+filename: resources/sprites/dummyheroactive.bmp
+colorkey: 0,255,0
+nextstate: 1
+numberofanimationsteps: 4
+ticksperstep: 100
+sheetstartsat: 1,1
+spritesize: 127,127
+numberofrects: 1
+rect: 28,38,66,44

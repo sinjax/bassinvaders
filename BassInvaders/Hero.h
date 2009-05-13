@@ -31,8 +31,13 @@ public:
 
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
+	virtual bool canBeRemoved();
 	void setActions(ACTIONMASK actions);
-	void collide(Renderable*);
+	virtual void doCollision(Renderable* pOther);
+
+protected:
+	virtual void updateStates();
+	virtual bool isCollidingWith(Renderable* pOther);
 
 private:
 	void loadHeroData(ResourceBundle *fp);

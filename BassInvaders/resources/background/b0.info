@@ -1,7 +1,7 @@
-filename:resources/background/starfield.bmp
+filename:resources/background/dummybg1.bmp
 colorkey:(0,0,0,0)
-drawbox:(0,0,256,256)
-repeatpoint:(256)
-tiling:(1,1)
+drawbox:(0,0,640,480)
+repeatpoint:(640)
+tiling:(1,0)
 drawpos:(0,0)
 scrollRatio:(1.0)
