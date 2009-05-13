@@ -14,6 +14,25 @@ int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
 map<string,void*> ResourceBundle::resourceRegister;
 
+template<class type> type* ResourceBundle::readArray(string cstr)
+{
+	tokenizer< escaped_list_separator<char> > tok(cstr);
+	vector <type> holder;
+	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
+	{
+		holder.push_back(lexical_cast<type>(*beg));
+	}
+
+	type * ret = new type[holder.size()];
+	uint32_t index = 0;
+	while(index!=holder.size())
+	{
+		type a = holder[index];
+		ret[index++] = a;
+	}
+	return ret;
+}
+
 ResourceBundle* ResourceBundle::getResource(char* file){
 	if(ResourceBundle::resourceRegister[file] == 0)
 	{
