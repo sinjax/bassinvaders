@@ -8,6 +8,7 @@
  */
 
 #include "ResourceBundle.h"
+#include "toolkit.h"
 
 int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
@@ -80,7 +81,7 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 	void * resource = ResourceBundle::resourceRegister[filename];
 	if(resource==0)
 	{
-		cout << "Surface does not exist, loading it now" << endl;
+		DebugPrint(("Surface does not exist, loading it now\n"));
 		SDL_Surface* loadedImage = NULL;
 		SDL_Surface* optimisedImage = NULL;
 		loadedImage = SDL_LoadBMP(filename);
@@ -89,6 +90,10 @@ SDL_Surface * ResourceBundle::loadImage(char * filename)
 		{
 			optimisedImage = SDL_DisplayFormat( loadedImage );
 			SDL_FreeSurface( loadedImage );
+		}
+		else
+		{
+			DebugPrint(("File \"%s\" not found!\n", filename));
 		}
 		return optimisedImage;
 	}

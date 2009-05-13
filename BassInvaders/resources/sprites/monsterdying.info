@@ -1,10 +1,10 @@
-state: 2
-filename: resources/sprites/Explode1.bmp
+state: 4
+filename: resources/sprites/dummymonsterexplode.bmp
 colorkey: 0,255,0
-nextstate: 2
-numberofanimationsteps: 8
-ticksperstep:100
-sheetstartsat: 1,1
-spritesize: 23,23
+nextstate: 8
+numberofanimationsteps: 5
+ticksperstep: 250
+sheetstartsat: 0,0
+spritesize: 128,128
 numberofrects: 1
-rect: 1,1,23,23
+rect: 0,0,128,128

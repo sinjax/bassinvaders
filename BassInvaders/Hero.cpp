@@ -28,8 +28,15 @@ Hero::Hero(ResourceBundle* resource)
 	 * charge attack? */
 }
 
-Hero::~Hero() {
+/* hero manages it's own sprites */
+Hero::~Hero()
+{
+	std::vector<Sprite>::iterator pos;
 
+		for (pos = sprites.begin(); pos !=sprites.end(); ++pos)
+		{
+			pos->destroy();
+		}
 }
 
 void Hero::loadHeroData(ResourceBundle* resource)
@@ -78,12 +85,10 @@ void Hero::setActions(ACTIONMASK actions)
 {
 	if (actions & ACTION_MOVE_DOWN)
 	{
-		DebugPrint(("moving down\n"));
 		yvelocity = HERO_Y_SPEED;
 	}
 	else if (actions & ACTION_MOVE_UP)
 	{
-		DebugPrint(("moving up\n"));
 		yvelocity = -(HERO_Y_SPEED);
 	}
 	else
@@ -93,12 +98,10 @@ void Hero::setActions(ACTIONMASK actions)
 
 	if (actions & ACTION_MOVE_LEFT)
 	{
-		DebugPrint(("moving left\n"));
 		xvelocity = -(HERO_X_SPEED);
 	}
 	else if (actions & ACTION_MOVE_RIGHT)
 	{
-		DebugPrint(("moving right\n"));
 		xvelocity = HERO_X_SPEED;
 	}
 	else
@@ -108,24 +111,6 @@ void Hero::setActions(ACTIONMASK actions)
 
 	if (actions & ACTION_SHOOT)
 	{
-	}
-
-	if (actions & ACTION_DIE)
-	{
-		std::vector<Sprite>::iterator pos;
-		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
-		{
-			(*pos).changeState(AS_DAMAGED);
-		}
-	}
-
-	if (actions & ACTION_LIVE)
-	{
-		std::vector<Sprite>::iterator pos;
-		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
-		{
-			(*pos).changeState(AS_IDLE);
-		}
 	}
 }
 
@@ -142,18 +127,12 @@ void Hero::doActions()
 	}
 }
 
-void Hero::collide(Renderable * b)
+bool Hero::canBeRemoved()
 {
-	if ((b->getType() == ENEMY)/*&&(b->getState() == RS_DEAD)*/) health -=1;
+	return false;
+}
 
-	if (health < 0) health = 0;
-
-	if (health < 40)
-	{
-		std::vector<Sprite>::iterator pos;
-		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
-		{
-			(*pos).changeState(AS_DAMAGED);
-		}
-	}
+void Hero::updateStates()
+{
+	currentState = pendingState;
 }

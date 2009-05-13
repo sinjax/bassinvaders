@@ -1,2 +1,2 @@
-numberofstates: 2
-statefiles: resources/sprites/monsteridle.info,resources/sprites/monsterdying.info
+numberofstates: 3
+statefiles: resources/sprites/monsteridle.info,resources/sprites/monsterdamaged.info,resources/sprites/monsterdying.info

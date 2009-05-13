@@ -1,10 +1,10 @@
-state: 1
-filename: resources/sprites/dummymonsteridle.bmp
+state: 2
+filename: resources/sprites/dummymonsterdamaged.bmp
 colorkey: 0,255,0
-nextstate: 1
+nextstate: 2
 numberofanimationsteps: 4
 ticksperstep: 100
 sheetstartsat: 0,0
 spritesize: 128,128
 numberofrects: 1
-rect: 42,30,42,51
+rect: 0,0,128,128

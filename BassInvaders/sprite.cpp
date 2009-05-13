@@ -8,14 +8,18 @@
 #include "Sprite.h"
 #include "toolkit.h"
 
+#define DEBUG_COLLISIONS
+
 Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	/* take a text file as a parameter containing all the data for all the states
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
 	loadSpriteData(resources);
-	forceStateChange = 0;
 	currentState = AS_IDLE;
 	pendingState = AS_IDLE;
+
+	xpos = 0;
+	ypos = 0;
 }
 
 Sprite::~Sprite() {
@@ -30,13 +34,13 @@ Sprite::~Sprite() {
 
 void Sprite::destroy()
 {
-	/*for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
+	for(uint32_t i = 0; i<AS_STATES_SIZE; ++i)
 	{
 		if (animationStateData[i].state != 0)
 		{
-			//SDL_FreeSurface(animationStateData[i].spriteSheet);
+			SDL_FreeSurface(animationStateData[i].spriteSheet);
 		}
-	}*/
+	}
 }
 
 void Sprite::changeState(AnimationState_t newState)
@@ -52,7 +56,7 @@ void Sprite::changeState(AnimationState_t newState)
 		DebugPrint(("Can't transition to state with no data\n"));
 		return;
 	}
-	forceStateChange = 1;
+
 	switch(currentState)
 	{
 		/* JG TODO: do we need any further logic?*/
@@ -71,7 +75,8 @@ void Sprite::changeState(AnimationState_t newState)
 		case AS_DEAD:
 		default:
 		{
-			//there's no return from '86...
+			/* cannot transition away from dying or dead.
+			 * Once a sprite is dead, it should be removed and cleaned up */
 		}break;
 	}
 }
@@ -119,6 +124,19 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 	spriteRect.w = pTempState->spriteWidth;
 	spriteRect.h = pTempState->spriteHeight;
 
+#ifdef DEBUG_COLLISIONS
+	std::vector<CollisionRect_t>::iterator pos;
+
+	for (pos = pTempState->collisionRects.begin(); pos != pTempState->collisionRects.end(); ++pos)
+	{
+		SDL_Rect foo;
+		foo.x = pos->x;
+		foo.y = pos->y;
+		foo.h = pos->h;
+		foo.w = pos->w;
+		SDL_FillRect(pScreen, &foo, SDL_MapRGB( pScreen->format, 255, 255, 255 ));
+	}
+#endif
 	DrawToSurface(xpos,
 				  ypos,
 				  pTempState->spriteSheet,
@@ -143,11 +161,10 @@ void Sprite::updateStates()
 	AnimationStateData_t* pCurrentState = &animationStateData[currentState];
 
 	/* this may be the last frame in a single pass state. if so , setup the next state here*/
-	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1) && !forceStateChange)
+	if (pCurrentState->currentAnimationStep == (pCurrentState->numberOfAnimationSteps-1))
 	{
 		pendingState = pCurrentState->nextState;
 	}
-	forceStateChange = 0;
 
 	/* change state if we are not in the one we
 	 * should be in
@@ -205,7 +222,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		pData = &(animationStateData[state]);
 		pData->state = state;
 
-		DebugPrint((" loading state 0x%x\n", state));
+		DebugPrint(("Loading sprite state 0x%x...", state));
 
 		R = GET_RESOURCE(int32_t, *currentState, "colorkey", 0); //((int*)((*currentState)["colorkey"]))[0];
 		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1); //((int*)((*currentState)["colorkey"]))[1];
@@ -231,23 +248,81 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
 			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
 			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
 			pData->collisionRects.push_back(rect);
+
 		}
 
 		// this doesn't work with GET_RESOURCE, I guess because filename doesn't return an array maybe?
 		pData->spriteSheet = (SDL_Surface*)((*currentState)["filename"]);
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
+
+		DebugPrint(("success\n"));
 	}
 }
 
 void Sprite::setLocation(uint32_t xpos, uint32_t ypos)
 {
+	int32_t xdelta = xpos - this->xpos;
+	int32_t ydelta = ypos - this->ypos;
+
+	/* update the collision rects now that the position has been updated */
+	std::vector<CollisionRect_t>::iterator pos;
+	uint32_t state = AS_IDLE;
+	AnimationStateData_t* pAnimState;
+
+	/* iterate through each sprite state, and then through each collision rect list,
+	 * updating the collision rect postions if we've changed position.
+	 * don't waste time doing any of this is the change is zero */
+	if ((ydelta != 0 ) || (xdelta != 0))
+	{
+		while(state < AS_STATES_SIZE)
+		{
+			pAnimState = &(animationStateData[state]);
+
+			for(pos=pAnimState->collisionRects.begin(); pos!=pAnimState->collisionRects.end(); ++pos)
+			{
+				if (ydelta != 0)
+				{
+					pos->y += ydelta;
+				}
+
+				if (xdelta != 0)
+				{
+					pos->x += xdelta;
+				}
+			}
+			state<<=1;
+		}
+	}
+	/* and finally set the position for the sprite object itself*/
 	this->xpos = xpos;
 	this->ypos = ypos;
 }
 
+/* returns the collision boxes of the current animation state*/
 std::vector<CollisionRect_t> Sprite::getCollisionRects()
 {
 	return animationStateData[currentState].collisionRects;
+}
+
+AnimationState_t Sprite::getPendingAnimationState()
+{
+	return pendingState;
+}
+
+AnimationState_t Sprite::getAnimationState()
+{
+	return currentState;
+}
+
+bool Sprite::isCollidingWith(std::vector<CollisionRect_t> other)
+{
+	std::vector<CollisionRect_t>::iterator myRects;
+	std::vector<CollisionRect_t>::iterator otherRects;
+	AnimationStateData_t* pData = &(animationStateData[currentState]);
+
+	//for (myRects = pData->collisionRects.begin(); myRects)
+	return true;
 }

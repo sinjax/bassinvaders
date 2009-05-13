@@ -157,12 +157,13 @@ void BassInvaders::loadLevel()
 	memset(&bgLayer, 0, sizeof(LayerInfo_t));
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b1.info");
 	pBG->addLayer(&bgLayer);
+	memset(&bgLayer, 0, sizeof(LayerInfo_t));
+	pBG->createLayerFromFile(&bgLayer, "resources/background/b2.info");
+	pBG->addLayer(&bgLayer);
 
-	/* set up the renderable manager */
-	rm = new renderableManager(wm.getWindowSurface());
-	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info")); /* make the hero */
-	rm->theHorde.push_back(pHero); /* add him to the list */
+	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
 
+	pMonster = new monster(23);
 	/*
 	 * Set up the music playback, filters and beat detection environment
 	 */
@@ -183,7 +184,7 @@ void BassInvaders::loadLevel()
 	dt = new BandPassFilterDT (chunkSampleLength*4);
 
 	// set up the beat detector.
-	int historyBuffer = 1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq));
+	int historyBuffer = (int) (1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq)));
 	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
 
 	// hook the game in to the music via the MusicPlayer function.
@@ -221,16 +222,10 @@ void BassInvaders::doPlayingState()
 
 		if (event.type == SDL_KEYUP)
 		{
-			if ((event.key.keysym.sym == SDLK_a) &&
+			if ((event.key.keysym.sym == SDLK_x) &&
 					(event.key.state == SDL_RELEASED))
 			{
-				pBG->accelerate(10, 1);
-			}
-
-			if ((event.key.keysym.sym == SDLK_d) &&
-					(event.key.state == SDL_RELEASED))
-			{
-				pBG->accelerate(1, 1);
+				pMonster->changeState(RS_DEAD);
 			}
 		}
 
@@ -265,7 +260,9 @@ void BassInvaders::doPlayingState()
 
 	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
+	pHero->render(wm.getWindowSurface());
 
+<<<<<<< HEAD:BassInvaders/BassInvaders.cpp
 	if (beatIter->isBeat()){
 		cout << "Creating monster!" << endl;
 		rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
@@ -275,9 +272,12 @@ void BassInvaders::doPlayingState()
 	rm->check_collision();
 	rm->render();
 
+=======
+	pMonster->render(wm.getWindowSurface());
+>>>>>>> 028b8f0dc4f048bb164903d424b79d8ddd1d4b47:BassInvaders/BassInvaders.cpp
 	/* ... then the hud/overlay */
-	h->displayText(10,10,"Health: %i0",pHero->getHealth());
-	h->draw();
+	//pHUD->displayText(10,10,"Health: %u",pHero->getHealth());
+	//pHUD->draw();
 }
 
 /**************************
