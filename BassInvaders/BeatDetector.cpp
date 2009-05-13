@@ -85,6 +85,7 @@ void BeatDetector::detect(uint8_t* stream){
 	H->record(average_energy);
 }
 
-bool BeatDetector::isBeat(){
+bool BeatDetector::isBeat()
+{
 	return beat;
 }

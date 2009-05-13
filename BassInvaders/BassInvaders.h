@@ -21,6 +21,7 @@
 #include "ResourceBundle.h"
 #include "BandPassFilterDT.h"
 #include "monster.h"
+#include "bomb.h"
 #include "hud.h"
 
 #define SENSITIVITY 1.3

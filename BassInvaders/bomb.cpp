@@ -66,15 +66,46 @@ void bomb::render(SDL_Surface* pScreen)
 	sprites[0].renderSprite(pScreen);
 }
 
-void bomb::collide(Renderable* b){
-	if (b->getType() == FRIENDLY)
-	{
-		changeState(RS_DEAD);
 
-		/*std::vector<Sprite>::iterator pos;
-		for (pos = sprites.begin(); pos!=sprites.end(); ++pos)
+bool bomb::canBeRemoved()
+{
+	if (isOffScreen(SCREEN_WIDTH, SCREEN_HEIGHT)) //JG TODO fix this hack
+	{
+		return true;
+	}
+
+	if ((currentState == RS_DEAD) && (sprites[MAIN_SPRITE].getAnimationState() == AS_DEAD))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void bomb::doCollision(Renderable*)
+{
+	
+}
+
+bool bomb::isCollidingWith(Renderable*){
+	return false;
+}
+
+void bomb::updateStates()
+{
+	currentState = pendingState;
+
+	switch(currentState)
+	{
+		case RS_ACTIVE:
 		{
-			(*pos).changeState(AS_DEAD);
-		}*/
+			sprites[MAIN_SPRITE].changeState(AS_IDLE);
+		}break;
+
+		case RS_DEAD:
+		{
+			/* the monster has been killed, so trigger the dying animation */
+			sprites[MAIN_SPRITE].changeState(AS_DYING);
+		}break;
 	}
 }

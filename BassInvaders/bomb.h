@@ -16,6 +16,7 @@
 #define BOMB_X_SPEED -1
 #define BOMB_Y_SPEED 0
 
+#define MAIN_SPRITE 0
 class bomb: public Renderable {
 public:
 	bomb(uint32_t);
@@ -23,7 +24,12 @@ public:
 
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
-	void collide(Renderable*);
+	virtual void doCollision(Renderable* pOther);
+	virtual bool canBeRemoved();
+
+protected:
+	virtual void updateStates();
+	virtual bool isCollidingWith(Renderable* pOther);
 private:
 	void loadBombData();
 	uint32_t velocityTicks;

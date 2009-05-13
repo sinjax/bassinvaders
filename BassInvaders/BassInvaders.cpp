@@ -9,6 +9,7 @@
 #include "WindowManager.h"
 #include "toolkit.h"
 
+
 /*
  * This is called by SDL Music for chunkSampleSize x 4 bytes each time SDL needs it
  */
@@ -48,6 +49,8 @@ BassInvaders::BassInvaders()
 	nextState = Loading;
 	running = true;
 	BassInvaders::theGame = this;
+	
+	this->monsterList = std::deque<Renderable*>();
 }
 
 BassInvaders::~BassInvaders() {
@@ -186,7 +189,7 @@ void BassInvaders::loadLevel()
 	// set up the beat detector.
 	int historyBuffer = (int) (1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq)));
 	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
-
+	beatIter = beat->iterator(100);
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(BassInvaders::MusicPlayer, this);
 
@@ -277,29 +280,35 @@ void BassInvaders::doPlayingState()
 	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
 	pHero->render(wm.getWindowSurface());
-
-	/* ... then the hordes of enemies 
-
-		static int isMonster = 0;
-		if (beatIter->isBeat())
-		{
-			if (isMonster!=4)
-			{
-				rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
-				isMonster++;
-			}
-			else
-			{
-				rm->theHorde.push_back(new bomb(rand()%SCREEN_HEIGHT));
-				isMonster = 0;
-			}
-		}
-		if (beatIter->isBeat()){
-			cout << "Creating monster!" << endl;
-			rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
-		} */
 	
-	pMonster->render(wm.getWindowSurface());
+	/* ... then the hordes of enemies */
+	static int isMonster = 0;
+	if (beatIter->isBeat())
+	{
+		if (isMonster!=4)
+		{
+			this->monsterList.push_back(new monster(rand()%SCREEN_HEIGHT));
+			isMonster++;
+		}
+		else
+		{
+			this->monsterList.push_back(new bomb(rand()%SCREEN_HEIGHT));
+			isMonster = 0;
+		}
+	}
+	if (beatIter->isBeat())
+	{
+		this->monsterList.push_back(new monster(rand()%SCREEN_HEIGHT));
+	} 
+	/**/
+	
+	uint32_t index = 0;
+	while(index!=this->monsterList.size())
+	{
+		Renderable * a = monsterList[index];
+		a->render(wm.getWindowSurface());
+	}
+	//pMonster->render(wm.getWindowSurface());
 	/* ... then the hud/overlay */
 	pHUD->displayText(10,10,"Health: %i",pHero->getHealth());
 	pHUD->displayText(300,10,"Score: %i",pHero->score);
