@@ -224,13 +224,16 @@ void BassInvaders::doPlayingState()
 	pBG->redraw(wm.getWindowSurface());
 
 	/* then the hero sprite */
+	pHero->doCollision(pMonster);
+
 	pHero->setActions(im.getCurrentActions());
 	pHero->render(wm.getWindowSurface());
 
 	pMonster->render(wm.getWindowSurface());
+
 	/* ... then the hud/overlay */
-	//pHUD->displayText(10,10,"Health: %u",pHero->getHealth());
-	//pHUD->draw();
+	pHUD->displayText(10,10,"Health: %u",pHero->getHealth());
+	pHUD->draw();
 }
 
 /**************************

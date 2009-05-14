@@ -23,15 +23,15 @@ public:
 	monster(uint32_t);
 	virtual ~monster();
 
-	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
 	virtual void doCollision(Renderable* pOther);
+	virtual std::vector<Sprite> getActiveSpriteList();
+	virtual void reactToCollision(Renderable* pOther);
 
 protected:
 	virtual void updateStates();
-	virtual bool isCollidingWith(Renderable* pOther);
 
 private:
 	void loadMonsterData();

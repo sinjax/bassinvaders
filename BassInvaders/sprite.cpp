@@ -15,7 +15,8 @@ Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	 * then pass file into a function which populates an AnimationState_t
 	  * note: in real game, will need to store checksums of all data files to confirm vanilla operation*/
 	loadSpriteData(resources);
-	currentState = AS_IDLE;
+
+	currentState = AS_INIT;
 	pendingState = AS_IDLE;
 
 	xpos = 0;
@@ -59,17 +60,13 @@ void Sprite::changeState(AnimationState_t newState)
 
 	switch(currentState)
 	{
-		/* JG TODO: do we need any further logic?*/
+		case AS_INIT:
 		case AS_IDLE:
+		case AS_DAMAGED:
 		{
 			pendingState = newState;
 
 		}break;
-
-		case AS_DAMAGED:
-		{
-			pendingState = newState;
-		} break;
 
 		case AS_DYING:
 		case AS_DEAD:
@@ -102,9 +99,10 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 			pTempState = &(animationStateData[AS_DYING]);
 		} break;
 		case AS_DEAD:
+		case AS_INIT:
 		default:
 		{
-			/* dead sprites (or bad states) do not get rendered */
+			/* initialising, dead sprites (or bad states) do not get rendered */
 			return;
 		}break;
 	}
@@ -319,10 +317,46 @@ AnimationState_t Sprite::getAnimationState()
 
 bool Sprite::isCollidingWith(std::vector<CollisionRect_t> other)
 {
+	if ((currentState == AS_INIT)
+		|| (currentState == AS_DEAD)
+		|| (currentState == AS_DYING))
+	{
+		return false;
+	}
+
 	std::vector<CollisionRect_t>::iterator myRects;
 	std::vector<CollisionRect_t>::iterator otherRects;
 	AnimationStateData_t* pData = &(animationStateData[currentState]);
 
-	//for (myRects = pData->collisionRects.begin(); myRects)
-	return true;
+	for (myRects = pData->collisionRects.begin(); myRects != pData->collisionRects.end(); ++myRects)
+	{
+		uint32_t top1,bottom1,left1,right1;
+
+		top1    = myRects->y;
+		bottom1 = top1+myRects->h;
+		left1   = myRects->x;
+		right1  = left1+myRects->w;
+
+		for (otherRects = other.begin(); otherRects != other.end(); ++otherRects)
+		{
+			uint32_t top2,bottom2,left2,right2;
+			top2    = otherRects->y;
+			bottom2 = top2+otherRects->h;
+			left2   = otherRects->x;
+			right2  = left2+otherRects->w;
+
+			if ((top1 > bottom2) || (left1>right2) || (bottom1<top2) || (right1<left2))
+			{
+				//not a collision
+				continue;
+			}
+			else
+			{
+				DebugPrint(("collision get! (%u,%u,%u,%u) with (%u,%u,%u,%u)!\n", left1, top1, right1, bottom1, left2, top2, right2, bottom2));
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

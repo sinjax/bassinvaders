@@ -18,6 +18,9 @@
 
 #define HERO_X_SPEED 5
 #define HERO_Y_SPEED 5
+
+#define DEAD_HEALTH 0
+#define DAMAGED_HEALTH 33
 /* JG TODO:
  * - Vector of bullets
  */
@@ -27,16 +30,16 @@ public:
 	Hero(ResourceBundle* filename);
 	virtual ~Hero();
 
-	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
 	void setActions(ACTIONMASK actions);
 	virtual void doCollision(Renderable* pOther);
+	virtual std::vector<Sprite> getActiveSpriteList();
+	virtual void reactToCollision(Renderable* pOther);
 
 protected:
 	virtual void updateStates();
-	virtual bool isCollidingWith(Renderable* pOther);
 
 private:
 	void loadHeroData(ResourceBundle *fp);
