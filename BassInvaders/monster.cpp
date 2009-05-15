@@ -44,6 +44,8 @@ void monster::loadMonsterData()
 
 bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 {
+	/* TODO: this should probably call into the sprite code
+	 * i.e. new method sprite::isOffScreen() */
 	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) )
 		return true;
 

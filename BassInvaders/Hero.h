@@ -46,7 +46,6 @@ private:
 	void doActions();
 
 private:
-	std::vector<Bullet> bullets;
 	uint32_t velocityTicks; //how many ticks pass before we move by velocity
 	uint32_t lastTickCount;
 };

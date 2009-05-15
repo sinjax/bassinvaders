@@ -57,6 +57,7 @@ bool Hero::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 void Hero::render(SDL_Surface* pScreen)
 {
 	doActions();
+	updateStates();
 
 	/* set the sprite for the main body to the same position
 	 * as the Hero class
@@ -130,6 +131,19 @@ bool Hero::canBeRemoved()
 void Hero::updateStates()
 {
 	currentState = pendingState;
+
+	switch(currentState)
+	{
+		case RS_ACTIVE:
+		{
+			sprites[BODYSPRITE].changeState(AS_IDLE);
+		}break;
+
+		case RS_DEAD:
+		{
+			sprites[BODYSPRITE].changeState(AS_DEAD);
+		}break;
+	}
 }
 
 void Hero::doCollision(Renderable* pOther)
@@ -179,11 +193,11 @@ void Hero::reactToCollision(Renderable* pOther)
 
 			//hero has hit a monster!
 			health -= pOther->getAttackDamage();
-			if (health < DEAD_HEALTH)
+			if (health <= DEAD_HEALTH)
 			{
 				changeState(RS_DEAD);
-
-				// JG TODO: maybe kick off game over ligic from this point...
+				health = DEAD_HEALTH;
+				// JG TODO: maybe kick off game over logic from this point...
 			}
 			else if (health < DAMAGED_HEALTH)
 			{

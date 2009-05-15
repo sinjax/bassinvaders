@@ -22,6 +22,7 @@
 #include "BandPassFilterDT.h"
 #include "monster.h"
 #include "hud.h"
+#include "RenderableManager.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
@@ -90,9 +91,7 @@ private:
 	WindowManager wm;
 	InputManager im;
 	hud *pHUD;
-
-	monster* pMonster;
-	std::deque<Renderable*> monsterList;
+	RenderableManager* pRM;
 };
 
 void MusicPlayer(void *udata, Uint8 *stream, int len);

@@ -1,123 +1,163 @@
 /*
- * renderableManager.cpp
+ * RenderableManager.cpp
  *
  *  Created on: May 7, 2009
- *      Author: Darren Golbourn
+ *      Author: Darren Golbourn, spijderman
  */
 
-#include "renderableManager.h"
+#include "RenderableManager.h"
+#include "toolkit.h"
 
-renderableManager::renderableManager(SDL_Surface* pScreen) {
+RenderableManager::RenderableManager(SDL_Surface* pScreen)
+{
 	this->pScreen = pScreen;
+	enemyCount = 0;
 }
 
-renderableManager::~renderableManager() {
-	// TODO Auto-generated destructor stub
+RenderableManager::~RenderableManager()
+{
+
 }
 
-void renderableManager::render(){
-	std::deque<Renderable*>::iterator i;
+void RenderableManager::setHero(Hero* pHero)
+{
+	this->pHero = pHero;
+}
 
-	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
-		(*i)->render(pScreen);
+void RenderableManager::addBullet(Renderable* pBullet)
+{
+	bullets.push_back(pBullet);
+}
+
+void RenderableManager::addEnemy(Renderable* pEnemy)
+{
+	enemies.push_back(pEnemy);
+	enemyCount++;
+}
+
+void RenderableManager::addPowerUp(Renderable* pPowerUp)
+{
+	powerups.push_back(pPowerUp);
+}
+
+void RenderableManager::render()
+{
+	/* draw all items in this order (remember that z-order is determined by when they are drawn)
+	 * - enemies
+	 * - bullets
+	 * - hero
+	 * - powerups
+	 */
+
+	DebugPrint(("rendering %u enemies\n", enemyCount));
+
+	std::deque<Renderable*>::iterator pos;
+
+	for (pos = enemies.begin(); pos != enemies.end(); ++pos)
+	{
+		(*pos)->render(this->pScreen);
 	}
-}
 
-void renderableManager::check_collision(){
-	std::deque<Renderable*>::iterator i,j;
-
-	for(i=theHorde.begin(); i != theHorde.end(); ++i) {
-		for(j=i+1; j != theHorde.end(); ++j) {
-
-			if (renderableIntersect(*i, *j))
-			{
-				(*j)->collide((*i));
-				(*i)->collide((*j));
-			}
-		}
+	for (pos = bullets.begin(); pos != bullets.end(); ++pos)
+	{
+		(*pos)->render(this->pScreen);
 	}
+
+	pHero->render(pScreen);
+
+	for (pos = powerups.begin(); pos != powerups.end(); ++pos)
+	{
+		(*pos)->render(this->pScreen);
+	}
+
 }
 
-void renderableManager::clean_up(){
-	std::deque<Renderable*>::iterator i;
+void RenderableManager::doCollisions()
+{
+	/* check collisions in the following order:
+	 * bullets vs enemies, interleaved with hero vs enemies
+	 * hero vs powerups
+	 *
+	 * JG TODO: can we make this more efficient - e.g. fewer passes?
+	 */
 
-	for(i=theHorde.begin(); i != theHorde.end();) {
-		Renderable *bees = *i;
-		if (bees->isOffScreen(pScreen->w, pScreen->h))
+	std::deque<Renderable*>::iterator bulletsIter;
+	std::deque<Renderable*>::iterator enemiesIter;
+	std::deque<Renderable*>::iterator powerupsIter;
+
+	/* bullets vs enemies */
+	for (bulletsIter = bullets.begin(); bulletsIter != bullets.end(); ++bulletsIter)
+	{
+		for (enemiesIter = enemies.begin(); enemiesIter != enemies.end(); ++enemiesIter)
 		{
-			i = theHorde.erase(i);
-			delete bees;
+			(*bulletsIter)->doCollision(*enemiesIter);
+
 		}
-		else i++;
 	}
+
+	/* hero vs enemies */
+	for (enemiesIter = enemies.begin(); enemiesIter != enemies.end(); ++enemiesIter)
+	{
+		pHero->doCollision(*enemiesIter);
+	}
+
+	/* hero vs powerups */
+	for (powerupsIter = powerups.begin(); powerupsIter != powerups.end(); ++powerupsIter)
+	{
+		pHero->doCollision(*powerupsIter);
+	}
+
 }
 
-bool renderableManager::renderableIntersect(Renderable* i, Renderable* j)
+void RenderableManager::removeInactiveRenderables()
 {
-	vector<Sprite>* I = i->getSprites();
-	vector<Sprite>* J = j->getSprites();
-	vector<Sprite>::iterator m;
-	vector<Sprite>::iterator n;
+	/* go thru each list of renderables and see if they
+	 * can be removed (i.e. they are dead or off screen)
+	 *
+	 * the slightly tortured loop syntax is so we don't erase
+	 * the element to which the iterator is referring and make ++pos
+	 * do undefined things (mostly crash...)
+	 */
+	std::deque<Renderable*>::iterator pos;
 
-	for(m=I->begin(); m != I->end(); ++m) {
-		for(n=J->begin(); n != J->end(); ++n) {
-			if (spriteIntersect(&(*n), &(*m)))
-			{
-				return true;
-			}
+	for (pos = bullets.begin(); pos != bullets.end();)
+	{
+		if ((*pos)->canBeRemoved())
+		{
+			delete(*pos);
+			pos = bullets.erase(pos);
+		}
+		else
+		{
+			++pos;
 		}
 	}
 
-	return false;
-}
-
-bool renderableManager::spriteIntersect(Sprite* A, Sprite* B){
-	vector<CollisionRect_t> X = A->getCollisionRects();
-	vector<CollisionRect_t> Y = B->getCollisionRects();
-	vector<CollisionRect_t>::iterator i;
-	vector<CollisionRect_t>::iterator j;
-	Uint32 C[4] = {B->xpos, B->ypos, A->xpos, A->ypos};
-
-	for(i=X.begin(); i != X.end(); ++i) {
-		for(j=Y.begin(); j != Y.end(); ++j) {
-			if (rectIntersect(&(*i), &(*j), C))
-			{
-				return true;
-			}
+	for (pos = enemies.begin(); pos != enemies.end();)
+	{
+		if ((*pos)->canBeRemoved())
+		{
+			delete(*pos);
+			pos = enemies.erase(pos);
+			DebugPrint(("deleted enemy\n"));
+			enemyCount--;
+		}
+		else
+		{
+			++pos;
 		}
 	}
 
-	return false;
-}
-
-bool renderableManager::rectIntersect(CollisionRect_t* A, CollisionRect_t* B, coords C)
-{
-	Sint16 x2 = C[2]+A->x;
-	Sint16 y2 = C[3]+A->y;
-	Uint16 h2 = A->h;
-	Uint16 w2 = A->w;
-	Sint32 x1 = C[0]+B->x;
-	Sint16 y1 = C[1]+B->y;
-	Uint16 h1 = B->h;
-	Uint16 w1 = B->w;
-
-	bool dx, dy;
-
-	if (x2>x1){
-		dx = (x2-x1)<w1;
-	}else {
-		dx = (x1-x2)<w2;
+	for (pos = powerups.begin(); pos != powerups.end();)
+	{
+		if ((*pos)->canBeRemoved())
+		{
+			delete(*pos);
+			pos = powerups.erase(pos);
+		}
+		else
+		{
+			++pos;
+		}
 	}
-
-	if (y2>y1){
-		dy = (y2-y1)<h1;
-	}else {
-		dy = (y1-y2)<h2;
-	}
-	//printf("(%i, %i, %i, %i), (%i, %i, %i, %i)\n", x2,y2,h2,w2,x1,y1,h1,w1);
-	if (dx&&dy){
-		return true;
-	}
-
-	return false;
 }

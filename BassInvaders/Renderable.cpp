@@ -29,7 +29,10 @@ void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
 
 void Renderable::changeState(RenderableState_t newState)
 {
-	pendingState = newState;
+	if (currentState != newState)
+	{
+		pendingState = newState;
+	}
 }
 
 RenderableState_t Renderable::getState()
