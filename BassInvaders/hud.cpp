@@ -28,6 +28,8 @@ hud::~hud() {
     TTF_Quit();
 }
 
+static int int_vasprintf (char ** result, const char * format, va_list args);
+
 /*
  * display text formatted in printf format at location (x,y) (i.e. to print changing numerical data like scores)
  */
@@ -38,17 +40,7 @@ void hud::displayText(int x, int y, char* text,...)
 	va_list args;
 	va_start (args, text);
 
-	/*
-	* due to cross-platform compatibility, some systems do not have access to
-	* certain extensions to glibc. In this case use vsprintf with a fixed sized buffer for now.
-	*/
-	#if defined (__GLIBC__)
-	  vasprintf(&buffer,text, args);
-	#else
-	  buffer = (char*) malloc(1024*sizeof(char));
-	  vsprintf(buffer, text, args);
-	#endif
-
+	int_vasprintf(&buffer,text, args);
 	char * pch = strtok (buffer,"\n");
 	int currentY = y;
 	int fontHeight = TTF_FontHeight(font);
@@ -68,7 +60,7 @@ void hud::displayText(int x, int y, char* text,...)
 }
 
 /**
- * Use this, along with to register SDL surfaces to be displayed on the HUD when draw is called
+ * Use this to register SDL surfaces to be displayed on the HUD when draw is called
  */
 void hud::registerSurface(Uint32 x, Uint32 y, SDL_Surface* component, SDL_Rect* clip = NULL){
 	SDL_Rect temp ={x,y,0,0};
@@ -87,3 +79,81 @@ void hud::draw(){
 		//DrawToSurface(bees.offset.x, bees.offset.y, bees.component, baseSurface, &(bees.clip));
 	}
 }
+
+static int int_vasprintf (char ** result, const char * format, va_list args){
+	const char *p = format;
+	/* Add one to make sure that it is never zero, which might cause malloc
+	 to return NULL.  */
+	int total_width = strlen (format) + 1;
+	va_list ap;
+
+	memcpy (&ap, &args, sizeof (va_list));
+
+	while (*p != '\0')
+    {
+		if (*p++ == '%')
+		{
+			while (strchr ("-+ #0", *p))
+			++p;
+			if (*p == '*')
+			{
+				++p;
+				total_width += abs (va_arg (ap, int));
+			}
+			else
+				total_width += strtoul (p, (char **) &p, 10);
+			if (*p == '.')
+			{
+				++p;
+				if (*p == '*')
+				{
+					++p;
+					total_width += abs (va_arg (ap, int));
+				}
+				else
+					total_width += strtoul (p, (char **) &p, 10);
+				}
+			while (strchr ("hlL", *p))
+			++p;
+			/* Should be big enough for any format specifier except %s and floats.  */
+			total_width += 30;
+			switch (*p)
+			{
+				case 'd':
+				case 'i':
+				case 'o':
+				case 'u':
+				case 'x':
+				case 'X':
+				case 'c':
+					(void) va_arg (ap, int);
+				break;
+				case 'f':
+				case 'e':
+				case 'E':
+				case 'g':
+				case 'G':
+					(void) va_arg (ap, double);
+			  /* Since an ieee double can have an exponent of 307, we'll
+			 make the buffer wide enough to cover the gross case. */
+					total_width += 307;
+				break;
+				case 's':
+					total_width += strlen (va_arg (ap, char *));
+				break;
+				case 'p':
+				case 'n':
+					(void) va_arg (ap, char *);
+				break;
+			}
+			p++;
+		}
+    }
+
+	*result = (char*)malloc (total_width);
+	if (*result != NULL)
+		return vsprintf (*result, format, args);
+	else
+		return 0;
+}
+

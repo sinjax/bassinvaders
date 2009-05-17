@@ -13,6 +13,7 @@
 #include "Bullet.h"
 #include "InputManager.h"
 #include "ResourceBundle.h"
+#include "WindowManager.h"
 
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 
@@ -24,10 +25,10 @@
 
 class Hero: public Renderable {
 public:
+	uint32_t score;
 	Hero(ResourceBundle* filename);
 	virtual ~Hero();
 
-	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();

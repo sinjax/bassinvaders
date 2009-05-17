@@ -34,7 +34,7 @@
 
 #ifndef HISTORY_H_
 #define HISTORY_H_
-#include<math.h>
+#include <math.h>
 
 template <class type> class history {
 	long int index; // current array index

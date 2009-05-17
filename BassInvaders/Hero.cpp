@@ -9,10 +9,11 @@
 #include "toolkit.h"
 #include <fstream>
 #include <iostream>
+
 Hero::Hero(ResourceBundle* resource)
 {
 	loadHeroData(resource);
-
+	score = 0;
 	xvelocity = 0;
 	yvelocity = 0;
 	xpos = 100;
@@ -47,11 +48,6 @@ void Hero::loadHeroData(ResourceBundle* resource)
 
 	sprites.push_back(heroBody);
 
-}
-
-bool Hero::isCollidingWith(Renderable* pRenderable)
-{
-	return false;
 }
 
 bool Hero::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
@@ -123,6 +119,7 @@ void Hero::doActions()
 	{
 		xpos += xvelocity;
 		ypos += yvelocity;
+
 		lastTickCount = now;
 	}
 }
@@ -135,4 +132,12 @@ bool Hero::canBeRemoved()
 void Hero::updateStates()
 {
 	currentState = pendingState;
+}
+
+void Hero::doCollision(Renderable*){
+	
+}
+
+bool Hero::isCollidingWith(Renderable*){
+	return false;
 }

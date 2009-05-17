@@ -11,11 +11,11 @@
 #include <deque>
 #include "Renderable.h"
 #include "Hero.h"
-#include "background.h"
+#include "Background.h"
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
-#include <SDL/SDL_mixer.h>
+#include "SDL_mixer.h"
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
 #include "ResourceBundle.h"
@@ -62,6 +62,7 @@ public:
 
 	static BassInvaders * theGame;
 	// End level class
+	static void MusicPlayer(void *udata, Uint8 *stream, int len);
 
 private:
 	void injectState(GameStates_t newState);
@@ -94,7 +95,5 @@ private:
 	RenderableManager* pRM;
 };
 
-void MusicPlayer(void *udata, Uint8 *stream, int len);
-void band_separate( void *udata, uint8_t *stream, int len);
 #endif /* BASSINVADERS_H_ */
 

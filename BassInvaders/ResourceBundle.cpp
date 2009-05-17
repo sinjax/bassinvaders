@@ -14,6 +14,78 @@ int ResourceBundle::isInit = 0;
 map<string,DataType> ResourceBundle::supportedTypes;
 map<string,void*> ResourceBundle::resourceRegister;
 
+template<class type> type* ResourceBundle::readArray(string cstr)
+{
+	tokenizer< escaped_list_separator<char> > tok(cstr);
+	vector <type> holder;
+	for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
+	{
+		holder.push_back(lexical_cast<type>(*beg));
+	}
+
+	type * ret = new type[holder.size()];
+	uint32_t index = 0;
+	while(index!=holder.size())
+	{
+		type a = holder[index];
+		ret[index++] = a;
+	}
+	return ret;
+}
+
+
+template<class type> type** ResourceBundle::readArrayArray(string cstr)
+{
+	char_separator<char> sep("","()",keep_empty_tokens);
+	tokenizer< char_separator<char> > tok(cstr,sep);
+	vector <type*> holder;
+	tokenizer<char_separator<char> >::iterator beg=tok.begin();
+	/*
+	Format must be:
+	([(](.+)[)])+
+	*/
+	BasicParse lookingFor = LEFTBRACKET;
+	while(beg!=tok.end())
+	{
+		switch (lookingFor)
+		{
+			case LEFTBRACKET:
+				if(string("(").compare(*beg) == 0)
+				{
+					lookingFor = TEXT;
+				}
+			break;
+			case TEXT:
+				holder.push_back(ResourceBundle::readArray<type>(*beg));
+				lookingFor = RIGHTBRACKET;
+			break;
+			case RIGHTBRACKET:
+				if(string(")").compare(*beg) == 0)
+				{
+					lookingFor = LEFTBRACKET;
+				}
+			break;
+			default:
+				lookingFor = LEFTBRACKET;
+			break;
+		}
+		beg++;
+	}
+	
+	if(lookingFor!=LEFTBRACKET){
+		return 0;
+	}
+
+	type ** ret = new type*[holder.size()];
+	uint32_t index = 0;
+	while(index!=holder.size())
+	{
+		type * a = holder[index];
+		ret[index++] = a;
+	}
+	return ret;
+}
+
 ResourceBundle* ResourceBundle::getResource(char* file){
 	if(ResourceBundle::resourceRegister[file] == 0)
 	{
@@ -65,7 +137,6 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["colorkey"] = INT;
 	ResourceBundle::supportedTypes["sheetstartsat"] = INT;
 	ResourceBundle::supportedTypes["spritesize"] = INT;
-	ResourceBundle::supportedTypes["rect"] = INT;
 	ResourceBundle::supportedTypes["health"] = INT;
 	ResourceBundle::supportedTypes["attackdamage"] = INT;
 	ResourceBundle::supportedTypes["nextstate"] = INT;
@@ -74,6 +145,10 @@ void ResourceBundle::initSupportedTypes()
 	ResourceBundle::supportedTypes["numberofrects"] = INT;
 	ResourceBundle::supportedTypes["state"] = INT;
 	ResourceBundle::supportedTypes["numberofstates"] = INT;
+	
+	ResourceBundle::supportedTypes["rect"] = INTARR;
+	
+	
 }
 
 SDL_Surface * ResourceBundle::loadImage(char * filename)
@@ -126,7 +201,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 		string::size_type startpos = value.find_first_not_of(" "); // Find the first character position after excluding leading blank spaces
 		string::size_type endpos = value.find_last_not_of(" ");
 		value = value.substr( startpos, endpos-startpos+1 );
-		char cstr[value.size()+1];
+		char * cstr = new char[value.size()+1];
 		strcpy (cstr, value.c_str());
 		DataType d = ResourceBundle::supportedTypes[key];
 		cout << "Loading Resource Variable " << key << ": " << cstr << endl;
@@ -140,7 +215,7 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			case SOUND:
 				if(ResourceBundle::resourceRegister[key] == 0)
 				{
-					ResourceBundle::resourceRegister[key] = this->data[key];
+					ResourceBundle::resourceRegister[key] = new SoundSource(cstr);
 				}
 
 				toAdd = (void*)( ResourceBundle::resourceRegister[key]);
@@ -153,6 +228,10 @@ ResourceBundle::ResourceBundle(char * infoFile)
 			break;
 			case INT:
 				toAdd = (void*)this->readArray<int>(value);
+				// Read an integer (array or single)
+			break;
+			case INTARR:
+				toAdd = (void*)this->readArrayArray<int>(value);
 				// Read an integer (array or single)
 			break;
 			case DOUBLE:

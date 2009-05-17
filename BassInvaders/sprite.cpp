@@ -209,15 +209,14 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 	uint32_t numberOfCollisionRects;
 	AnimationState_t state;
 
-	/* comments are left in currently in case we decide we don't like the GET_RESOURCE preprocessor macro */
-	numberOfStates = GET_RESOURCE(int32_t, *resource, "numberofstates", 0);//*(int*)((*resource)["numberofstates"]);
+	numberOfStates = GET_RESOURCE(int32_t, *resource, "numberofstates", 0);
 
 	memset(animationStateData, 0, (sizeof(AnimationStateData_t) * AS_STATES_SIZE));
 	ResourceBundle * currentState;
 	for (uint32_t i = 0; i<numberOfStates; i++)
 	{
 		currentState = GET_RESOURCE(ResourceBundle*, *resource, "statefiles", i);
-		state = GET_RESOURCE(AnimationState_t, *currentState, "state", 0);//*((AnimationState_t*)((*currentState)["state"]));
+		state = GET_RESOURCE(AnimationState_t, *currentState, "state", 0);
 
 		pData = &(animationStateData[state]);
 		pData->state = state;
@@ -226,26 +225,27 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		G = GET_RESOURCE(int32_t, *currentState, "colorkey", 1); //((int*)((*currentState)["colorkey"]))[1];
 		B = GET_RESOURCE(int32_t, *currentState, "colorkey", 2); //((int*)((*currentState)["colorkey"]))[2];
 
-		pData->nextState = GET_RESOURCE(AnimationState_t, *currentState, "nextstate", 0); //*((AnimationState_t*)((*currentState)["nextstate"]));
-		pData->numberOfAnimationSteps = GET_RESOURCE(int32_t, *currentState, "numberofanimationsteps", 0); //*((int*)((*currentState)["numberofanimationsteps"]));
-		pData->ticksPerStep = GET_RESOURCE(int32_t, *currentState, "ticksperstep", 0);//*((int*)((*currentState)["ticksperstep"]));
+		pData->nextState = GET_RESOURCE(AnimationState_t, *currentState, "nextstate", 0);
+		pData->numberOfAnimationSteps = GET_RESOURCE(int32_t, *currentState, "numberofanimationsteps", 0);
+		pData->ticksPerStep = GET_RESOURCE(int32_t, *currentState, "ticksperstep", 0);
 
-		pData->sheetStartsAt.x = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 0);//((int*)((*currentState)["sheetstartsat"]))[0];
-		pData->sheetStartsAt.y = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 1);//((int*)((*currentState)["sheetstartsat"]))[1];
+		pData->sheetStartsAt.x = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 0);
+		pData->sheetStartsAt.y = GET_RESOURCE(int32_t, *currentState, "sheetstartsat", 1);
 
-		pData->spriteWidth = GET_RESOURCE(int32_t, *currentState, "spritesize", 0);//((int*)((*currentState)["spritesize"]))[0];
-		pData->spriteHeight = GET_RESOURCE(int32_t, *currentState, "spritesize", 1);//((int*)((*currentState)["spritesize"]))[1];
+		pData->spriteWidth = GET_RESOURCE(int32_t, *currentState, "spritesize", 0);
+		pData->spriteHeight = GET_RESOURCE(int32_t, *currentState, "spritesize", 1);
 
-		numberOfCollisionRects = GET_RESOURCE(int32_t, *currentState, "numberofrects", 0);//*((int*)((*currentState)["numberofrects"]));
+		numberOfCollisionRects = GET_RESOURCE(int32_t, *currentState, "numberofrects", 0);
 
 		for (uint32_t j = 0; j<numberOfCollisionRects; ++j)
 		{
 			CollisionRect_t rect = {0,0,0,0};
 
-			rect.x = GET_RESOURCE(int32_t, *currentState, "rect", 0);
-			rect.y = GET_RESOURCE(int32_t, *currentState, "rect", 1);
-			rect.w = GET_RESOURCE(int32_t, *currentState, "rect", 2);
-			rect.h = GET_RESOURCE(int32_t, *currentState, "rect", 3);
+			rect.x = GET_RESOURCE(int32_t*, *currentState, "rect", j)[0];
+			rect.y = GET_RESOURCE(int32_t*, *currentState, "rect", j)[1];
+			rect.w = GET_RESOURCE(int32_t*, *currentState, "rect", j)[2];
+			rect.h = GET_RESOURCE(int32_t*, *currentState, "rect", j)[3];
+			DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
 			pData->collisionRects.push_back(rect);
 
 		}
@@ -316,7 +316,7 @@ bool Sprite::isCollidingWith(std::vector<CollisionRect_t> other)
 {
 	std::vector<CollisionRect_t>::iterator myRects;
 	std::vector<CollisionRect_t>::iterator otherRects;
-	AnimationStateData_t* pData = &(animationStateData[currentState]);
+	//AnimationStateData_t* pData = &(animationStateData[currentState]);
 
 	//for (myRects = pData->collisionRects.begin(); myRects)
 	return true;

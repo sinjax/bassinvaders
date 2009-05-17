@@ -11,7 +11,7 @@
 # include <iostream>
 # include <unistd.h>
 # include <sys/stat.h>
-# include <SDL/SDL.h>
+# include "SDL.h"
 
 extern "C"{
 #include <libavcodec/avcodec.h>

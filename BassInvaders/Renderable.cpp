@@ -49,3 +49,4 @@ uint32_t Renderable::getHealth()
 {
 	return health;
 }
+

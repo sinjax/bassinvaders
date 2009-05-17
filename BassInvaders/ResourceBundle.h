@@ -1,4 +1,4 @@
-/*
+ /*
  *  ResourceBundle.h
  *  BassInvaders
  *
@@ -18,10 +18,22 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-
 #include <vector>
 using namespace boost;
 using namespace std;
+
+/*
+Now, you might notice i've used the word parse here. This is a hack, a horrible hack. Though
+can be approximated to a LL1 consumption parser using the tokenizer in boost. 
+
+Its bad, boost has a parser called spirit, we should use it, its good. For now this will do
+*/
+typedef enum{
+	LEFTBRACKET,
+	TEXT,
+	RIGHTBRACKET,
+} BasicParse;
+
 typedef enum
 {
 	STRING, // Its just the string value, whatever that is
@@ -30,8 +42,7 @@ typedef enum
 	SOUND, // A SoundSource
 	INT,
 	DOUBLE,
-	NSECTION,
-	SECTION
+	INTARR,
 }  DataType;
 
 /*
@@ -47,25 +58,8 @@ class ResourceBundle
 
 private:
 	// readArray template class replaces readIntArray and readFloatArray
-	template<class type> static type* ResourceBundle::readArray(string cstr)
-	{
-		tokenizer< escaped_list_separator<char> > tok(cstr);
-		vector <type> holder;
-		for(tokenizer<escaped_list_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg)
-		{
-			holder.push_back(lexical_cast<type>(*beg));
-		}
-
-		type * ret = new type[holder.size()];
-		uint32_t index = 0;
-		while(index!=holder.size())
-		{
-			type a = holder[index];
-			ret[index++] = a;
-		}
-		return ret;
-	}
-
+	template<class type> static type* readArray(string cstr);
+	template<class type> static type** readArrayArray(string cstr);
 	ResourceBundle ** ResourceBundle::readResourceArray(string cstr);
 	static void registerResource(string, void *);
 

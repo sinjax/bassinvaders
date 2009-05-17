@@ -23,7 +23,6 @@ public:
 	monster(uint32_t);
 	virtual ~monster();
 
-	virtual bool isCollidingWith(Renderable *pRenderable);
 	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();

@@ -41,11 +41,6 @@ void monster::loadMonsterData()
 
 }
 
-bool monster::isCollidingWith(Renderable* pRenderable)
-{
-	return false;
-}
-
 bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 {
 	/* TODO: this should probably call into the sprite code
@@ -109,5 +104,13 @@ bool monster::canBeRemoved()
 		return true;
 	}
 
+	return false;
+}
+
+void monster::doCollision(Renderable*){
+	
+}
+
+bool monster::isCollidingWith(Renderable*){
 	return false;
 }
