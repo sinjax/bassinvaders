@@ -18,7 +18,7 @@ Hero::Hero(ResourceBundle* resource)
 	yvelocity = 0;
 	xpos = 100;
 	ypos = 100;
-	type = FRIENDLY;
+	type = RT_FRIENDLY;
 	currentState = RS_ACTIVE;
 	pendingState = RS_ACTIVE;
 
@@ -58,6 +58,7 @@ bool Hero::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
 void Hero::render(SDL_Surface* pScreen)
 {
 	doActions();
+	updateStates();
 
 	/* set the sprite for the main body to the same position
 	 * as the Hero class
@@ -132,12 +133,90 @@ bool Hero::canBeRemoved()
 void Hero::updateStates()
 {
 	currentState = pendingState;
+
+	switch(currentState)
+	{
+		case RS_ACTIVE:
+		{
+			sprites[BODYSPRITE].changeState(AS_IDLE);
+		}break;
+
+		case RS_DEAD:
+		{
+			sprites[BODYSPRITE].changeState(AS_DEAD);
+		}break;
+	}
 }
 
-void Hero::doCollision(Renderable*){
-	
+void Hero::doCollision(Renderable* pOther)
+{
+	/* read type of Renderable.
+	 * if neutral/friend:
+	 *  return
+	 * if enemy/powerup:
+	 *  find out if collision
+	 *   if true, call reactToCollision on both Renderables
+	 */
+
+	switch(pOther->getType())
+	{
+		case RT_ENEMY:
+		case RT_POWERUP:
+		{
+			if (isCollidingWith(pOther))
+			{
+				this->reactToCollision(pOther);
+				pOther->reactToCollision(this);
+			}
+		}break;
+
+		case RT_FRIENDLY:
+		case RT_NEUTRAL:
+		default:
+		{
+			return;
+		}
+	}
 }
 
-bool Hero::isCollidingWith(Renderable*){
-	return false;
+std::vector<Sprite> Hero::getActiveSpriteList()
+{
+	std::vector<Sprite> ret;
+	ret.push_back(sprites[BODYSPRITE]);
+	return ret;
+}
+
+void Hero::reactToCollision(Renderable* pOther)
+{
+	switch(pOther->getType())
+	{
+		case RT_ENEMY:
+		{
+
+			//hero has hit a monster!
+			health -= pOther->getAttackDamage();
+			if (health <= DEAD_HEALTH)
+			{
+				changeState(RS_DEAD);
+				health = DEAD_HEALTH;
+				// JG TODO: maybe kick off game over logic from this point...
+			}
+			else if (health < DAMAGED_HEALTH)
+			{
+				sprites[BODYSPRITE].changeState(AS_DAMAGED);
+			}
+
+			DebugPrint(("Hero hit by enemy, down to %d health\n", health));
+
+		}break;
+
+		case RT_POWERUP:
+		case RT_FRIENDLY:
+		case RT_NEUTRAL:
+		default:
+		{
+			// so far nothing, but if we want to have health pickups, we can do it here
+			return;
+		}
+	}
 }

@@ -93,8 +93,6 @@ private:
 	InputManager im;
 	hud *pHUD;
 	RenderableManager* pRM;
-
-	Renderable *pMonster;
 };
 
 #endif /* BASSINVADERS_H_ */
