@@ -20,7 +20,6 @@ typedef SDL_Rect CollisionRect_t;
 
 typedef enum
 {
-	AS_INIT    = 0x0, // the only time it is valid to set a sprite to INIT is in the ctor, and the pending state MUST be set to something else...
 	AS_IDLE    = 0x00000001,
 	AS_DAMAGED = 0x00000002,
 	AS_DYING   = 0x00000004,

@@ -48,7 +48,6 @@ BassInvaders::BassInvaders()
 	nextState = Loading;
 	running = true;
 	BassInvaders::theGame = this;
-	pRM = new RenderableManager(wm.getWindowSurface());
 }
 
 BassInvaders::~BassInvaders() {
@@ -154,10 +153,9 @@ void BassInvaders::loadLevel()
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b2.info");
 	pBG->addLayer(&bgLayer);
 
-	// create the hero and stuff him into the renderable manager
 	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
-	pRM->setHero(pHero);
 
+	pMonster = new monster(23);
 	/*
 	 * Set up the music playback, filters and beat detection environment
 	 */
@@ -211,28 +209,28 @@ void BassInvaders::doPlayingState()
 				injectState(Paused);
 			}
 		}
+
+		if (event.type == SDL_KEYUP)
+		{
+			if ((event.key.keysym.sym == SDLK_x) &&
+					(event.key.state == SDL_RELEASED))
+			{
+				pMonster->changeState(RS_DEAD);
+			}
+		}
 	}
 
 	/* firstly, draw the background */
 	pBG->redraw(wm.getWindowSurface());
 
-	/* move the hero about and let him shoot things*/
+	/* then the hero sprite */
 	pHero->setActions(im.getCurrentActions());
+	pHero->render(wm.getWindowSurface());
 
-	pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT));
-
-	/* do collision detection */
-	pRM->doCollisions();
-
-	/* draw all the active renderables */
-	pRM->render();
-
-	/* remove the dead/off screen ones */
-	pRM->removeInactiveRenderables();
-
-	/* draw the hud/overlay */
-	pHUD->displayText(10,10,"Health: %u",pHero->getHealth());
-	pHUD->draw();
+	pMonster->render(wm.getWindowSurface());
+	/* ... then the hud/overlay */
+	//pHUD->displayText(10,10,"Health: %u",pHero->getHealth());
+	//pHUD->draw();
 }
 
 /**************************

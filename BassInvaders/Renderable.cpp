@@ -45,47 +45,7 @@ RenderableType_t Renderable::getType()
 	return type;
 }
 
-int32_t Renderable::getHealth()
+uint32_t Renderable::getHealth()
 {
 	return health;
-}
-
-uint32_t Renderable::getAttackDamage()
-{
-	return attackDamage;
-}
-
-bool Renderable::isCollidingWith(Renderable* pOther)
-{
-	/* if either renderable is dead, they can't be colliding*/
-	if ((pOther->getState() == RS_DEAD)
-	  || (this->getState() == RS_DEAD))
-	{
-		return false;
-	}
-
-	/* get local active sprite list
-	 * get pOther active sprite list
-	 *
-	 * iterate comparing all to all...
-	 * return true if any collide
-	 */
-	std::vector<Sprite> mySprites = this->getActiveSpriteList();
-	std::vector<Sprite> otherSprites = pOther->getActiveSpriteList();
-
-	std::vector<Sprite>::iterator myPos;
-	std::vector<Sprite>::iterator otherPos;
-
-	for (myPos = mySprites.begin(); myPos != mySprites.end(); ++myPos)
-	{
-		for (otherPos = otherSprites.begin(); otherPos != otherSprites.end(); ++otherPos)
-		{
-			if (myPos->isCollidingWith(otherPos->getCollisionRects()))
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
 }
