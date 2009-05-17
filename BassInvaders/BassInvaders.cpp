@@ -131,10 +131,7 @@ void BassInvaders::doLoadingState()
 void BassInvaders::loadLevel()
 {
 	/* Load the level */
-	ResourceBundle level = *(ResourceBundle::getResource(
-		"resources/levels/level-test.info"
-	));
-
+	ResourceBundle *level = ResourceBundle::getResource("resources/levels/level-test.info");
 
 	/* set up background */
 
@@ -157,7 +154,7 @@ void BassInvaders::loadLevel()
 	 * Set up the music playback, filters and beat detection environment
 	 */
 	// where the music comes from.
-	soundSource = (SoundSource*)(level["music"]);
+	soundSource = (SoundSource*)((*level)["music"]);
 
 	// this is how many 2 x 2byte samples are in a chunk
 	int chunkSampleLength = soundSource->spec.samples;
@@ -181,8 +178,8 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	cout << "Loading HUD with font: " << (char*)(level["scorefont"]) << endl;
-	pHUD = new hud((char*)(level["scorefont"]), 20, c, wm.getWindowSurface());
+	cout << "Loading HUD with font: " << (char*)((*level)["scorefont"]) << endl;
+	pHUD = new hud((char*)((*level)["scorefont"]), 20, c, wm.getWindowSurface());
 }
 
 /**************************
@@ -215,10 +212,11 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(10, 1);
+				BandPassFilterDT::alpha = 0.1;
 
 				if (!isRegistered)
 				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
 			}
@@ -227,10 +225,12 @@ void BassInvaders::doPlayingState()
 					(event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
-				if (isRegistered)
+				BandPassFilterDT::alpha = 1.;
+
+				if (!isRegistered)
 				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
-					isRegistered = 0;
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
+					isRegistered = 1;
 				}
 			}
 			if ((event.key.keysym.sym == SDLK_x) &&
@@ -240,17 +240,9 @@ void BassInvaders::doPlayingState()
 
 			}
 
-			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
-			{
-				if (!isRegistered)
-				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
-					isRegistered = 1;
-				}
-			}
-
 			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
 			{
+				BandPassFilterDT::alpha0 = 1;
 				if (isRegistered)
 				{
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
@@ -315,7 +307,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))
