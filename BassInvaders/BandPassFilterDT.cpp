@@ -6,7 +6,7 @@
  */
 
 #include "BandPassFilterDT.h"
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 double BandPassFilterDT::alpha = 0.1;
 double BandPassFilterDT::alpha0 = 1;

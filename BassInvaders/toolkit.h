@@ -8,7 +8,7 @@
 #ifndef TOOLKIT_H_
 #define TOOLKIT_H_
 
-#include "SDL.h"
+#include <SDL/SDL.h>
 
 #ifdef DEBUG
 #define DebugPrint(x) printf x

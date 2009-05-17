@@ -15,7 +15,7 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "soundSource.h"
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include "BeatDetector.h"
 #include "BandPassFilterFFT.h"
 #include "ResourceBundle.h"
@@ -93,6 +93,8 @@ private:
 	InputManager im;
 	hud *pHUD;
 	RenderableManager* pRM;
+
+	Renderable *pMonster;
 };
 
 #endif /* BASSINVADERS_H_ */
