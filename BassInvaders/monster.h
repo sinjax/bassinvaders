@@ -13,23 +13,23 @@
 #include "InputManager.h"
 #include "ResourceBundle.h"
 
-#define MONSTER_X_SPEED -2
+#define MONSTER_X_SPEED -10
 #define MONSTER_Y_SPEED 0
 
 #define MAIN_SPRITE 0
 
 class monster: public Renderable {
 public:
-	monster(uint32_t);
+	monster(int32_t);
 	virtual ~monster();
 
-	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
+	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
 	virtual void doCollision(Renderable* pOther);
 	virtual std::vector<Sprite> getActiveSpriteList();
 	virtual void reactToCollision(Renderable* pOther);
-
+	static int32_t speed;
 protected:
 	virtual void updateStates();
 

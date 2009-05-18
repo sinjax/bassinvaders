@@ -40,7 +40,7 @@ class Renderable {
 public:
 	Renderable();
 	virtual ~Renderable();
-	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight) = 0;
+	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
 	void changeState(RenderableState_t newState);
 	RenderableState_t getState();

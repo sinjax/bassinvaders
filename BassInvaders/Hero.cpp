@@ -50,8 +50,11 @@ void Hero::loadHeroData(ResourceBundle* resource)
 
 }
 
-bool Hero::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
+bool Hero::isOffScreen(int32_t screenWidth, int32_t screenHeight)
 {
+	if ( (ypos < -50) || (ypos > (int32_t)screenHeight) )
+		return true;
+
 	return false;
 }
 

@@ -213,11 +213,11 @@ void BassInvaders::doPlayingState()
 			if ((event.key.keysym.sym == SDLK_a) && (event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(10, 1);
-				BandPassFilterDT::alpha = 0.1;
-
+				BandPassFilterDT::alpha = 0.3;
+				monster::speed = -20;
 				if (!isRegistered)
 				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
 			}
@@ -226,22 +226,7 @@ void BassInvaders::doPlayingState()
 			{
 				pBG->accelerate(1, 1);
 				BandPassFilterDT::alpha = 1.;
-
-				if (!isRegistered)
-				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
-					isRegistered = 1;
-				}
-			}
-
-			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
-			{
-				BandPassFilterDT::alpha0 = 1;
-				if (isRegistered)
-				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
-					isRegistered = 0;
-				}
+				monster::speed = -10;
 			}
 		}
 	}
@@ -254,7 +239,8 @@ void BassInvaders::doPlayingState()
 
 	if (beatIter->isBeat())
 	{
-		pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT));
+		pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT-50));
+		pHero->score-=monster::speed;
 	}
 
 	/* do collision detection */
@@ -268,7 +254,7 @@ void BassInvaders::doPlayingState()
 
 	/* draw the hud/overlay */
 	pHUD->displayText(10,10,"Health: %i",pHero->getHealth());
-	pHUD->displayText(300,10,"Score: %i",pHero->score);
+	pHUD->displayText(300,10,"Score: %i0",pHero->score);
 
 	pHUD->draw();
 }

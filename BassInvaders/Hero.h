@@ -31,7 +31,7 @@ public:
 	Hero(ResourceBundle* filename);
 	virtual ~Hero();
 
-	virtual bool isOffScreen(uint32_t screenWidth, uint32_t screenHeight);
+	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
 	void setActions(ACTIONMASK actions);

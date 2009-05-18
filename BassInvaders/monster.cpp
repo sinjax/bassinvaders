@@ -11,11 +11,13 @@
 #include "WindowManager.h"
 #include <iostream>
 
-monster::monster(uint32_t height)
+int32_t monster::speed = MONSTER_X_SPEED;
+
+monster::monster(int32_t height)
 {
 	loadMonsterData();
 
-	xvelocity = MONSTER_X_SPEED;
+	xvelocity = speed;
 	yvelocity = MONSTER_Y_SPEED;
 	xpos = SCREEN_WIDTH;
 	ypos = height;
@@ -42,11 +44,11 @@ void monster::loadMonsterData()
 
 }
 
-bool monster::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
+bool monster::isOffScreen(int32_t screenWidth, int32_t screenHeight)
 {
 	/* TODO: this should probably call into the sprite code
 	 * i.e. new method sprite::isOffScreen() */
-	if ( (xpos < 0) || (xpos > (int32_t)screenWidth) )
+	if ( (xpos < -50) || (xpos > (int32_t)screenWidth) )
 		return true;
 
 	return false;
@@ -61,6 +63,7 @@ void monster::render(SDL_Surface* pScreen)
 
 	if (delta > velocityTicks)
 	{
+		xvelocity = speed;
 		xpos += xvelocity;
 		ypos += yvelocity;
 		lastTickCount = now;
