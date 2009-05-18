@@ -174,6 +174,7 @@ void BassInvaders::loadLevel()
 	// set up the beat detector.
 	int historyBuffer = (int) (1.0 / ((double)(chunkSampleLength)/(double)(soundSource->spec.freq)));
 	beat = new BeatDetector(historyBuffer, SENSITIVITY, chunkSampleLength );
+	beatIter = beat->iterator(COOLDOWN);
 
 	// hook the game in to the music via the MusicPlayer function.
 	Mix_HookMusic(BassInvaders::MusicPlayer, this);
@@ -200,8 +201,7 @@ void BassInvaders::doPlayingState()
 
 		if (event.type == SDL_KEYUP)
 		{
-			if ((event.key.keysym.sym == SDLK_p) &&
-					(event.key.state == SDL_RELEASED))
+			if ((event.key.keysym.sym == SDLK_p) && (event.key.state == SDL_RELEASED))
 			{
 				injectState(Paused);
 			}
@@ -210,31 +210,23 @@ void BassInvaders::doPlayingState()
 		static int isRegistered = 0;
 		if (event.type == SDL_KEYUP)
 		{
-			if ((event.key.keysym.sym == SDLK_a) &&
-					(event.key.state == SDL_RELEASED))
+			if ((event.key.keysym.sym == SDLK_a) && (event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(10, 1);
+				BandPassFilterDT::alpha = 0.1;
 
 				if (!isRegistered)
 				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
+					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
 					isRegistered = 1;
 				}
 			}
 
-			if ((event.key.keysym.sym == SDLK_d) &&
-					(event.key.state == SDL_RELEASED))
+			if ((event.key.keysym.sym == SDLK_d) && (event.key.state == SDL_RELEASED))
 			{
 				pBG->accelerate(1, 1);
-				if (isRegistered)
-				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
-					isRegistered = 0;
-				}
-			}
+				BandPassFilterDT::alpha = 1.;
 
-			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
-			{
 				if (!isRegistered)
 				{
 					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
@@ -244,6 +236,7 @@ void BassInvaders::doPlayingState()
 
 			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
 			{
+				BandPassFilterDT::alpha0 = 1;
 				if (isRegistered)
 				{
 					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
@@ -259,7 +252,7 @@ void BassInvaders::doPlayingState()
 	/* move the hero about and let him shoot things*/
 	pHero->setActions(im.getCurrentActions());
 
-	if (beat->isBeat())
+	if (beatIter->isBeat())
 	{
 		pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT));
 	}

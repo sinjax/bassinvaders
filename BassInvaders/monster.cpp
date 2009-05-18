@@ -17,7 +17,7 @@ monster::monster(uint32_t height)
 
 	xvelocity = MONSTER_X_SPEED;
 	yvelocity = MONSTER_Y_SPEED;
-	xpos = 400;
+	xpos = SCREEN_WIDTH;
 	ypos = height;
 	type = RT_ENEMY;
 	currentState = RS_ACTIVE;
