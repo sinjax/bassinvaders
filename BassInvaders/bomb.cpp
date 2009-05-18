@@ -19,7 +19,7 @@ bomb::bomb(uint32_t height)
 	yvelocity = BOMB_Y_SPEED;
 	xpos = SCREEN_WIDTH;
 	ypos = height;
-	type = AMMO;
+	type = RT_AMMO;
 	currentState = RS_ACTIVE;
 	pendingState = RS_ACTIVE;
 
@@ -67,7 +67,7 @@ void bomb::render(SDL_Surface* pScreen)
 }
 
 void bomb::collide(Renderable* b){
-	if (b->getType() == FRIENDLY)
+	if (b->getType() == RT_FRIENDLY)
 	{
 		changeState(RS_DEAD);
 
