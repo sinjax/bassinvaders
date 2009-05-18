@@ -37,6 +37,7 @@ BassInvaders::BassInvaders()
 	nextState = Loading;
 	running = true;
 	BassInvaders::theGame = this;
+	pRM = new RenderableManager(wm.getWindowSurface());
 }
 
 BassInvaders::~BassInvaders() {
@@ -131,10 +132,7 @@ void BassInvaders::doLoadingState()
 void BassInvaders::loadLevel()
 {
 	/* Load the level */
-	ResourceBundle level = *(ResourceBundle::getResource(
-		"resources/levels/level-test.info"
-	));
-
+	ResourceBundle *level = ResourceBundle::getResource("resources/levels/level-test.info");
 
 	/* set up background */
 
@@ -150,14 +148,15 @@ void BassInvaders::loadLevel()
 	pBG->createLayerFromFile(&bgLayer, "resources/background/b2.info");
 	pBG->addLayer(&bgLayer);
 
+	// create the hero and stuff him into the renderable manager
 	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
+	pRM->setHero(pHero);
 
-	pMonster = new monster(23);
 	/*
 	 * Set up the music playback, filters and beat detection environment
 	 */
 	// where the music comes from.
-	soundSource = (SoundSource*)(level["music"]);
+	soundSource = (SoundSource*)((*level)["music"]);
 
 	// this is how many 2 x 2byte samples are in a chunk
 	int chunkSampleLength = soundSource->spec.samples;
@@ -181,8 +180,8 @@ void BassInvaders::loadLevel()
 
 	/* set up the HUD */
 	SDL_Color c = {55, 255, 25};
-	cout << "Loading HUD with font: " << (char*)(level["scorefont"]) << endl;
-	pHUD = new hud((char*)(level["scorefont"]), 20, c, wm.getWindowSurface());
+	cout << "Loading HUD with font: " << (char*)((*level)["scorefont"]) << endl;
+	pHUD = new hud((char*)((*level)["scorefont"]), 20, c, wm.getWindowSurface());
 }
 
 /**************************
@@ -207,89 +206,29 @@ void BassInvaders::doPlayingState()
 				injectState(Paused);
 			}
 		}
-
-		static int isRegistered = 0;
-		if (event.type == SDL_KEYUP)
-		{
-			if ((event.key.keysym.sym == SDLK_a) &&
-					(event.key.state == SDL_RELEASED))
-			{
-				pBG->accelerate(10, 1);
-
-				if (!isRegistered)
-				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);
-					isRegistered = 1;
-				}
-			}
-
-			if ((event.key.keysym.sym == SDLK_d) &&
-					(event.key.state == SDL_RELEASED))
-			{
-				pBG->accelerate(1, 1);
-				if (isRegistered)
-				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect);
-					isRegistered = 0;
-				}
-			}
-			if ((event.key.keysym.sym == SDLK_x) &&
-					(event.key.state == SDL_RELEASED))
-			{
-				pMonster->changeState(RS_DEAD);
-
-			}
-
-			if ((event.key.keysym.sym == SDLK_m) && (event.key.state == SDL_RELEASED))
-			{
-				if (!isRegistered)
-				{
-					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect, NULL, dt);
-					isRegistered = 1;
-				}
-			}
-
-			if ((event.key.keysym.sym == SDLK_n) && (event.key.state == SDL_RELEASED))
-			{
-				if (isRegistered)
-				{
-					Mix_UnregisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::highPassFilterEffect);
-					isRegistered = 0;
-				}
-			}
-		}
 	}
 
 	/* firstly, draw the background */
 	pBG->redraw(wm.getWindowSurface());
 
-	/* then the hero sprite */
+	/* move the hero about and let him shoot things*/
 	pHero->setActions(im.getCurrentActions());
-	pHero->render(wm.getWindowSurface());
 
-	/* ... then the hordes of enemies
+	if (beat->isBeat())
+	{
+		pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT));
+	}
 
-		static int isMonster = 0;
-		if (beatIter->isBeat())
-		{
-			if (isMonster!=4)
-			{
-				rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
-				isMonster++;
-			}
-			else
-			{
-				rm->theHorde.push_back(new bomb(rand()%SCREEN_HEIGHT));
-				isMonster = 0;
-			}
-		}
-		if (beatIter->isBeat()){
-			cout << "Creating monster!" << endl;
-			rm->theHorde.push_back(new monster(rand()%SCREEN_HEIGHT));
-		} */
+	/* do collision detection */
+	pRM->doCollisions();
 
-	pMonster->render(wm.getWindowSurface());
-	/* ... then the hud/overlay */
+	/* draw all the active renderables */
+	pRM->render();
+
+	/* remove the dead/off screen ones */
+	pRM->removeInactiveRenderables();
+
+	/* draw the hud/overlay */
 	pHUD->displayText(10,10,"Health: %i",pHero->getHealth());
 	pHUD->displayText(300,10,"Score: %i",pHero->score);
 
@@ -315,7 +254,7 @@ void BassInvaders::doPausedState()
 			running = false;
 		}
 
-		if (event.type = SDL_KEYUP)
+		if (event.type == SDL_KEYUP)
 		{
 			if ((event.key.keysym.sym == SDLK_p) &&
 					(event.key.state == SDL_RELEASED))

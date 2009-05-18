@@ -29,10 +29,11 @@ typedef enum
 
 typedef enum
 {
-	FRIENDLY,
-	ENEMY,
-	NEUTRAL,
-	AMMO
+	RT_FRIENDLY,
+	RT_ENEMY,
+	RT_NEUTRAL,
+	RT_AMMO,
+	RT_POWERUP
 } RenderableType_t;
 
 class Renderable {
@@ -46,14 +47,17 @@ public:
 	RenderableType_t getType();
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
-	uint32_t getHealth();
+	int32_t getHealth();
 	virtual bool canBeRemoved() = 0; //the renderable is either dead or off screen and can be removed permanently from the game
 	virtual void doCollision(Renderable* pOther)=0; //what to do when it collides with another renderable
-
+	virtual std::vector<Sprite> getActiveSpriteList() = 0; //which sprites are currently active in terms of collision detection
+	virtual void reactToCollision(Renderable* pOther) = 0; // what this Renderable does when it collides with another Renderable
+	// NOTE: reactToCollision must only be called ONCE for every colliding renderable pair. Otherwise they will react twice to a collision
+	// It's up to the renderable manager to make sure this is not done
 
 protected:
 	virtual void updateStates() = 0;
-	virtual bool isCollidingWith(Renderable* pOther) = 0;//this is only for the class to use internally. others should call doCollision and let the class figure out the effects
+	virtual bool isCollidingWith(Renderable* pOther);//this is only for the class to use internally. others should call doCollision and let the class figure out the effects
 
 protected:
 	std::vector<Sprite> sprites;

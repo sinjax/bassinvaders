@@ -1,31 +1,41 @@
 /*
- * renderableManager.h
+ * RenderableManager.h
  *
  *  Created on: May 7, 2009
- *      Author: Darren Golbourn
+ *      Author: Darren Golbourn, spijderman
  */
 
 #ifndef RENDERABLEMANAGER_H_
 #define RENDERABLEMANAGER_H_
-#include <deque>
+
 #include "Renderable.h"
-#include "sprite.h"
-#include "SDL.h"
+#include <deque>
+#include <SDL/SDL.h>
+#include "Hero.h"
 
-typedef Uint32* coords; // x2, y2, x1, y1
-
-class renderableManager {
-	SDL_Surface* pScreen;
-	bool renderableIntersect(Renderable*, Renderable*);
-	bool spriteIntersect(Sprite*, Sprite*);
-	bool rectIntersect(CollisionRect_t* A, CollisionRect_t* B, coords);
+class RenderableManager {
 public:
-	std::deque <Renderable*> theHorde;
-	renderableManager(SDL_Surface*);
-	virtual ~renderableManager();
-	void render();
-	void check_collision();
-	void clean_up();
+	RenderableManager(SDL_Surface*);
+	~RenderableManager();
+
+	Hero* pHero;
+	std::deque <Renderable*> bullets;
+	std::deque <Renderable*> enemies;
+	std::deque <Renderable*> powerups;
+
+	void render(); // draw all renderables
+	void doCollisions(); //check for (and act on) collisions between all renderables
+	void removeInactiveRenderables(); // remove inactive renderables from the lists (e.g. off screen or dead)
+
+	void setHero(Hero* pHero);
+	void addBullet(Renderable* pBullet);
+	void addEnemy(Renderable* pEnemy);
+	void addPowerUp(Renderable* pPowerUp);
+
+	uint32_t enemyCount;
+
+private:
+	SDL_Surface* pScreen; // pointer to main screen
 };
 
 #endif /* RENDERABLEMANAGER_H_ */

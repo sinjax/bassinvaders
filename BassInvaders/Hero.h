@@ -13,12 +13,14 @@
 #include "Bullet.h"
 #include "InputManager.h"
 #include "ResourceBundle.h"
-#include "WindowManager.h"
 
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 
 #define HERO_X_SPEED 5
 #define HERO_Y_SPEED 5
+
+#define DEAD_HEALTH 0
+#define DAMAGED_HEALTH 33
 /* JG TODO:
  * - Vector of bullets
  */
@@ -34,17 +36,17 @@ public:
 	virtual bool canBeRemoved();
 	void setActions(ACTIONMASK actions);
 	virtual void doCollision(Renderable* pOther);
+	virtual std::vector<Sprite> getActiveSpriteList();
+	virtual void reactToCollision(Renderable* pOther);
 
 protected:
 	virtual void updateStates();
-	virtual bool isCollidingWith(Renderable* pOther);
 
 private:
 	void loadHeroData(ResourceBundle *fp);
 	void doActions();
 
 private:
-	std::vector<Bullet> bullets;
 	uint32_t velocityTicks; //how many ticks pass before we move by velocity
 	uint32_t lastTickCount;
 };

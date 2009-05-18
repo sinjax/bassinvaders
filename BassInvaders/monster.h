@@ -13,7 +13,7 @@
 #include "InputManager.h"
 #include "ResourceBundle.h"
 
-#define MONSTER_X_SPEED 0
+#define MONSTER_X_SPEED -2
 #define MONSTER_Y_SPEED 0
 
 #define MAIN_SPRITE 0
@@ -27,10 +27,11 @@ public:
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
 	virtual void doCollision(Renderable* pOther);
+	virtual std::vector<Sprite> getActiveSpriteList();
+	virtual void reactToCollision(Renderable* pOther);
 
 protected:
 	virtual void updateStates();
-	virtual bool isCollidingWith(Renderable* pOther);
 
 private:
 	void loadMonsterData();
