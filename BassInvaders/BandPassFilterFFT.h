@@ -57,6 +57,7 @@ public:
 	void ingest(uint8_t *stream); // eat a stream and fourier-transform it.
 	void band_pass(uint8_t *stream, double flo, double fhi); // copy band passed version ingested data to stream.
 	void writef(double*, char* file); //write frequency data to file
+	void EQ(uint8_t *stream, double(*eq)(double, void*), void *args); // use the equaliser eq on the stream.
 };
 
 #endif /* BANDPASSFILTERFFT_H_ */

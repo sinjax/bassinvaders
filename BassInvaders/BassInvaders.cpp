@@ -8,6 +8,11 @@
 #include "BassInvaders.h"
 #include "WindowManager.h"
 #include "toolkit.h"
+#include "graphicalEqualiser.h"
+
+double x[] = {0, 300, 440,500,1000, 40000};
+double y[] = {0.5, 0.5, 0.9, 0.9, 0.5, 0.5};
+graphicalEqualiser pGE(x,y, 6);
 
 /*
  * This is called by SDL Music for chunkSampleSize x 4 bytes each time SDL needs it
@@ -23,6 +28,9 @@ void BassInvaders::MusicPlayer(void *udata, Uint8 *stream, int len)
 			stream[i] = sample->sample[i];
 		}
 	}
+
+	((BassInvaders*)udata)->fft->ingest(stream);
+	((BassInvaders*)udata)->fft->EQ(stream, graphicalEqualiser::eq, (void*)&pGE);
 
 	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
@@ -214,7 +222,7 @@ void BassInvaders::doPlayingState()
 			{
 				pBG->accelerate(10, 1);
 				BandPassFilterDT::alpha = 0.3;
-				monster::speed = -20;
+				monster::speed = -15;
 				if (!isRegistered)
 				{
 					Mix_RegisterEffect(MIX_CHANNEL_POST, BandPassFilterDT::lowPassFilterEffect, NULL, dt);

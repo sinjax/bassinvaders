@@ -131,6 +131,28 @@ void BandPassFilterFFT::band_window(double *band_data, uint32_t bandhi, uint32_t
 }
 
 /*
+ * graphical equaliser using the function eq to boost/cut the stream.
+ */
+void BandPassFilterFFT::EQ(uint8_t *stream, double(*eq)(double, void*), void *args)
+{
+	double band_data[2*samples];
+
+	/*
+	 * EQ the data
+	 */
+	for(uint32_t i=0; i<=freqs; i++) // Go over each frequency.
+	{
+		double Eq = eq(f[i], args);
+		REAL(band_data,POSITIVE(i,samples)) = Eq * REAL(fcache,POSITIVE(i,samples));
+		IMAG(band_data,POSITIVE(i,samples)) = Eq * IMAG(fcache,POSITIVE(i,samples));
+		REAL(band_data,NEGATIVE(i,samples)) = Eq * REAL(fcache,NEGATIVE(i,samples));
+		IMAG(band_data,NEGATIVE(i,samples)) = Eq * IMAG(fcache,NEGATIVE(i,samples));
+	}
+
+	fft_inverse(band_data, stream);
+}
+
+/*
  * transform frequency domain into stream
  */
 void BandPassFilterFFT::fft_inverse(double* band_data, uint8_t *stream) {
