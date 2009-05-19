@@ -8,7 +8,7 @@
 #include "sprite.h"
 #include "toolkit.h"
 
-//#define DEBUG_COLLISIONS
+#define DEBUG_COLLISIONS
 
 Sprite::Sprite(ResourceBundle * resources/*, BassInvaders * game*/) {
 	/* take a text file as a parameter containing all the data for all the states
@@ -135,6 +135,11 @@ void Sprite::renderSprite(SDL_Surface *pScreen)
 		SDL_FillRect(pScreen, &foo, SDL_MapRGB( pScreen->format, 255, 255, 255 ));
 	}
 #endif
+	if (pTempState->spriteSheet == NULL)
+	{
+		DebugPrint(("!!!!WTF NULL SPRITESHEET!!!!\n"));
+	}
+
 	DrawToSurface(xpos,
 				  ypos,
 				  pTempState->spriteSheet,
@@ -243,7 +248,7 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 			rect.y = GET_RESOURCE(int32_t*, *currentState, "rect", j)[1];
 			rect.w = GET_RESOURCE(int32_t*, *currentState, "rect", j)[2];
 			rect.h = GET_RESOURCE(int32_t*, *currentState, "rect", j)[3];
-			DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
+			//DebugPrint(("loading rect (%u,%u,%u,%u)\n", rect.x, rect.y,rect.w, rect.h ));
 			pData->collisionRects.push_back(rect);
 
 		}
@@ -252,6 +257,11 @@ void Sprite::loadSpriteData(ResourceBundle * resource)
 		pData->spriteSheet = (SDL_Surface*)((*currentState)["filename"]);
 		uint32_t colorkey = SDL_MapRGB( pData->spriteSheet->format, R, G, B );
 		SDL_SetColorKey( pData->spriteSheet, SDL_SRCCOLORKEY, colorkey );
+
+		if (pData->collisionRects.begin() == pData->collisionRects.end())
+		{
+			DebugPrint(("Loaded sprite without a collision box!\n"));
+		}
 	}
 }
 
@@ -347,7 +357,7 @@ bool Sprite::isCollidingWith(std::vector<CollisionRect_t> other)
 			}
 			else
 			{
-				DebugPrint(("collision get! (%u,%u,%u,%u) with (%u,%u,%u,%u)!\n", left1, top1, right1, bottom1, left2, top2, right2, bottom2));
+				//DebugPrint(("collision get! (%u,%u,%u,%u) with (%u,%u,%u,%u)!\n", left1, top1, right1, bottom1, left2, top2, right2, bottom2));
 				return true;
 			}
 		}

@@ -27,6 +27,7 @@ void RenderableManager::setHero(Hero* pHero)
 void RenderableManager::addBullet(Renderable* pBullet)
 {
 	bullets.push_back(pBullet);
+	bulletCount++;
 }
 
 void RenderableManager::addEnemy(Renderable* pEnemy)
@@ -49,7 +50,7 @@ void RenderableManager::render()
 	 * - powerups
 	 */
 
-	DebugPrint(("rendering %u enemies\n", enemyCount));
+	//DebugPrint(("rendering %u bullets\n", bulletCount));
 
 	std::deque<Renderable*>::iterator pos;
 
@@ -58,12 +59,12 @@ void RenderableManager::render()
 		(*pos)->render(this->pScreen);
 	}
 
+	pHero->render(pScreen);
+
 	for (pos = bullets.begin(); pos != bullets.end(); ++pos)
 	{
 		(*pos)->render(this->pScreen);
 	}
-
-	pHero->render(pScreen);
 
 	for (pos = powerups.begin(); pos != powerups.end(); ++pos)
 	{
@@ -126,6 +127,7 @@ void RenderableManager::removeInactiveRenderables()
 		{
 			delete(*pos);
 			pos = bullets.erase(pos);
+			--bulletCount;
 		}
 		else
 		{
@@ -139,7 +141,7 @@ void RenderableManager::removeInactiveRenderables()
 		{
 			delete(*pos);
 			pos = enemies.erase(pos);
-			DebugPrint(("deleted enemy\n"));
+			//DebugPrint(("deleted enemy\n"));
 			enemyCount--;
 		}
 		else

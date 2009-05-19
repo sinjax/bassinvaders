@@ -149,7 +149,7 @@ void BassInvaders::loadLevel()
 	pBG->addLayer(&bgLayer);
 
 	// create the hero and stuff him into the renderable manager
-	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"));
+	pHero = new Hero(ResourceBundle::getResource("resources/hero/heroclass.info"), pRM);
 	pRM->setHero(pHero);
 
 	/*
@@ -252,17 +252,23 @@ void BassInvaders::doPlayingState()
 	/* move the hero about and let him shoot things*/
 	pHero->setActions(im.getCurrentActions());
 
+	//DebugPrint(("is beat?\n"));
 	if (beatIter->isBeat())
 	{
+		//DebugPrint(("add monster\n"));
 		pRM->addEnemy(new monster(rand()%SCREEN_HEIGHT));
 	}
 
+
 	/* do collision detection */
+//	DebugPrint(("do collisions\n"));
 	pRM->doCollisions();
 
+//	DebugPrint(("render\n"));
 	/* draw all the active renderables */
 	pRM->render();
 
+//	DebugPrint(("remove inactives\n"));
 	/* remove the dead/off screen ones */
 	pRM->removeInactiveRenderables();
 
