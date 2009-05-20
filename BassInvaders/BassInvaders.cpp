@@ -10,9 +10,9 @@
 #include "toolkit.h"
 #include "graphicalEqualiser.h"
 
-double x[] = {0, 300, 440,500,1000, 40000};
-double y[] = {0.5, 0.5, 0.9, 0.9, 0.5, 0.5};
-graphicalEqualiser pGE(x,y, 6);
+double x[] = {-10, 220, 440,1760, 30000};
+double y[] = {0.88, 1.3, 0.9, 0.6, 0.8};
+graphicalEqualiser pGE(x,y, 5);
 
 /*
  * This is called by SDL Music for chunkSampleSize x 4 bytes each time SDL needs it
@@ -23,16 +23,13 @@ void BassInvaders::MusicPlayer(void *udata, Uint8 *stream, int len)
 	if(iter->hasNext())
 	{
 		SoundSample * sample = iter->next();
-		for(int i = 0; i < sample->len; i++)
-		{
-			stream[i] = sample->sample[i];
-		}
+		memcpy(stream, sample->sample, sample->len);
+
+		((BassInvaders*)udata)->fft->ingest(stream);
+		((BassInvaders*)udata)->fft->EQ(stream, graphicalEqualiser::eq, (void*)&pGE);
+
+		BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 	}
-
-	((BassInvaders*)udata)->fft->ingest(stream);
-	((BassInvaders*)udata)->fft->EQ(stream, graphicalEqualiser::eq, (void*)&pGE);
-
-	BeatDetector::process(((BassInvaders*)udata)->beat, stream, len);
 }
 
 BassInvaders * BassInvaders::theGame = 0;
