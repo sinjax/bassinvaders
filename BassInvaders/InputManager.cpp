@@ -17,6 +17,7 @@ InputManager::InputManager()
 	keyMap[SDLK_LEFT] = ACTION_MOVE_LEFT;
 	keyMap[SDLK_RIGHT] = ACTION_MOVE_RIGHT;
 	keyMap[SDLK_SPACE] = ACTION_SHOOT;
+	keyMap[SDLK_z] = ACTION_SWITCH_AMMO;
 
 }
 
