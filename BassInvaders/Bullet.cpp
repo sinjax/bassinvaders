@@ -116,7 +116,7 @@ bool Bullet::canBeRemoved()
 	return false;
 }
 
-void Bullet::doCollision(Renderable* pOther)
+void Bullet::doCollision(Entity* pOther)
 {
 	switch(pOther->getType())
 	{
@@ -146,14 +146,14 @@ std::vector<Sprite> Bullet::getActiveSpriteList()
 	return ret;
 }
 
-void Bullet::reactToCollision(Renderable* pOther)
+void Bullet::reactToCollision(Entity* pOther)
 {
 	switch(pOther->getType())
 	{
 		case RT_ENEMY:
 		{
 			/* Bullet has hit an enemy.
-			 * Remember that the enemy Renderable will figure out what it
+			 * Remember that the enemy Entity will figure out what it
 			 * should be doing at this point. All the bullet cares is that it
 			 * has now ceased to be.
 			 */

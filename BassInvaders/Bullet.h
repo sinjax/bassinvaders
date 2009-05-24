@@ -8,7 +8,7 @@
 #ifndef BULLET_H_
 #define BULLET_H_
 
-#include "Renderable.h"
+#include "Entity.h"
 #include "ResourceBundle.h"
 
 #define BULLET_X_SPEED 10
@@ -21,16 +21,16 @@
  * The type is set at instantiation time.
  */
 
-class Bullet: public Renderable {
+class Bullet: public Entity {
 public:
 	Bullet(int32_t xpos, int32_t ypos);
 	virtual ~Bullet();
 	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
-	virtual void doCollision(Renderable* pOther);
+	virtual void doCollision(Entity* pOther);
 	virtual std::vector<Sprite> getActiveSpriteList();
-	virtual void reactToCollision(Renderable* pOther);
+	virtual void reactToCollision(Entity* pOther);
 
 protected:
 	virtual void updateStates();

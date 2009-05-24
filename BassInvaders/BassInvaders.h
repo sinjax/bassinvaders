@@ -9,7 +9,7 @@
 #define BASSINVADERS_H_
 
 #include <deque>
-#include "Renderable.h"
+#include "Entity.h"
 #include "Hero.h"
 #include "Background.h"
 #include "WindowManager.h"
@@ -22,7 +22,7 @@
 #include "BandPassFilterDT.h"
 #include "monster.h"
 #include "hud.h"
-#include "RenderableManager.h"
+#include "EntityManager.h"
 #include "Bullet.h"
 
 #define SENSITIVITY 1.3
@@ -93,7 +93,7 @@ private:
 	WindowManager wm;
 	InputManager im;
 	hud *pHUD;
-	RenderableManager* pRM;
+	EntityManager* pRM;
 };
 
 #endif /* BASSINVADERS_H_ */

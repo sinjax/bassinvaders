@@ -1,47 +1,47 @@
 /*
- * RenderableManager.cpp
+ * EntityManager.cpp
  *
  *  Created on: May 7, 2009
  *      Author: Darren Golbourn, spijderman
  */
 
-#include "RenderableManager.h"
+#include "EntityManager.h"
 #include "toolkit.h"
 
-RenderableManager::RenderableManager(SDL_Surface* pScreen)
+EntityManager::EntityManager(SDL_Surface* pScreen)
 {
 	this->pScreen = pScreen;
 	enemyCount = 0;
 }
 
-RenderableManager::~RenderableManager()
+EntityManager::~EntityManager()
 {
 
 }
 
-void RenderableManager::setHero(Hero* pHero)
+void EntityManager::setHero(Hero* pHero)
 {
 	this->pHero = pHero;
 }
 
-void RenderableManager::addBullet(Renderable* pBullet)
+void EntityManager::addBullet(Entity* pBullet)
 {
 	bullets.push_back(pBullet);
 	bulletCount++;
 }
 
-void RenderableManager::addEnemy(Renderable* pEnemy)
+void EntityManager::addEnemy(Entity* pEnemy)
 {
 	enemies.push_back(pEnemy);
 	enemyCount++;
 }
 
-void RenderableManager::addPowerUp(Renderable* pPowerUp)
+void EntityManager::addPowerUp(Entity* pPowerUp)
 {
 	powerups.push_back(pPowerUp);
 }
 
-void RenderableManager::render()
+void EntityManager::render()
 {
 	/* draw all items in this order (remember that z-order is determined by when they are drawn)
 	 * - enemies
@@ -52,7 +52,7 @@ void RenderableManager::render()
 
 	//DebugPrint(("rendering %u bullets\n", bulletCount));
 
-	std::deque<Renderable*>::iterator pos;
+	std::deque<Entity*>::iterator pos;
 
 	for (pos = enemies.begin(); pos != enemies.end(); ++pos)
 	{
@@ -73,7 +73,7 @@ void RenderableManager::render()
 
 }
 
-void RenderableManager::doCollisions()
+void EntityManager::doCollisions()
 {
 	/* check collisions in the following order:
 	 * bullets vs enemies, interleaved with hero vs enemies
@@ -82,9 +82,9 @@ void RenderableManager::doCollisions()
 	 * JG TODO: can we make this more efficient - e.g. fewer passes?
 	 */
 
-	std::deque<Renderable*>::iterator bulletsIter;
-	std::deque<Renderable*>::iterator enemiesIter;
-	std::deque<Renderable*>::iterator powerupsIter;
+	std::deque<Entity*>::iterator bulletsIter;
+	std::deque<Entity*>::iterator enemiesIter;
+	std::deque<Entity*>::iterator powerupsIter;
 
 	/* bullets vs enemies */
 	for (bulletsIter = bullets.begin(); bulletsIter != bullets.end(); ++bulletsIter)
@@ -110,16 +110,16 @@ void RenderableManager::doCollisions()
 
 }
 
-void RenderableManager::removeInactiveRenderables()
+void EntityManager::removeInactiveEntities()
 {
-	/* go thru each list of renderables and see if they
+	/* go thru each list of Entities and see if they
 	 * can be removed (i.e. they are dead or off screen)
 	 *
 	 * the slightly tortured loop syntax is so we don't erase
 	 * the element to which the iterator is referring and make ++pos
 	 * do undefined things (mostly crash...)
 	 */
-	std::deque<Renderable*>::iterator pos;
+	std::deque<Entity*>::iterator pos;
 
 	for (pos = bullets.begin(); pos != bullets.end();)
 	{

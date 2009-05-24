@@ -10,7 +10,7 @@
 #include <fstream>
 #include <iostream>
 
-Hero::Hero(ResourceBundle* resource, RenderableManager* pRM)
+Hero::Hero(ResourceBundle* resource, EntityManager* pRM)
 {
 	loadHeroData(resource);
 	score = 0;
@@ -139,7 +139,7 @@ void Hero::doActions()
 	if (canShoot)
 	{
 		//DebugPrint(("Firing bullet\n"));
-		/* Create a new bullet, stick it in the renderable manager
+		/* Create a new bullet, stick it in the Entity manager
 		 * the x and y pos are where we want the bullet to spawn (i.e. at the nose of the hero craft)*/
 		pRM->addBullet(new Bullet(xpos+100, ypos+50)); //JG TODO: magic numbers must go
 		canShoot = false;
@@ -169,14 +169,14 @@ void Hero::updateStates()
 	}
 }
 
-void Hero::doCollision(Renderable* pOther)
+void Hero::doCollision(Entity* pOther)
 {
-	/* read type of Renderable.
+	/* read type of Entity.
 	 * if neutral/friend:
 	 *  return
 	 * if enemy/powerup:
 	 *  find out if collision
-	 *   if true, call reactToCollision on both Renderables
+	 *   if true, call reactToCollision on both Entities
 	 */
 
 	switch(pOther->getType())
@@ -207,7 +207,7 @@ std::vector<Sprite> Hero::getActiveSpriteList()
 	return ret;
 }
 
-void Hero::reactToCollision(Renderable* pOther)
+void Hero::reactToCollision(Entity* pOther)
 {
 	switch(pOther->getType())
 	{
