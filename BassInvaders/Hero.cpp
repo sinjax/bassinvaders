@@ -26,7 +26,7 @@ Hero::Hero(ResourceBundle* resource, EntityManager* pRM)
 
 	this->pRM = pRM;
 
-	fireRate = 500;
+	fireRate = 100;
 	canShoot = false;
 	lastFireTicks = 0;
 }
