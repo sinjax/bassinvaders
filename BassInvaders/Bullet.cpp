@@ -47,7 +47,7 @@ void Bullet::loadBulletData()
 	sprites.push_back(bulletBody);
 }
 
-bool Bullet::isOffScreen(uint32_t screenWidth, uint32_t screenHeight)
+bool Bullet::isOffScreen(int32_t screenWidth, int32_t screenHeight)
 {
 	return (xpos>(int32_t)screenWidth) ? true : false;
 }
