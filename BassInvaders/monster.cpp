@@ -112,14 +112,14 @@ bool monster::canBeRemoved()
 }
 
 
-void monster::doCollision(Renderable* pOther)
+void monster::doCollision(Entity* pOther)
 {
-	/* read type of Renderable.
+	/* read type of Entity.
 	 * if enemy/powerup:
  	 *  return
 	 * if friendly: (i.e. bad for monsters)
 	 *   find out if collision
-	 *   if true, call reactToCollision on both Renderables
+	 *   if true, call reactToCollision on both Entities
 	 */
 
 	switch(pOther->getType())
@@ -150,7 +150,7 @@ std::vector<Sprite> monster::getActiveSpriteList()
 	return ret;
 }
 
-void monster::reactToCollision(Renderable* pOther)
+void monster::reactToCollision(Entity* pOther)
 {
 	switch(pOther->getType())
 	{

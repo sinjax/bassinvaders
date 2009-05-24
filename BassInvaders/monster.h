@@ -8,7 +8,7 @@
 #ifndef MONSTER_H_
 #define MONSTER_H_
 
-#include "Renderable.h"
+#include "Entity.h"
 #include <vector>
 #include "InputManager.h"
 #include "ResourceBundle.h"
@@ -18,7 +18,7 @@
 
 #define MAIN_SPRITE 0
 
-class monster: public Renderable {
+class monster: public Entity {
 public:
 	monster(int32_t);
 	virtual ~monster();
@@ -26,9 +26,9 @@ public:
 	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight);
 	virtual void render(SDL_Surface *pScreen);
 	virtual bool canBeRemoved();
-	virtual void doCollision(Renderable* pOther);
+	virtual void doCollision(Entity* pOther);
 	virtual std::vector<Sprite> getActiveSpriteList();
-	virtual void reactToCollision(Renderable* pOther);
+	virtual void reactToCollision(Entity* pOther);
 	static int32_t speed;
 protected:
 	virtual void updateStates();

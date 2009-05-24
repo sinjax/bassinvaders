@@ -1,12 +1,12 @@
 /*
- * Renderable.h
+ * Entity.h
  *
  *  Created on: 19-Apr-2009
  *      Author: spijderman
  */
 
-#ifndef RENDERABLE_H_
-#define RENDERABLE_H_
+#ifndef Entity_H_
+#define Entity_H_
 
 #include "Sprite.h"
 #include <vector>
@@ -25,7 +25,7 @@ typedef enum
 {
 	RS_ACTIVE,
 	RS_DEAD,
-} RenderableState_t;
+} Entitiestate_t;
 
 typedef enum
 {
@@ -33,38 +33,38 @@ typedef enum
 	RT_ENEMY,
 	RT_NEUTRAL,
 	RT_POWERUP
-} RenderableType_t;
+} EntityType_t;
 
-class Renderable {
+class Entity {
 public:
-	Renderable();
-	virtual ~Renderable();
+	Entity();
+	virtual ~Entity();
 	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight) = 0;
 	virtual void render(SDL_Surface *pScreen) = 0;
-	void changeState(RenderableState_t newState);
-	RenderableState_t getState();
-	RenderableType_t getType();
+	void changeState(Entitiestate_t newState);
+	Entitiestate_t getState();
+	EntityType_t getType();
 	virtual void setVelocity(int32_t xvelocity, int32_t yvelocity);
 	uint32_t getAttackDamage();
 	int32_t getHealth();
-	virtual bool canBeRemoved() = 0; //the renderable is either dead or off screen and can be removed permanently from the game
-	virtual void doCollision(Renderable* pOther)=0; //what to do when it collides with another renderable
+	virtual bool canBeRemoved() = 0; //the Entity is either dead or off screen and can be removed permanently from the game
+	virtual void doCollision(Entity* pOther)=0; //what to do when it collides with another Entity
 	virtual std::vector<Sprite> getActiveSpriteList() = 0; //which sprites are currently active in terms of collision detection
-	virtual void reactToCollision(Renderable* pOther) = 0; // what this Renderable does when it collides with another Renderable
-	// NOTE: reactToCollision must only be called ONCE for every colliding renderable pair. Otherwise they will react twice to a collision
-	// It's up to the renderable manager to make sure this is not done
+	virtual void reactToCollision(Entity* pOther) = 0; // what this Entity does when it collides with another Entity
+	// NOTE: reactToCollision must only be called ONCE for every colliding Entity pair. Otherwise they will react twice to a collision
+	// It's up to the Entity manager to make sure this is not done
 
 protected:
 	virtual void updateStates() = 0;
-	virtual bool isCollidingWith(Renderable* pOther);//this is only for the class to use internally. others should call doCollision and let the class figure out the effects
+	virtual bool isCollidingWith(Entity* pOther);//this is only for the class to use internally. others should call doCollision and let the class figure out the effects
 
 protected:
 	std::vector<Sprite> sprites;
 	int32_t xvelocity;
 	int32_t yvelocity;
-	RenderableType_t type;
-	RenderableState_t currentState;
-	RenderableState_t pendingState;
+	EntityType_t type;
+	Entitiestate_t currentState;
+	Entitiestate_t pendingState;
 	uint32_t attackDamage;
 	int32_t health;
 	int32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
@@ -73,4 +73,4 @@ protected:
 	uint32_t lastTickCount;
 };
 
-#endif /* RENDERABLE_H_ */
+#endif /* Entity_H_ */

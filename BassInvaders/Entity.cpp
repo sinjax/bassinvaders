@@ -1,33 +1,33 @@
 /*
- * Renderable.cpp
+ * Entity.cpp
  *
  *  Created on: 19-Apr-2009
  *      Author: spijderman
  */
 
-#include "Renderable.h"
+#include "Entity.h"
 #include "toolkit.h"
 
-Renderable::Renderable() {
+Entity::Entity() {
 	// TODO Auto-generated constructor stub
 
 }
 
-Renderable::~Renderable()
+Entity::~Entity()
 {
 	/* you'd think it would make sense to free up all the sdl surfaces that
-	 * were allocated to make this Renderable here, but actually they are
+	 * were allocated to make this Entity here, but actually they are
 	 * handled by the Resource Bundle.
 	 */
 }
 
-void Renderable::setVelocity(int32_t xvelocity, int32_t yvelocity)
+void Entity::setVelocity(int32_t xvelocity, int32_t yvelocity)
 {
 	this->xvelocity = xvelocity;
 	this->yvelocity = yvelocity;
 }
 
-void Renderable::changeState(RenderableState_t newState)
+void Entity::changeState(Entitiestate_t newState)
 {
 	if (currentState != newState)
 	{
@@ -35,29 +35,29 @@ void Renderable::changeState(RenderableState_t newState)
 	}
 }
 
-RenderableState_t Renderable::getState()
+Entitiestate_t Entity::getState()
 {
 	return currentState;
 }
 
-RenderableType_t Renderable::getType()
+EntityType_t Entity::getType()
 {
 	return type;
 }
 
-int32_t Renderable::getHealth()
+int32_t Entity::getHealth()
 {
 	return health;
 }
 
-uint32_t Renderable::getAttackDamage()
+uint32_t Entity::getAttackDamage()
 {
 	return attackDamage;
 }
 
-bool Renderable::isCollidingWith(Renderable* pOther)
+bool Entity::isCollidingWith(Entity* pOther)
 {
-	/* if either renderable is dead, they can't be colliding*/
+	/* if either Entity is dead, they can't be colliding*/
 	if ((pOther->getState() == RS_DEAD)
 	  || (this->getState() == RS_DEAD))
 	{
