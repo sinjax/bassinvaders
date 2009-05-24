@@ -11,7 +11,6 @@
 EntityManager::EntityManager(SDL_Surface* pScreen)
 {
 	this->pScreen = pScreen;
-	enemyCount = 0;
 }
 
 EntityManager::~EntityManager()
@@ -27,13 +26,11 @@ void EntityManager::setHero(Hero* pHero)
 void EntityManager::addBullet(Entity* pBullet)
 {
 	bullets.push_back(pBullet);
-	bulletCount++;
 }
 
 void EntityManager::addEnemy(Entity* pEnemy)
 {
 	enemies.push_back(pEnemy);
-	enemyCount++;
 }
 
 void EntityManager::addPowerUp(Entity* pPowerUp)
@@ -120,14 +117,14 @@ void EntityManager::removeInactiveEntities()
 	 * do undefined things (mostly crash...)
 	 */
 	std::deque<Entity*>::iterator pos;
-
+	Entity * entity;
 	for (pos = bullets.begin(); pos != bullets.end();)
 	{
-		if ((*pos)->canBeRemoved())
+		entity = *pos;
+		if (entity->canBeRemoved())
 		{
-			delete(*pos);
 			pos = bullets.erase(pos);
-			--bulletCount;
+			delete entity;
 		}
 		else
 		{
@@ -137,12 +134,13 @@ void EntityManager::removeInactiveEntities()
 
 	for (pos = enemies.begin(); pos != enemies.end();)
 	{
-		if ((*pos)->canBeRemoved())
+		entity = *pos;
+		if (entity->canBeRemoved())
 		{
-			delete(*pos);
 			pos = enemies.erase(pos);
+			delete entity;
+			
 			//DebugPrint(("deleted enemy\n"));
-			enemyCount--;
 		}
 		else
 		{
@@ -152,10 +150,11 @@ void EntityManager::removeInactiveEntities()
 
 	for (pos = powerups.begin(); pos != powerups.end();)
 	{
+		entity = *pos;
 		if ((*pos)->canBeRemoved())
 		{
-			delete(*pos);
 			pos = powerups.erase(pos);
+			delete *pos;
 		}
 		else
 		{

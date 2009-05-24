@@ -32,9 +32,6 @@ public:
 	void addEnemy(Entity* pEnemy);
 	void addPowerUp(Entity* pPowerUp);
 
-	uint32_t enemyCount;
-	uint32_t bulletCount;
-
 private:
 	SDL_Surface* pScreen; // pointer to main screen
 };

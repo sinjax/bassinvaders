@@ -62,7 +62,14 @@ public:
 	BandPassFilterDT *dt;
 	BeatDetector *beat;
 	BeatIterator *beatIter;
+	bool running;// is the main game loop still running?
 
+	Hero* pHero;
+	Background* pBG;
+	WindowManager wm;
+	InputManager im;
+	hud *pHUD;
+	EntityManager* pRM;
 	static BassInvaders * theGame;
 	// End level class
 	static void MusicPlayer(void *udata, Uint8 *stream, int len);
@@ -70,32 +77,15 @@ public:
 private:
 	void injectState(GameStates_t newState);
 	void updateStates();
-
-private:
 	void doPlayingState();
-
-private:
 	void doPausedState();
 	void pauseGame();
-
-private:
 	void doEndOfLevelState();
-
-private:
 	void doLoadingState();
 	void loadLevel();
 
-private:
-	bool running;// is the main game loop still running?
-
-	Hero* pHero;
-	Background* pBG;
 	GameStates_t gameState;
 	GameStates_t nextState;
-	WindowManager wm;
-	InputManager im;
-	hud *pHUD;
-	EntityManager* pRM;
 };
 
 #endif /* BASSINVADERS_H_ */

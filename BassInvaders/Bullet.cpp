@@ -8,12 +8,12 @@
 #include "Bullet.h"
 #include "WindowManager.h"
 #include "toolkit.h"
+#include "BassInvaders.h"
 
-uint32_t Bullet::bulletCount = 0;
 
 Bullet::Bullet(int32_t xpos, int32_t ypos)
 {
-	number = bulletCount++;
+	number = BassInvaders::theGame->pRM->bullets.size();
 
 	loadBulletData();
 

@@ -11,7 +11,7 @@
 #include "graphicalEqualiser.h"
 
 double x[] = {-10, 220, 440,1760, 30000};
-double y[] = {1.0, 0.4, 0.4, 0.4, 0.4};
+double y[] = {1.0, 1.0, 1.0, 1.0, 1.0};
 graphicalEqualiser pGE(x,y, 5);
 
 /*
