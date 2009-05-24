@@ -35,8 +35,6 @@ protected:
 
 private:
 	void loadMonsterData();
-	uint32_t velocityTicks;
-	uint32_t lastTickCount;
 };
 
 #endif /* HERO_H_ */

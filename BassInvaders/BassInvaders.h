@@ -23,6 +23,7 @@
 #include "monster.h"
 #include "hud.h"
 #include "RenderableManager.h"
+#include "Bullet.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"

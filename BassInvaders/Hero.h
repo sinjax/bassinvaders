@@ -13,6 +13,7 @@
 #include "Bullet.h"
 #include "InputManager.h"
 #include "ResourceBundle.h"
+#include "RenderableManager.h"
 
 #define BODYSPRITE 0 //main body of hero is the first sprite in the vector
 
@@ -28,7 +29,7 @@
 class Hero: public Renderable {
 public:
 	uint32_t score;
-	Hero(ResourceBundle* filename);
+	Hero(ResourceBundle* filename, class RenderableManager* pRM);
 	virtual ~Hero();
 
 	virtual bool isOffScreen(int32_t screenWidth, int32_t screenHeight);
@@ -47,8 +48,10 @@ private:
 	void doActions();
 
 private:
-	uint32_t velocityTicks; //how many ticks pass before we move by velocity
-	uint32_t lastTickCount;
+	class RenderableManager* pRM; // the hero needs a handle to the RM so that it can add bullets to it
+	uint32_t fireRate; //number of ticks which must pass before another bullet can be fired
+	uint32_t lastFireTicks; //tickcount when the last bullet was fired
+	bool canShoot; //hero is firing a shot
 };
 
 #endif /* HERO_H_ */

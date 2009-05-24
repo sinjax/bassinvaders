@@ -18,7 +18,7 @@ public:
 	RenderableManager(SDL_Surface*);
 	~RenderableManager();
 
-	Hero* pHero;
+	class Hero* pHero;
 	std::deque <Renderable*> bullets;
 	std::deque <Renderable*> enemies;
 	std::deque <Renderable*> powerups;
@@ -33,6 +33,7 @@ public:
 	void addPowerUp(Renderable* pPowerUp);
 
 	uint32_t enemyCount;
+	uint32_t bulletCount;
 
 private:
 	SDL_Surface* pScreen; // pointer to main screen

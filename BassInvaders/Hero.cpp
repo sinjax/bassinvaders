@@ -10,7 +10,7 @@
 #include <fstream>
 #include <iostream>
 
-Hero::Hero(ResourceBundle* resource)
+Hero::Hero(ResourceBundle* resource, RenderableManager* pRM)
 {
 	loadHeroData(resource);
 	score = 0;
@@ -23,10 +23,12 @@ Hero::Hero(ResourceBundle* resource)
 	pendingState = RS_ACTIVE;
 
 	this->velocityTicks = 10;
-	/* JG TODO: load in sprites:
-	 * ship/damaged ship
-	 * thrusters all around
-	 * charge attack? */
+
+	this->pRM = pRM;
+
+	fireRate = 500;
+	canShoot = false;
+	lastFireTicks = 0;
 }
 
 /* hero manages it's own sprites */
@@ -111,6 +113,13 @@ void Hero::setActions(ACTIONMASK actions)
 
 	if (actions & ACTION_SHOOT)
 	{
+		uint32_t now = SDL_GetTicks();
+		uint32_t delta = now - lastFireTicks;
+		if (delta >= fireRate)
+		{
+			canShoot = true;
+			lastFireTicks = now;
+		}
 	}
 }
 
@@ -125,6 +134,15 @@ void Hero::doActions()
 		ypos += yvelocity;
 
 		lastTickCount = now;
+	}
+
+	if (canShoot)
+	{
+		//DebugPrint(("Firing bullet\n"));
+		/* Create a new bullet, stick it in the renderable manager
+		 * the x and y pos are where we want the bullet to spawn (i.e. at the nose of the hero craft)*/
+		pRM->addBullet(new Bullet(xpos+100, ypos+50)); //JG TODO: magic numbers must go
+		canShoot = false;
 	}
 }
 

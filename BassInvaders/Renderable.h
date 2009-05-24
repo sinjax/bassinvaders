@@ -32,7 +32,6 @@ typedef enum
 	RT_FRIENDLY,
 	RT_ENEMY,
 	RT_NEUTRAL,
-	RT_AMMO,
 	RT_POWERUP
 } RenderableType_t;
 
@@ -70,6 +69,8 @@ protected:
 	int32_t health;
 	int32_t xpos; //this x and y may or may not bear any resemblance to the x and y pos of the encapsulated sprites
 	int32_t ypos;
+	uint32_t velocityTicks; //how many ticks pass before we move by velocity
+	uint32_t lastTickCount;
 };
 
 #endif /* RENDERABLE_H_ */
