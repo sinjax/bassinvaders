@@ -24,6 +24,8 @@
 #include "hud.h"
 #include "EntityManager.h"
 #include "Bullet.h"
+#include "Formation.h"
+#include "Scene.h"
 
 #define SENSITIVITY 1.3
 #define INSERT_YOUR_SONG_PATH_HERE "test.mp3"
